@@ -2,17 +2,6 @@
 - spawned pup.c from within phisbo.c, but haven’t started scripting yet - trying new method of all checks from one script.
 
 //REMINDER OF WHAT’S DONE:
-- Added diagonal direction check to phisbo.c to reduce lag by reventing load of phishyb.c into memory in situations where push/pull isn’t possible.
-- Added “ppbypass” procedure that can be chosen to run instead of push and pull system by passing ‘1’ to &arg1 of (“phisbo”, “touch”).
-- Removed hold to pull custom keys and all procs from scripts
-- Removed all instances of resetspeed and deleted the procedure
-- Mitigated dink_speed_change bugs taking place due to not updating until next wait 
-   (Added Dink position check after the next wait line which is in hyblim.c)
-- Removed Dinkspeed.c 
-   (push and pull now detects dinks speed, and any speed change made to dink by item or magic and accounts for it during engage/disengage of a move-able sprite)
-- Removed use of init lines
-- Added option in custom limit override custom keys to set “Enable-Limit” to 2, and ignore values of 0 or -1.
-- Optimised relock and sprite limit checks in hybup.c
 
 Bug hard to reproduce:
 - Sometimes Dink’s speed increases when releasing a sprite - Investigate and fix.  - ADDED debug lines to diagnose, should it happen again.
