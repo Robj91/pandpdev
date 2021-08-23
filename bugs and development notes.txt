@@ -14,11 +14,6 @@ bugs and ideas:
 - add option for “movedetectduring()” to only activate each time the object has moved positions.
 - add option for “movedetectidle()” procedure if “movedetectduring()” is disabled when sprite not moving.
 - remove/combine redundant custom keys
-- reduce lag in 1.08 by making initial touch not run (loads all the way to phishyb and then fails hardbox test)
-
-DINKHD compatibility:
-- Remove all functions from if statements.
-- Remove all one line DinkC containers.
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
@@ -78,10 +73,7 @@ CUSTOM KEYS AND THEIR USES:
 "phishybridactive": Used to indicate whether the moveable sprite has begun move limit calculation for STICKY PUSH.
 		    1 = Calculation in progress
 
-"pushdelay": Used to set a delay before push activates, when walking into a sprite. Affects Push and Sticky Push ONLY. 
-	     Please note, the delay will not translate into the usual "wait(<time>)". It's rather a loop that repeats an amount of times based on the value you input with a "wait(1)" between each loop.
-	     Because of this, I've found the same value gives a longer delay in engines other than FreeDink.
-	     So if you use this, you may want to run an "&vcheck" condition and run a different pushdelay on older Dink Engines (&vcheck < 1086), to make the delay equal in all versions.
+"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite. Affects Push and Sticky Push ONLY. 
 
 "pushtimer": Used to count the amount of looped checks in the phisbo.c "timer" procedure, to compare against the "pushdelay" cusotm key.
 
@@ -94,9 +86,6 @@ CUSTOM KEYS AND THEIR USES:
 
 "reset-required": Let's the touch procedure in phisbo.c know whether to reset touch damage and other stuff as well
                   1 = reset required.
-
-"phisbowaitloop": Used to run a preset wait amount at the end of the phisbo.c touch procedure before touch resets, while constantly checking if pullkey is held to avoid decrease in pullkey response.
-	          Is only used when any engine other than FreeDink is used, to decrease lag.
 
 "Initiate-Hybrid": Used to indicate when phishyb.c has been sucessfuly called, and the initiating checks have been started.
 		   1 = phishyb.c has been called.
@@ -144,8 +133,8 @@ CUSTOM KEYS AND THEIR USES:
              On the X axis the script will +/- 30 pixels. On the Y axis the script will +/- 20 pixels.
 
 "Idle-SkipChecks": Used to automatically limit the checks constantly run every "wait(1)", during a sprite move, so that they only run ONE TIME when the object becomes idle, and then restart when it moves again.
-		   This saves on lag in older engines. Changing this will have no effect, it’s handled automatically by the push and pull system and activates and deactivates when it determines is best.
-	           0 = DO NOT skip checks
+		   This increases performance by skipping executing redundant stuff. Changing this will have no effect, it’s handled automatically by the push and pull system and activates and deactivates when it determines is best.
+	                0 = DO NOT skip checks
 		   1 = Skip checks
 
 "hupmove": Used to store the X or Y cordinate the current sprite is allowed to move to when pushing, based on hardness tracking tests and move axis.
@@ -202,7 +191,7 @@ CUSTOM KEYS AND THEIR USES:
 - If you need to set a value to "-1" (which can't be done in a custom key, because "-1" retrieves the custom keys value), set it to "-1111" and push and pull will interpret it as "-1" instead.
 
 - A value of "9999" will cause an individual key to be ignored when “Enable-Limit” is higher than 0. (e.g, you might want to set the "setXmax" value only. You would then set all the others to "9999" so they are ignored).
-  OR ALTERNATIVELY - when “Enable-Limit” is ‘2’ the default “Un-Set” values of any custom keys (0 or -1 depending on engine version) will be ignored. So you can use this setting, set the keys you want, leave the others untouched.
+  OR ALTERNATIVELY - when “Enable-Limit” is ‘2’ any custom key value of ’0’ or ‘-1’ will be ignored. So you can use this setting, set the keys you want, leave the others untouched.
 
 -------------------------
 
@@ -323,12 +312,8 @@ CUSTOM KEYS AND THEIR USES:
 
 -------------------------
 
-"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits a sprite, rather than using it's depth dot.
-		 There are options to filter out collision system being enabled for certain version. 
-	         I did this because performance of push/pull seems to take a hit in anything other than FreeDink when collision is enabled. So I gave author's a choice.
-		 1 = Enable hardbox collision ONLY when the FREEDINK engine is being used. When other Dink engines are used, hardbox collision will be disabled.
- 	    	 2 = Enable hardbox collision ONLY when the FREEDINK or DINK 1.08(Vanilla) engine's are being used. When DinkSmallwood HD is used, hardbox collision will be disabled.
-		 3 = Enable hardbox collision in ALL engines.
+"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits a sprite, rather than it's depth dot.
+	          1(or higher) = Collision enabled.
 
  			"trimleft": see below
  			"trimtop" : see below
@@ -366,7 +351,7 @@ CUSTOM KEYS AND THEIR USES:
 
 -------------------------
 
-"HBOX": Used to determine if hardbox values have been passed to phisbo.c by the dmod developer, allowing many calculations to be bypassed and a noticeable lag reduction.
+"HBOX": Used to determine if hardbox values have been passed to phisbo.c by the dmod developer, allowing many calculations to be bypassed and lag removal.
 	1 = Hardbox values passed.
 
 "LEFT-BOX": Used to store the value of the LEFT hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.

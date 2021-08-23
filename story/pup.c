@@ -9,5 +9,8 @@ void main(void)
  //immediately retrieve the move-able sprite that spawned this script, stored in &save_y.
  int &hybsprite = &save_y;
  
+ //save this script number as a custom key attached to the sprite
+ sp_custom("PP-pup", &save_y, &current_script);
+ 
  
 }

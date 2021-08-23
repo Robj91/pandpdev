@@ -8,13 +8,14 @@ There are many changes in this version but all old moveable sprite scripts will 
 Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushandpull" Dmod folder) in your Dink Directory before installing this package. Then follow the update instructions in the readme file to apply the new update to your dmod.
 
 - Actually updated the changelog for once! (Previously hadn't been upated since 2.01 I think). All previous versions added to changelog as well).
-- Removed the “Hold Z to pull” method. Sticky push is only method to use now.
+- (Vanilla)Dink Smallwood 1.08 and DinkHD compatiblity has been dropped - the work arounds required to make them be able to handle push and pull without crashing was causing the smoothness of push and pull to suffer.
+- Compatible with All FreeDink versions 108.4 and above. This caters for boththe linux and windows release of FreeDink.
+- FreeDink version is strictly forced. If 1.08 or DinkHD detected, it prompts the player at the title screen their version is incompatible, and only option is to exit the game.
+- Removed the “Hold Z to pull” method. Sticky push is the one and only method now, because it’s superior and much more intuitive.
 - Fixed an issue with remotely terminating a push/pull procedure, where it would not reset the sprite properly.
 - Cleaned up commented scripts, fixed incorrect comments, and typos.
 - Added custom keys that can be retrieved and check to determine current status and specifics of push/pull, for ease of puzzle creating.
-- Added a small delay in resetting a sprite's touch damage within the push/pull system, when using any engine other than FreeDink (Lag reduction)
 - Removed much redundant Scripting (Many unused custom keys, external calls, loops, unused procedures and other redundant stuff).
-- Performance increase when using this with Dink Smallwood 1.08 and DinkHD. Still not as smooth as FreeDink, but I can't help old Dink engine limitations.
 - Fixed a bug where a sprite can permanently lose it's hardness if Dink touches it while moving another sprite.
 - Fixed incorrect calculations in collision which would sometimes cause the player to move through hardness when pulling.
 - Fixed the automatic hardbox calculation, used when the author DOES NOT pass hardbox info to phisbo proc in their sprite's script.
@@ -27,7 +28,7 @@ Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushand
 - Skeleton "moveable sprite" script has been updated to reflect changes, with some redundant stuff removed and to clean it up.
 - Added "Move-Nohard" custom key, which can be set to make a sprite ignore hardness when being moved.
 - Added many other custom keys able to be "set" in the moveable sprite's script, to manipulate and configure almost any aspect of the push and pull system.
-- Altered push/pull calculations to assure sprite move limits are strictly followed regardless of engine timing issues, so a sprite will not move even 1 pixel passed it's intended x/y limit in any Dink version.
+- Altered push/pull calculations to assure sprite move limits are strictly followed regardless of engine timing issues, so a sprite will not move even 1 pixel passed it's intended x/y limit.
 - Fixed a bug that would cause a very slight(probably undetectable) discrepency when using a custom key to override a sprite's move limit.
 - Any custom key value of "-1111" passed to (or set with a custom key) the push and pull is now interpreted as "-1". Since "-1" cannot be set (that would only retrieve an already set value).
 - Fixed Dink's position misaligning when swapping between push and pull when Sticky Push is active and a faster item is equipped, causing weird graphic jumping issues.
@@ -39,14 +40,14 @@ Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushand
 - Sprite's depth dot respects the custom "trim<side>" keys, so the sprite will NOT get stuck in another sprite when depth dot overalaps it's hardbox due to a manually set trim value.
 - When you check if a sprite is currently being moved with "external("phisbo", "moveactive);", it now returns the active sprite number of detected sprite(if it tests TRUE) instead of just returning "1".
 - Fixed a bug caused by a conflict of active sprite numbers in the push and pull scripts, when a dmod developer attaches a shadow to a move-able sprite.
-- Altered system to unload 1 very large script out of memory(phishyb.c) as soon as push and pull is fully initiated (lag reduced).
+- Altered system to unload 1 very large script out of memory(phishyb.c) as soon as push and pull is fully initiated (lag removal).
 - Removed requirement of dinkspeed.c script (same manual process is now automated and handled by push and pull system).
 - Removed requirement of button4.c script.
-- Removed many unnecessary “wait()” lines. (lag/delay reduction in push and pull systems in all engine versions)
+- Removed many unnecessary “wait()” lines. (lag/delay removed)
 - Global Variable “&spush” no longer required.
 - Removed use of init lines (no duplicate push graphics loaded over the top of pig feed sequence anymore. Push anim accomplished with created fakedink sprite shadowed to Dink)
 - Removed chance of dink showing the push sequence of a direction the player presses to disengage, before resuming his normal basewalk.
-- Added diagonal direction check to phisbo.c to reduce lag by reventing load of phishyb.c into memory in situations where push/pull isn’t possible.
+- Added diagonal direction check to phisbo.c to remove lag by preventing load of phishyb.c into memory in situations where push/pull isn’t possible.
 - Added “ppbypass” procedure as an option to run instead of push and pull system. It runs after it has detected that Dink is trying to push a sprite, but won’t process push/pull system or change Dink’s anim, so you can customise it.
 
 ---------

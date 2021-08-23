@@ -1,5 +1,5 @@
 //This script is a tweaked, merged version of pup.c and hup.c so when sticky push is enabled it can swap between push and pull
- //hup.c and pup.c don't exist anymore.. they were part of the hold to pull method in the old version, and that's been abolished.
+ //hup.c and pup.c have been re-cycled, they do other stuff now.. they were part of the hold to pull method in the old version, and that's been abolished.
   
 //What this script does among other stuff:
 //Constantly updates hardness, moves the object, changes dinks sequence, and detects when the player stops pushing or pulling the object
@@ -275,7 +275,7 @@ loop:
      /////////////////////////////////////////
      //ASSURE SPRITE HASN'T PASSED ITS LIMIT//
      ///////////////////////////////////////// 
-     //don't need to run this the first time around. Skipping saves lag in older engines.           
+     //don't need to run this the first time around.       
      &mco = sp_custom("move-status", &hybsprite, -1);
      &save_y = 0;
      if (&mco > 0)
@@ -447,7 +447,7 @@ loop:
       //////////////////////////////////////
       //relock Dink relative to the sprite//
       //////////////////////////////////////
-      //don't need to run this the first time around. Skipping saves lag in older engines.   
+      //don't need to run this the first time around.
       &save_x = sp_custom("move-status", &hybsprite, -1);
       &save_y = 0;
       &val1 = 0;
@@ -819,7 +819,6 @@ loop:
    sp_reverse(&save_x, 0);
 
    //skip the move lines if the sprite is continuing in the same direction
-   //this saves lag in older Dink engines
    &save_x = sp_custom("move-status", &hybsprite, -1);
    if (&save_x != 2)
    {
@@ -943,7 +942,6 @@ loop:
    sp_reverse(&save_x, 1); 
 
    //skip the move lines if the sprite is continuing in the same direction
-   //this saves lag in older Dink engines
    &save_x = sp_custom("move-status", &hybsprite, -1);
    if (&save_x != 3)
    {

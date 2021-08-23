@@ -417,7 +417,6 @@ void hybrid(void)
    else
    {
     //Hard box boundary values are provided, so that makes things a little easier
-    //Copied in from "dirnocalc" for 1 less proc call, reduces lag in 1.08 and DinkHD.
  
     //First let's get the current position of the sprites hardbox boundaries, and save them away
     &save_x = sp_x(&current_sprite, -1);
@@ -685,12 +684,6 @@ dirphiscalccont:
  //Store Dink's speed in a custom key for later retrieval
  //we can retrieve the sp_speed equivelant of Dink and convert it to dink_speed value.
    //save both values in custom keys.
- if (&vcheck <= 108)
- {
-  //bugfix for sp_speed returning incorrect value in 1.08
-  sp_speed(1, 999);
-  wait(0);
- }
  &val1 = sp_speed(1, -1);
  sp_custom("PPd-sp_speed", &current_sprite, &val1);
  debug("phishyb dink CHECK SPEED is &val1");
@@ -875,7 +868,7 @@ dirphiscalccont:
  draw_hard_map();
  
  //MARKER - "INIT" Lines removed in favor of fakedink creation sprite.
- 
+
  //create the fake dink and shadow it to dink
  &save_y = sp_custom("hupseq", &current_sprite, -1);
  &val1 = sp_x(1, -1);

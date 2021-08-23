@@ -50,12 +50,10 @@ void main(void)
 
  if (&save_x == 1)
  {
-  //Let future scripts know that hardbox boundaries have been provided, so no need for automatic hardbox detection. Yay for less lag!
+  //Let future scripts know that hardbox boundaries have been provided, so no need for automatic hardbox detection. Yay for no lag!
   sp_custom("HBOX", &current_sprite, 1);
  
   //let's save the hardbox boundaries for later use
-  //so we can create a better collision system, and less lag in older verisons, when dink is moving against the sprite.
-  //If no hardbox boundaries are passed, there will be a slight lag in 1.08 and DinkHD when Dink touches the object 
   sp_custom("LEFT-BOX", &current_sprite, &arg1);
   sp_custom("TOP-BOX", &current_sprite, &arg2);
   sp_custom("RIGHT-BOX", &current_sprite, &arg3);
@@ -65,29 +63,8 @@ void main(void)
   &save_x = sp_custom("setcollision", &current_sprite, -1);
   if (&save_x > 0)
   {
-   if (&save_x == 3)
-   {
-    //allow collision for all Dink Versions
-    sp_custom("AllowCollision", &current_sprite, 1);
-   }
-   if (&save_x == 2)
-   {
-    //allow collision for 1.08 and FreeDink
-    if (&vcheck == 108)
-     sp_custom("AllowCollision", &current_sprite, 1);
-    if (&vcheck == 1084)
-     sp_custom("AllowCollision", &current_sprite, 1);
-    if (&vcheck == 1096)
-     sp_custom("AllowCollision", &current_sprite, 1);
-   }
-   if (&save_x == 1)
-   {
-    //allow collision for FreeDink only
-    if (&vcheck == 1096)
-     sp_custom("AllowCollision", &current_sprite, 1);   
-    if (&vcheck == 1084)
-     sp_custom("AllowCollision", &current_sprite, 1);   
-   }
+   //allow collision
+   sp_custom("AllowCollision", &current_sprite, 1);
   }
  }
  
@@ -318,24 +295,6 @@ touchend:
  &save_x = sp_custom("reset-required", &current_sprite, -1);
  if (&save_x == 1)
  {  
-  if (&vcheck <= 110)
-  {
-   //lag reduction for any verison other than FreeDink
-   //create a delay of wait(300) before reset - enough to almost abolish lag, but not enough to be annoying.
-   //but constantly check if pullkey held so pullkey response is not diminished.
-   sp_custom("phisbowaitloop", &current_sprite, 0);
-   phisbowaitloop:
-    wait(100);
-
-   &save_x = sp_custom("phisbowaitloop", &current_sprite, -1);
-   &save_x += 1;
-   sp_custom("phisbowaitloop", &current_sprite, &save_x);
-   if (&save_x < 3)
-   {
-    goto phisbowaitloop;
-   }
-  }  
-
   //reset the "reset-required" custom key to 0
   sp_custom("reset-required", &current_sprite, 0);
   
