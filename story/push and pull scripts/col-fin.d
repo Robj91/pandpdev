@@ -1,0 +1,3 @@
+ÿ  
+sp, €&save_…†ˆ‡itto‰xusol‹m&crŠ‚‘Ž’“”e"ƒ("_c‚˜•ƒ–›™š—);= Ÿ„Œ -1imœ£‰y ž¤Š¥¡¨2lªf i¬­(¢§¦ hi±s)„erTrack´© µ¶¹·> re
+}žp²«{„0³„¯¢»©®°§ÅÃÆÈ€  € ¼t ¯-ÍP²€ÀŒ³œ¦®°¸Ç¸ÔºÐÂÎÉØÏÖÒÑÓ¡ÙpÜ¾L¨ÞÄidoávâ = Û<å«Õ»ÛÁÕÚæÚèÝçÝéä ìºí×- anhòtó«àÁàïßðßõºö× „)ÌBOÌ¾ã main(ã){ÌÌint •  ¦;ÌÌÍurn;¾ã Final(ã){Ì®&arg3î0üÂ®&arg2î2)û go‹ lessô;„„®&arg2î1³ go‹ g¼at´ô;þ ®&arg3î1üÂ®&arg2î2)û go‹ PHISlessô;„„®&arg2î1³ go‹ PHISg¼at´ô;þ¾ã lessô(ã){lessô:€ÊÄº1÷1êù2ïLªêù3÷3êù4÷4êù5÷5êù6÷6êù7÷7ê«Ü}„ Ìgo‹ p«¼calc;¾ã g¼at´ô(ã){g¼at´ô:Äº1÷1ëù2ïLªëù3÷3ëù4÷4ëù5÷5ëù6÷6ëù7÷7ë«ÞÌgo‹ p«¼calc;¾ã PHISlessô(ã){PHISlessô:Ä×1ø1êú2ðLªêú3ø3êú4ø4êú5ø5êú6ø6êú7ø7êÁÜ}„Ìgo‹ pÁ¼calc;¾ã PHISg¼at´ô(ã){PHISg¼at´ô:Ä×1ø1ëú2ðLªëú3ø3ëú4ø4ëú5ø5ëú6ø6ëú7ø7ëÁÞÌgo‹ pÁ¼calc;¾ã p«¼calc(ã){p«¼calc:Ì®Àulldir¥)î2üÂÇýTTOM-ýX©¯tr¤botÉ °ñŒ;€€„Äp«©¢ñ¦;û¢+ 1;„À«œŒŸþ ®Àulldir¥)î4üÂÇLEFT-ýX©¯tr¤leftÉ °+ Œ;€€„Äp«©¢ñ¦;ûÀ«œŒŸ þ ®Àulldir¥)î6üÂÇRIGHT-ýX©¯tr¤rightÉ °ñŒ;€„Äp«©¢ñ¦;û¢+ 1;„À«œŒŸ þ ®Àulldir¥)î8üÂÇTOP-ýX©¯tr¤‹pÉ °+ Œ;Ê„Äp«©¢ñ¦;ûÀ«œŒŸ þ Íurn;¾ã pÁ¼calc(ã){pÁ¼calc:Ì®Àhdir¥)î2üÂÇýTTOM-ýX©¯tr¤botÉ °ñŒ;€„ÄpÁ©¢ñ¦;û¢+ 1;„ÀÁœŒŸþ ®Àhdir¥)î4üÂÇLEFT-ýX©¯tr¤leftÉ °+ Œ;€€„ÄpÁ©¢ñ¦;ûÀÁœŒŸ þ ®Àhdir¥)î6üÂÇRIGHT-ýX©¯tr¤rightÉ °ñŒ;„ÄpÁ©¢ñ¦;û¢+ 1;„ÀÁœŒŸ þ ®Àhdir¥)î8üÂÇTOP-ýX©¯tr¤‹pÉ °+ Œ;€„ÄpÁ©¢ñ¦;ûÀÁœŒŸ þ Íurn;¾ã KillCŽFin(ã){Ìkill_t²_task(Ÿ}
