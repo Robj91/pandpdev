@@ -131,12 +131,6 @@ void touch(void)
       //Here we have determined that Dink's seq is between 70 and 80, and an even number (we don't want diags)
       sp_custom("CanPush", &current_sprite, 1);
      }
-     else
-     {
-      //dink is facing a diagonal direction, no point continuing, he can't push diagonal
-      sp_custom("reset-required", &current_sprite, 1); 
-      goto touchend;
-     }
     }
    }
   
