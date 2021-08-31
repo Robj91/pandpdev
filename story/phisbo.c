@@ -122,12 +122,11 @@ void touch(void)
     &save_y = sp_custom("PP-pup", &save_x, -1);
     if (&save_y > 0)
     {
-     &save_x = &save_y;
-     &save_y = &current_sprite;
-     run_script_by_number(&save_x, "main");
-     run_script_by_number(&save_x, "validate");
-     &save_x = &return;
-     goto validated;
+     if (&save_y == 0)
+     {
+      //Here we have determined that Dink's seq is between 70 and 80, and an even number (we don't want diags)
+      sp_custom("CanPush", &current_sprite, 1);
+     }
     }
     
     &save_x += 1;
