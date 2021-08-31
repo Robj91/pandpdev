@@ -113,14 +113,18 @@ void touch(void)
     kill_this_task();
    } 
 
-   //check if an instance of pup.c already exists(spawned by another sprite) and if it does, use that to save resources
-   &save_x = 0;
-  findpup:
-   &save_x = get_next_sprite_with_this_brain(15, 0, &save_x);
-   if (&save_x > 0)
+   //spawn the script that will perform checks and determine if Dink should engage a move-able sprite he is touching
+   //&save_y = &current_sprite;
+   //&save_x = spawn("pup");
+
+   //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
+   &save_x = sp_pseq(1, -1);
+   sp_custom("pseq-origin", &current_sprite, &save_x);
+   &save_y = math_mod(&save_x, 2);
+   //check if seq is correct for pushing and pulling, and save result in custom key 
+   if (&save_x > 70)
    {
-    &save_y = sp_custom("PP-pup", &save_x, -1);
-    if (&save_y > 0)
+    if (&save_x < 80)
     {
      if (&save_y == 0)
      {
@@ -128,84 +132,86 @@ void touch(void)
       sp_custom("CanPush", &current_sprite, 1);
      }
     }
-    
-    &save_x += 1;
-    goto findpup;
    }
-
-   //spawn the script that will perform checks and determine if Dink should engage a move-able sprite he is touching
-   &save_y = &current_sprite;
-   &save_x = spawn("pup");
-   run_script_by_number(&save_x, "validate");
-   &save_x = &return;
   
-  validated:
-   //check if any checks failed
-   if (&save_x > 0)
-   {
-    //failed - end this
-    sp_custom("reset-required", &current_sprite, 1);
-    goto touchend;    
-   }
-   
-   &save_x = sp_custom("HBOX", &current_sprite, -1);
+   &save_x = sp_custom("CanPush", &current_sprite, 1);
    if (&save_x <= 0)
    {
-    //hardbox values weren't provided.. try to auto detect if Dink is in position/direction to push a sprite without hardbox values.
-    external("phispull", "auto_detect", &current_sprite);
-    if (&return == 0)
-    {
-     sp_custom("reset-required", &current_sprite, 1);   
-     goto touchend;
-    }
-    else
-    {
-     //Since there was a "wait()", let's assure dink's original sequence HAS NOT changed.
-     //and also assure his position and direction haven't changed
-     &save_x = sp_custom("HBOX", &current_sprite, -1);
-     if (&save_x == 0) 
-     {
-      //seq check
-      &save_x = sp_pseq(1, -1);
-      &save_y = sp_custom("pseq-origin", &current_sprite, -1);
-      if (&save_x != &save_y)
-      {
-       //it has changed - end it
-       sp_custom("reset-required", &current_sprite, 1);
-       kill_this_task();
-      }
-     
-      //pos check
-      &save_x = sp_x(1, -1);
-      &save_y = sp_custom("dinkox", &current_sprite, -1);
-      if (&save_x != &save_y)
-      {
-       //it has changed - end it
-       sp_custom("reset-required", &current_sprite, 1);
-       goto pupend;
-      }  
-      &save_x = sp_y(1, -1);
-      &save_y = sp_custom("dinkoy", &current_sprite, -1);
-      if (&save_y != &save_y)
-      {
-       //it has changed - end it
-       sp_custom("reset-required", &current_sprite, 1);
-       goto pupend;
-      } 
-     
-      //dir check
-      &save_x = sp_dir(1, -1);
-      &save_y = sp_custom("pushdir", &current_sprite, -1);
-      if (&save_x != &save_y)
-      {
-       //it has changed - end it
-       sp_custom("reset-required", &current_sprite, 1);
-       kill_this_task();  
-      }  
-     }
-    }
-   }
+    //no point continuing if Dink can't push
+    sp_custom("reset-required", &current_sprite, 1);    
+    goto touchend; 
+   }  
 
+   //store dinks direction - this won't return any diags - thats was filtered out above with the math_mod checks.
+   &save_x = sp_dir(1, -1);
+   sp_custom("pushdir", &current_sprite, &save_x);
+
+   //work out the pulldir - it will be opposite the pushdir
+   &save_x = sp_custom("pushdir", &current_sprite, -1);
+   if (&save_x == 2) 
+    sp_custom("pulldir", &current_sprite, 8);
+    
+   if (&save_x == 4)
+    sp_custom("pulldir", &current_sprite, 6); 
+    
+   if (&save_x == 6)
+    sp_custom("pulldir", &current_sprite, 4);
+    
+   if (&save_x == 8)
+    sp_custom("pulldir", &current_sprite, 2);
+   
+   //and set the move-axis custom key. 1 = x axis. 2 = y axis.
+   if (&save_x == 2)
+    sp_custom("move-axis", &current_sprite, 2);
+   
+   if (&save_x == 4)
+    sp_custom("move-axis", &current_sprite, 1);  
+   
+   if (&save_x == 6)
+    sp_custom("move-axis", &current_sprite, 1);  
+    
+   if (&save_x == 8)
+    sp_custom("move-axis", &current_sprite, 2);
+    
+   //set whether will be pushing in a positive or negative direction. (Adding or reducing X or Y value as we push)
+   if (&save_x == 2)
+    sp_custom("PushPosNeg", &current_sprite, 2);
+   
+   if (&save_x == 4)
+    sp_custom("PushPosNeg", &current_sprite, 1);  
+   
+   if (&save_x == 6)
+    sp_custom("PushPosNeg", &current_sprite, 2);  
+    
+   if (&save_x == 8)
+    sp_custom("PushPosNeg", &current_sprite, 1);   
+
+   //set whether will be pulling in a positive or negative direction. (Adding or reducing X or Y value as we push)
+   &save_x = sp_custom("pulldir", &current_sprite, -1);
+   if (&save_x == 2)
+    sp_custom("PullPosNeg", &current_sprite, 2);
+   
+   if (&save_x == 4)
+    sp_custom("PullPosNeg", &current_sprite, 1);  
+   
+   if (&save_x == 6)
+    sp_custom("PullPosNeg", &current_sprite, 2);  
+    
+   if (&save_x == 8)
+    sp_custom("PullPosNeg", &current_sprite, 1);  
+  
+   //store dinks coordinates
+   &save_x = sp_x(1, -1);
+   &save_y = sp_y(1, -1);
+   sp_custom("dinkox", &current_sprite, &save_x);
+   sp_custom("dinkoy", &current_sprite, &save_y);
+
+   //store current_sprite's coordinates
+   &save_x = sp_x(&current_sprite, -1);
+   &save_y = sp_y(&current_sprite, -1);
+   sp_custom("spriteox", &current_sprite, &save_x);
+   sp_custom("spriteoy", &current_sprite, &save_y);
+   
    /////////
    //TIMER//
    /////////
