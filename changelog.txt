@@ -8,9 +8,6 @@ There are many changes in this version but all old moveable sprite scripts will 
 Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushandpull" Dmod folder) in your Dink Directory before installing this package. Then follow the update instructions in the readme file to apply the new update to your dmod.
 
 - Actually updated the changelog for once! (Previously hadn't been upated since 2.01 I think). All previous versions added to changelog as well).
-- (Vanilla)Dink Smallwood 1.08 and DinkHD compatiblity has been dropped - the work arounds required to make them be able to handle push and pull without crashing was causing the smoothness of push and pull to suffer.
-- Compatible with All FreeDink versions 108.4 and above. This caters for boththe linux and windows release of FreeDink.
-- FreeDink version is strictly forced. If 1.08 or DinkHD detected, it prompts the player at the title screen their version is incompatible, and only option is to exit the game.
 - Removed the “Hold Z to pull” method. Sticky push is the one and only method now, because it’s superior and much more intuitive.
 - Fixed an issue with remotely terminating a push/pull procedure, where it would not reset the sprite properly.
 - Cleaned up commented scripts, fixed incorrect comments, and typos.

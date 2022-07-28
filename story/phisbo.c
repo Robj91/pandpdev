@@ -113,10 +113,6 @@ void touch(void)
     kill_this_task();
    } 
 
-   //spawn the script that will perform checks and determine if Dink should engage a move-able sprite he is touching
-   //&save_y = &current_sprite;
-   //&save_x = spawn("pup");
-
    //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
    &save_x = sp_pseq(1, -1);
    sp_custom("pseq-origin", &current_sprite, &save_x);

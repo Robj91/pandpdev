@@ -377,7 +377,7 @@ void end(void)
   if (&save_x == 318) move(&arg4, 8, 600, 1);
  }
 
-    &save_x = sp_xutom("PosAltered", &arg4, -1);
+    &save_x = sp_custom("PosAltered", &arg4, -1);
     if (&save_x > 0)
     {
 
