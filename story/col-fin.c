@@ -8,31 +8,6 @@ void main(void)
  return;
 }
 
-void Final(void)
-{
-//Check each tracker hit hardness before plimit2, and if it did, overwrite it
-//&arg1 = Direction of pull
-//&arg2 = 1 (check less than), &arg2 = 2 (check greater than)
-//&arg3 = 1 - Dink is pushing, not pulling
-
- if (&arg3 == 0)
- {
-  if (&arg2 == 2) 
-   goto lessthan;
-  
-  if (&arg2 == 1)
-   goto greaterthan;
- }
- if (&arg3 == 1)
- {
-  if (&arg2 == 2) 
-   goto PHISlessthan;
-  
-  if (&arg2 == 1)
-   goto PHISgreaterthan;
- }
-}
-
 void lessthan(void)
 {
 lessthan:     

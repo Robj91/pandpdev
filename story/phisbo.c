@@ -130,7 +130,7 @@ void touch(void)
     }
    }
   
-   &save_x = sp_custom("CanPush", &current_sprite, 1);
+   &save_x = sp_custom("CanPush", &current_sprite, -1);
    if (&save_x <= 0)
    {
     //no point continuing if Dink can't push
@@ -212,11 +212,6 @@ void touch(void)
    //TIMER//
    /////////
    //start the timer before push can activate
-    
-    //this will be the counter before push activates
-    sp_custom("pushtimer", &current_sprite, 0);
-    
-   timerwaitloop:
     //skip the rest of this if no pushdelay is set.
     &save_x = sp_custom("pushdelay", &current_sprite, -1);
     if (&save_x > 0)
@@ -231,7 +226,8 @@ void touch(void)
      goto timercont;
     }
 
-    wait(0);
+   timerwaitloop:
+    wait(1);
    
     //retrieve the old x, compare it against the new x
     &save_x = sp_custom("dinkox", &current_sprite, -1);
@@ -262,7 +258,7 @@ void touch(void)
       }
      }
     }
-    
+
     //Dinks coords or sequence has changed, this tells us he's no longer pushing against the sprite
     &save_x = sp_custom("timerscript", &current_sprite, -1);
     if (&save_x > 0)
@@ -288,6 +284,7 @@ touchend:
   //reset the "reset-required" custom key to 0
   sp_custom("reset-required", &current_sprite, 0);
   
+  wait(0);
   //kill off the shadow sprite used to retrieve and identify this moveable object
   &save_x = sp_custom("PP-Shadow", &current_sprite, -1);
   &save_y = sp_custom("PP-Parent", &save_x, -1);

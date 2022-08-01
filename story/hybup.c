@@ -131,7 +131,7 @@ loop:
   &mco = 0;
   wait(1); 
 
-   //record if the sprite moves, if it doesn't move at all(dink grabs then releases), we can skip some stuff in phisend.c
+   //record if the sprite moves. If it doesn't move at all(dink grabs then releases), we can skip some stuff in phisend.c
    &save_x = sp_custom("PosAltered", &hybsprite, -1);
    if (&save_x <= 0)
    {
@@ -266,7 +266,7 @@ loop:
      &save_x = -1111;
     }
     sp_custom("PPd-speed", &hybsprite, &save_x);
-     
+        
     //set dink's speed back to -1.
     set_dink_speed(-1);
    }
@@ -567,14 +567,86 @@ loop:
     sp_custom("Idle-SkipChecks", &hybsprite, 1); 
    }
   }
- 
-  //run the MoveDetectDuring proc of the hybsprite
-  &save_x = is_script_attached(&hybsprite);
+
+  //Check if the author has the "move_during_idle" or "move_idle" custom key set.
+  &save_y = 0;
+  &val1 = 0;
+  &save_x = sp_custom("move_during_idle", &hybsprite, -1);
   if (&save_x > 0)
   {
-   run_script_by_number(&save_x, "MoveDetectDuring");
+   &val1 = 1;
   }
-  
+  &save_x = sp_custom("move_idle", &hybsprite, -1);
+  if (&save_x > 0)
+  {
+   &val1 = 1;
+  }
+  if (&val1 == 1)
+  {
+   //the player does have one of the above custom keys set. If the sprite hasn't moved, skip the MoveDetectDuring procedure.
+   //initial check to block movedetectduring from running initially
+   &save_x = sp_custom("PosAltered", &hybsprite, -1);
+   if (&save_x <= 0)
+   {
+    &save_y = 1;
+   }
+   //constant check for the duration of Dink holding the sprite
+   &save_x = sp_custom("Idle-SkipChecks", &hybsprite, -1);
+   if (&save_x == 1)
+   {
+    &save_y = 1;
+   }
+  }
+
+  if (&save_y == 0)
+  {
+   //run the MoveDetectDuring proc of the hybsprite.
+   &save_x = is_script_attached(&hybsprite);
+   if (&save_x > 0)
+   {
+    run_script_by_number(&save_x, "MoveDetectDuring");
+   }
+  }
+  else
+  {
+   //run the IdleDetectDuring proc of the hybsprite.
+   &save_x = is_script_attached(&hybsprite);
+   if (&save_x > 0)
+   {
+    run_script_by_number(&save_x, "IdleDetectDuring");
+   }
+  }
+
+  //Check if the sprite's speed has changed(maybe the author changed it as part of the "movedetectduring" procedure)
+  &save_x = sp_speed(&hybsprite, -1);
+  &save_y = sp_custom("oldspeed", &hybsprite, -1);
+  if (&save_x != &save_y)
+  {
+   //update the visible clone sprite to the new speed too.
+   &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);
+   sp_speed(&save_y, &save_x);
+
+   //update Dink's frame delay to match the sprite  move speed.
+   &save_x = sp_speed(&hybsprite, -1);
+   if (&save_x >= 5)
+   {
+    sp_frame_delay(1, 30);   
+   }  
+   if (&save_x <= 4)
+   {
+     sp_frame_delay(1, 60);
+   } 
+   if (&save_x <= 2)
+   {
+    sp_frame_delay(1, 0);
+   }
+   
+   //copy frame delay to fakedink sprite
+   &save_x = sp_custom("fdink", &hybsprite, -1);
+   &save_y = sp_frame_delay(1, -1);
+   sp_frame_delay(&save_x, &save_y);
+  }
+
    //check to see if the player has disengaged, if so the seq will not match the expected push, pull or holding-idle seq.
    &save_x = sp_custom("pupseq", &hybsprite, -1);
    &save_x -= 240;
@@ -990,16 +1062,7 @@ limit:
       move(&save_y, 2, -200, 1);
     
      if (sp_custom("pupseq", &hybsprite, -1) == 318) 
-      move(&save_y, 8, 600, 1); 
-     
-    &save_x = sp_custom("move-status", &hybsprite, -1);
-    if (&save_x > 1)
-    {
-     //save status of push/pull in "last-status" custom key
-     sp_custom("last-status", &hybsprite, &save_x);
-     //let script know limit checks and relock need to be performed.
-     sp_custom("Idle-SkipChecks", &hybsprite, 0);
-    }
+      move(&save_y, 8, 600, 1);
      
     sp_custom("move-status", &hybsprite, 1);       
  
@@ -1056,10 +1119,18 @@ limit:
    if (&save_y > 1)
    {
     if (&save_x != &save_y)
+    {
+     //save status of push/pull in "last-status" custom key
      sp_custom("last-status", &hybsprite, &save_y);
+    }
+
+    //let script know limit checks and relock need to be performed.
+    sp_custom("Idle-SkipChecks", &hybsprite, 0);
    }
   }
-    
+
+
+
   goto loop; 
  }
  

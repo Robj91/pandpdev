@@ -38,14 +38,15 @@ Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushand
 - When you check if a sprite is currently being moved with "external("phisbo", "moveactive);", it now returns the active sprite number of detected sprite(if it tests TRUE) instead of just returning "1".
 - Fixed a bug caused by a conflict of active sprite numbers in the push and pull scripts, when a dmod developer attaches a shadow to a move-able sprite.
 - Altered system to unload 1 very large script out of memory(phishyb.c) as soon as push and pull is fully initiated (lag removal).
-- Removed requirement of dinkspeed.c script (same manual process is now automated and handled by push and pull system).
+- Simplified dinkspeed.c script
 - Removed requirement of button4.c script.
 - Removed many unnecessary “wait()” lines. (lag/delay removed)
 - Global Variable “&spush” no longer required.
 - Removed use of init lines (no duplicate push graphics loaded over the top of pig feed sequence anymore. Push anim accomplished with created fakedink sprite shadowed to Dink)
 - Removed chance of dink showing the push sequence of a direction the player presses to disengage, before resuming his normal basewalk.
 - Added diagonal direction check to phisbo.c to remove lag by preventing load of phishyb.c into memory in situations where push/pull isn’t possible.
-- Added “ppbypass” procedure as an option to run instead of push and pull system. It runs after it has detected that Dink is trying to push a sprite, but won’t process push/pull system or change Dink’s anim, so you can customise it.
+- Added “push_custom” procedure as an option to run instead of push and pull system. It runs after it has detected that Dink is trying to push a sprite, but won’t process push/pull system or change Dink’s anim, so you can customise your own push procedure entirely.
+- Fixed a bug where disengaging a currently held object would allow you to phase through adjacent hardness
 
 ---------
 --v2.04--

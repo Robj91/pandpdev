@@ -33,7 +33,7 @@ phishybridfix:
     if (&val2 > 0)
     {
      //there is currently a hybridlimit procedure running
-     //we don't want to increment &val1 here, just throw in a wait and let it loop so it checks the same sprite again
+     //we don't want to increment &val1 here, just throw in a wait and let it loop so it checks the same sprite again  
      wait(1);
      goto phishybridfix;
     }
@@ -553,7 +553,6 @@ hyblimitloop:
   }
 
  wait(1);
-
  &val1 = sp_custom("HybLim-Moved", &current_sprite, -1); 
  if (&val1 <= 1)
  {
@@ -569,6 +568,8 @@ hyblimitloop:
     if (&val1 < &save_y)
     {
      sp_x(1, &save_y);
+     &save_y = sp_custom("dinkoy", &current_sprite, -1);
+     sp_y(1, &save_y);
     }
    }
    else
@@ -576,6 +577,8 @@ hyblimitloop:
     if (&val1 > &save_y)
     {
      sp_x(1, &save_y);
+     &save_y = sp_custom("dinkoy", &current_sprite, -1);
+     sp_y(1, &save_y);
     }
    }
   }
@@ -588,6 +591,8 @@ hyblimitloop:
     if (&val1 < &save_y)
     {
      sp_y(1, &save_y);
+     &save_y = sp_custom("dinkox", &current_sprite, -1);
+     sp_x(1, &save_y);
     }
    }
    else
@@ -595,13 +600,14 @@ hyblimitloop:
     if (&val1 > &save_y)
     {
      sp_y(1, &save_y);
+     &save_y = sp_custom("dinkox", &current_sprite, -1);
+     sp_x(1, &save_y);
     }
    }  
   }
-  
+ 
   sp_custom("HybLim-Moved", &current_sprite, 2);
  }
- 
 
  //check dinks original seq has not changed
  &save_x = sp_pseq(1, -1);
@@ -2071,7 +2077,7 @@ hyblimitloop:
    run_script_by_number(&save_x, "KillColFin");
   }
 
- //return and let phispush.c/phishyb.c know to terminate.
+ //return and let phishyb.c know to terminate.
  sp_custom("phishybridactive", &current_sprite, 0);
  return(1);
  kill_this_task();

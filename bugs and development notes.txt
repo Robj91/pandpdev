@@ -1,20 +1,11 @@
 //REMINDER OF WHAT’S DONE:
 
-Bug hard to reproduce:
-- Sometimes Dink’s speed increases when releasing a sprite - Investigate and fix.  - ADDED debug lines to diagnose, should it happen again.
-
 bugs and ideas:
 - Add "PP" prefix to all core push and pull custom keys.
-- Option for a different speed pushing compared to pulling
-- remove redundant procedures and scripting in all scripts to save memory when they are loaded (col- scripts have a few)
-- add option to let author activate “movedetectafter()” only if the object has moved position. 
-- add option for “movedetectduring()” to only activate each time the object has moved positions.
-- add option for “movedetectidle()” procedure if “movedetectduring()” is disabled when sprite not moving.
 - remove/combine redundant custom keys
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
-
 - Escape.c - help section and settings.
 
 - "push_active(0);" option in "onload.c"
@@ -23,8 +14,17 @@ TUTNOTES:
 
 - moveactive now returns sprite number of sprite being moved.
 
-//////////////////////////
-CUSTOM KEYS AND THEIR USES:
+- move_after_idle custom key, ignores movedetectafter procedure if sprite didn’t move, and enables the additional IdleDetectAfter procedure
+- move_during_idle custom key, ignores movedetectduring procedure if sprite didn’t move, and enables the additional IdleDetectDuring procedure
+- move_idle custom key, is the equivelant to setting “move_after_idle” and “move_during_idle” to 1
+
+
+
+//////////////////////////////
+//CUSTOM KEYS AND THEIR USES//
+//////////////////////////////
+
+“push_custom”: Used to enable the “push_custom” procedure, instead of using the push/pull system
 
 “SLR-limit”: Used in hybup.c to temporarily store the move limit value when calculating custom override of move limits.
 
@@ -70,9 +70,7 @@ CUSTOM KEYS AND THEIR USES:
 "phishybridactive": Used to indicate whether the moveable sprite has begun move limit calculation for STICKY PUSH.
 		    1 = Calculation in progress
 
-"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite. Affects Push and Sticky Push ONLY. 
-
-"pushtimer": Used to count the amount of looped checks in the phisbo.c "timer" procedure, to compare against the "pushdelay" cusotm key.
+"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite.
 
 "talkreturn": Used in the phisbo.c "talk" procedure to store whether the player is currently moving an object to customise "say()" lines.
  	      Not actually needed as of Push and Pull version 2.05, but left in to retain compatibility of any old moveable sprite scripts.	
@@ -378,6 +376,18 @@ CUSTOM KEYS AND THEIR USES:
 "move-sprx": Returns the sprite's last X position BEFORE it was last moved
 
 "move-spry": Returns the sprite's last Y position BEFORE it was last moved
+
+------------------------
+
+"move_after_idle": Used to make the “MoveDetectAfter” procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
+                          0 = Run MoveDetectAfter always (even if sprite never moved)
+                          1 = Only run MoveDetectAfter if sprite moved positions
+
+"move_during_idle": Used to make the “MoveDetectDuring” procedure only run if the sprite mis moving (If Dink is holding it but not moving, it won’t run)
+                           0 = Run MoveDetectDuring always (even if sprite isn’t moving)
+                           1 = Only run MoveDetectDuring if sprite is currently moving
+
+"move_idle": A combination of the above. Setting this to 1, is the same as setting both “move_after_idle” and “move_during_idle” to 1.
 
 ------------------------
 

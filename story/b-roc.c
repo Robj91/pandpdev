@@ -18,7 +18,7 @@ void main(void)
  
  //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
  //also does other important checks to set the push/pull system up properly.
- external("phisbo", "main", -21, -35, 23, 9); 
+ external("phisbo", "main", -21, -35, 23, 9);
  
  goto stopex;
 }
@@ -34,15 +34,11 @@ void touch(void)
 
 void MoveDetectDuring(void)
 {
-
-
  goto stopex;
 }
 
 void MoveDetectAfter(void)
 {
-
-
  goto stopex;
 }
 

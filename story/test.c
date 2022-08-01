@@ -15,7 +15,9 @@ void main(void)
  sp_custom("trimtop", &current_sprite, 10);
  sp_custom("trimright", &current_sprite, 0);
  sp_custom("trimbottom", &current_sprite, 6);
- 
+
+ sp_custom("move_idle", &current_sprite, 1);
+
  //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
  //also does other important checks to set the push/pull system up properly.
  //external("phisbo", "main", -21, -35, 23, 9); 
@@ -32,30 +34,43 @@ void touch(void)
  goto stopex;
 }
 
-void ppbypass(void)
+void push_custom(void)
 {
- //return(99);
- 
- //This procedure is used to trigger your own push/pull event, instead of the actual push/pull system activating.
- //Basically, if you uncomment the above return line, the push/pull system will detect the return value of '99'
- //and will ONLY execute it's script up to the point where it has determined that Dink is pushing against the sprite
- //then it will terminate the push/pull system and everything else in this procedure will execute. 
- //keep in mind that if you want the push/pull system to work again you will need to do: external("phisbo", "initiate");
- //You can use if statements with the above return line to make "ppbypass()" only run on certain conditions.
- 
+ //This procedure is used to create your own push procedure, instead of the actual push/pull system activating.
+ //To use this, you need to set set "sp_custom("push_custom", &current_sprite, 1);", in the main procedure(before the phisbo external line)
+ //it will not use the push/pull system at all, and will instead run this procedure when Dink pushes the sprite
+   //(won't even play dink pushing anim by default - this is your own push procedure built from scratch)
+
+ //please note, to run this procedure, the push/pull system entirely terminates itself
+ //so at the end of this procedure, to enable push/pull deteciton on the sprite again, do: external("phisbo", "initiate");
  goto stopex;
 }
 
 void MoveDetectDuring(void)
 {
+ &gold += 1;
+ draw_status();
+ goto stopex;
+}
 
+void IdleDetectDuring(void)
+{
+ &magic += 1;
+ draw_status();
  goto stopex;
 }
 
 void MoveDetectAfter(void)
 {
+ &strength += 1;
+ draw_status();
+ goto stopex;
+}
 
-
+void IdleDetectAfter(void)
+{
+ &defense += 10;
+ draw_status();
  goto stopex;
 }
 

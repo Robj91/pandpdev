@@ -46,67 +46,19 @@ void end(void)
  //we need 1 local
  int &val1;
 
+ DEBUG("Phisend speed is &arg5");
+
  //This is to indicate that an instance of Phisend.c has initiated.
  sp_custom("Initiate-END", &arg4, 1);
 
-   //////////////////////////////////////////////////////////////////
-   //Check if there are any sprites currently with push/pull active//
-   //////////////////////////////////////////////////////////////////
-   //So we can determine what stuff we should skip so we don't screw them up
-   &save_x = 0;
-  ENDspritecheck:
-   //If any other moveable sprites are being touched, they will have an invisible shadow sprite.
-   &save_x = get_next_sprite_with_this_brain(15, 0, &save_x);
-   if (&save_y > 0)
-   { 
-    //Retrieve the parent sprite (The sprite the shadow is attached to).
-    &save_y = sp_custom("PP-Parent", &save_x, -1);
-    if (&save_y == &arg4)
-    {  
-     //we've retrieved the current sprite- loop and search for other sprites.
-     &save_x += 1;
-     goto ENDspritecheck;
-    }
-    else
-    {
-     //We've found another shadow sprite - let's make sure it's a moveable sprite's shadow
-     //retrieve the parent sprite
-     &save_y = sp_custom("PP-Parent", &save_x, -1);
-     
-     //If it's a moveable sprite, "PP-Shadow" will EQUAL the active sprite number of it's shadow sprite.
-     &save_y = sp_custom("PP-Shadow", &save_y, -1);
-     if (&save_y == &save_x)
-     {
-      //We have found another moveable sprite currently being touched by Dink
-      //retrieve the parent sprite in &save_y again.
-      &save_y = sp_custom("PP-Parent", &save_x, -1);
-      
-      //now check if speedlock has been applied to the parent sprite
-      &save_y = sp_custom("speedlock", &save_y, -1);
-      if (&save_y > 0)
-      {
-       //This tells us at least one other sprite has speedlock active.
-       //that's all we need to know - set the custom key.
-       sp_custom("SkipSpeedReset", &arg4, 1);
-      }
-      else
-      {
-       //no speedlock key set on this sprite - loop and find the next shadow sprite
-       &save_x += 1;
-       goto ENDspritecheck;
-      }
-     }
-     else
-     {
-      //This is not a moveable sprite(maybe a missile or something else) - loop and find the next shadow sprite
-      &save_x += 1;
-      goto ENDspritecheck;
-     }
-    }
-   }
-   //////////////////////////////////////////////////////////////////
-   //Check if there are any sprites currently with push/pull active//
-   ////////////////////////////////////////////////////////////////// 
+   //failsafe speedlock check
+   &save_x = sp_custom("speedlock", 1, -1);
+   &save_x -= 1;
+   sp_custom("speedlock", 1, &save_x);  
+   if (&save_x > 0)
+   {
+    sp_custom("SkipSpeedReset", &arg4, 1); 
+   }    
 
  if (&arg1 > 0)
  {
@@ -127,11 +79,13 @@ void end(void)
     &save_x = sp_custom("SkipSpeedReset", &arg4, -1);
     if (&save_x <= 0)
     {
+     debug("Phisend confirm(1) DINKSPEED IS &val1 on &current_sprite");
      set_dink_speed(&val1);
      sp_frame_delay(1, &arg6);
     }
 
     //reset the sprites speed and timing
+    debug("Phisend confirm(1) ARG4 SET TO &arg4");
     &save_x = sp_custom("oldspeed", &arg4, -1);
     &save_y = sp_custom("oldtiming", &arg4, -1);
     sp_speed(&arg4, &save_x);
@@ -149,6 +103,7 @@ void end(void)
    sp_frame(1, 1);
    
    //reset dinks speed
+   debug("Phisend confirm(2) DINKSPEED IS &val1");
    set_dink_speed(&val1);
    sp_frame_delay(1, &arg6);
 
@@ -316,6 +271,7 @@ void end(void)
        //So we just need to retrieve the correct seq and move limit. 
        //Direction checks can be used as is. 
        //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other.
+       &save_x = sp_x(1, -1);
        &save_x = sp_custom("move-status", &arg4, -1);
        &save_y = 0;
        if (&save_x > 0)
@@ -384,7 +340,7 @@ void end(void)
          &val1 += &save_x;
          if (&save_y > &val1)
           &save_y = &val1;
-          
+
          sp_x(1, &save_y);
         } 
         if (sp_custom("RelockSeq", &arg4, -1) == 318)
@@ -444,25 +400,65 @@ void end(void)
  
     &save_x = &arg6;
    }
-   
-   set_dink_speed(&val1);
-   sp_frame_delay(1, &save_x);
+
+   &save_x = sp_custom("SkipSpeedReset", &arg4, -1);
+   if (&save_x <= 0)
+   {   
+    debug("Phisend confirm(3) DINKSPEED IS &val1");
+    set_dink_speed(&val1);
+    sp_frame_delay(1, &save_x);
+   }
   }
 
   //reset the sprites speed and timing
   &save_x = sp_custom("oldspeed", &arg4, -1);
   &save_y = sp_custom("oldtiming", &arg4, -1);
+  debug("Phisend confirm(1) ARG4 SET TO &arg4");
   sp_speed(&arg4, &save_x);
   sp_timing(&arg4, &save_y);
  }
 
  if (&arg1 <= 0)
  {
-  //poke the MoveDetectAfter proc if this was a succesfully activated push/pull.
-  &save_x = is_script_attached(&arg4);
+  //Check if the author has the "move_after_idle" or "move_idle" custom key set.
+  &save_y = 0;
+  &val1 = 0;
+  &save_x = sp_custom("move_after_idle", &arg4, -1);
   if (&save_x > 0)
   {
-   run_script_by_number(&save_x, "MoveDetectAfter");
+   &val1 = 1;
+  }
+  &save_x = sp_custom("move_idle", &arg4, -1);
+  if (&save_x > 0)
+  {
+   &val1 = 1;
+  }
+  if (&val1 == 1)
+  {
+   //the player does have it set, if the sprite hasn't moved, skip the MoveDetectAfter procedure.
+   &save_x = sp_custom("PosAltered", &arg4, -1);
+   if (&save_x <= 0)
+   {
+    &save_y = 1;
+   }
+  }
+  if (&save_y == 0)
+  {
+   //poke the MoveDetectAfter proc if this was a succesfully activated push/pull.
+   &save_x = is_script_attached(&arg4);
+   if (&save_x > 0)
+   {
+    run_script_by_number(&save_x, "MoveDetectAfter");
+   }
+  }
+  else
+  {
+   //poke the IdleDetectAfter proc if this was a succesfully activated push/pull.
+   &save_x = is_script_attached(&arg4);
+   if (&save_x > 0)
+   {
+    run_script_by_number(&save_x, "IdleDetectAfter");
+   }
   }
  }
 
@@ -489,6 +485,9 @@ keyresets:
  sp_custom("move-status", &arg4, 0);
  sp_custom("Idle-SkipChecks", &arg4, 0);
  sp_custom("INACTIVE", &arg4, 0);
+ sp_custom("PPd-sp_speed", &arg4, 0);
+ sp_custom("PPd-speed", &arg4, 0);
+ sp_custom("PosAltered", &arg4, 0);
 
  //let phisbo.c "touch" proc know to reset the sprite. 
  //unless manual termination by author, then just run the killshadow.

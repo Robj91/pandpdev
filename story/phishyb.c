@@ -30,530 +30,29 @@ void hybrid(void)
   }
  }
 
- ///////////////////////////////////////
- //HARDBOX EDGE TOUCH AND LOOK - CHECK//
- ///////////////////////////////////////
-  //If HBOX custom key is 0, no hardbox values have been passed to phisbo.c - so we'll have to figure them out.
+  //If HBOX custom key is 0, no hardbox values have been passed to phisbo.c - so we'll have to call a script to figure out if Dink is standing next to the hardbox
    &val1 = sp_custom("HBOX", &current_sprite, -1);
    if (&val1 == 0)
    {
-    //Hardbox values not provided.. so this will be tricky to detect
-    //but we'll manage..
-    
-     //check if any other sprite is currently performing it's phisdir proc
-     &val1 = 0;
-    phisdirfix: 
-     //get invisible shadow sprites, there is one for each moveable object that is currently being touched
-     &val1 = get_next_sprite_with_this_brain(15, 0, &val1);
-     if (&val1 > 0)
-     {
-      //now get the actual moveable sprite that the shadow is attached to
-      &val2 = sp_custom("PP-Parent", &val1, -1);
-      if (&val2 == &current_sprite)
-      {
-       //if it's this sprite, loop again, we've already checked for that above
-       goto phisdirfixend;
-      }
-      else
-      {
-       &val2 = sp_custom("PP-Parent", &val1, -1);
-       &val2 = sp_custom("PP-Shadow", &val2, -1);
-       if (&val2 == &val1)
-       {
-        &val2 = sp_custom("PP-Parent", &val1, -1);
-        &val2 = sp_custom("dirphisactive", &val2, -1);
-        if (&val2 > 0)
-        {
-         //there is currently a direction proc running
-         //we don't want to increment &val1 here, just throw in a wait and let it loop so it checks the same sprite again
-         wait(1);
-         goto phisdirfix;
-        }
-       }
-      }
-     phisdirfixend:
-      &val1 += 1;
-      goto phisdirfix;
-     } 
-          
-     //make sure only 1 direction procedure from any moveable object can run at a time
-     sp_custom("dirphisactive", &current_sprite, 1); 
-     
-     //This saves the difference between dink and the object
-     sp_custom("dirrelpx", &current_sprite, 0);
-     sp_custom("dirrelpy", &current_sprite, 0); 
-     &val1 = sp_x(1, -1);
-     &val2 = sp_y(1, -1);
-     &save_x = sp_x(&current_sprite, -1);
-     &save_y = sp_y(&current_sprite, -1);
-     &val1 -= &save_x;
-     &val2 -= &save_y;
-     
-     //assure we are not trying to save a value of -1 in a custom key, since it can't be retrieved.
-     if (&val1 == -1)
-      &val1 = -1111;
-    
-     if (&val2 == -1)
-      &val2 = -1111;
-     
-     sp_custom("dirrelpx", &current_sprite, &val1);
-     sp_custom("dirrelpy", &current_sprite, &val2);
-     
-     &save_x = sp_custom("dirrelpx", &current_sprite, &val1);
-     &save_y = sp_custom("dirrelpy", &current_sprite, &val2);
-     
-     //Check if Dink is facing towards the sprite, which is required to push it..
-     &val2 = sp_custom("pushdir", &current_sprite, -1);
-     if (&val2 == 4)
-     {
-      //dink facing west
-      &save_x = sp_x(&current_sprite, -1);
-      
-      //check if Dink is facing the sprite
-      &save_y = sp_x(1, -1);
-      if (&save_y < &save_x)
-       goto directionpushend;
-     }
-     if (&val2 == 6)
-     {
-      &save_x = sp_x(&current_sprite, -1);
-      
-      &save_y = sp_x(1, -1);
-      if (&save_y > &save_x)
-       goto directionpushend;
-     }
-     if (&val2 == 2)
-     {
-      &save_x = sp_y(&current_sprite, -1);  
-      
-      &save_y = sp_y(1, -1);
-      if (&save_y > &save_x)
-       goto directionpushend;
-     } 
-     if (&val2 == 8)
-     {
-      &save_x = sp_y(&current_sprite, -1);
-      
-      &save_y = sp_y(1, -1);
-      if (&save_y < &save_x)
-       goto directionpushend;
-     }  
-     
-     //set up the starting coordinates for the 'location test' sprite
-     //make it a location off-screen for best chance of initial success.
-     &save_x = 50;
-     &save_y = 50;
-     sp_custom("findstartpx", &current_sprite, &save_x);
-     sp_custom("findstartpy", &current_sprite, &save_y); 
-     sp_custom("dirpfindtrue", &current_sprite, 0);
-     sp_custom("dirphistrackrun", &current_sprite, 0);
-     //loop to find suitable test place. 
-    dirpushfindloop:
-    
-     //let's make it so the sprite knows WHERE to move to.
-     &save_x = sp_custom("findstartpx", &current_sprite, -1);
-     &save_y = sp_custom("findstartpy", &current_sprite, -1);
-     &val2 = sp_custom("pushdir", &current_sprite, -1);
-     if (&val2 == 2) 
-     {
-      &save_y += 200;
-      &save_x = &save_y;
-     }
-     if (&val2 == 4)
-      &save_x -= 200;
-    
-     if (&val2 == 6) 
-      &save_x += 200;
-    
-     if (&val2 == 8) 
-     {
-      &save_y -= 200;
-      &save_x = &save_y;
-     }
-     sp_custom("dirpmax", &current_sprite, &save_x);
-    
-     //if below is true, this is not the first loop - suitable place found. 
-     //We need to spawn in the object so the real test is completed
-     &val1 = sp_custom("dirpfindtrue", &current_sprite, -1);
-     if (&val1 == 1)
-     {
-      //create the object in the correct place
-      &val1 = sp_custom("dirrelpx", &current_sprite, -1);
-      if (&val1 == -1111)
-       &val1 = -1;
-      
-      &val2 = sp_custom("dirrelpy", &current_sprite, -1);
-      if (&val2 == -1111)
-       &val2 = -1;  
-      
-      
-      &save_x = sp_custom("findstartpx", &current_sprite, -1);
-      &save_y = sp_custom("findstartpy", &current_sprite, -1);   
-      &save_x -= &val1;
-      &save_y -= &val2;
-      
-      //set the seq and frame and create the object
-      &val1 = sp_pseq(&current_sprite, -1);
-      &val2 = sp_pframe(&current_sprite, -1);
-      &val2 = create_sprite(&save_x, &save_y, 0, &val1, &val2);
-      sp_hard(&val2, 0);
-      sp_nodraw(&val2, 1);
-      
-      //store the created sprite in a custom key.
-      sp_custom("phisdirtracker2", &current_sprite, &val2);
-     
-      //bugfix - also store current sprite in custom key of created sprite
-      //so we can double check sprite against current_sprite
-      sp_custom("phisdirtrackerfix", &val2, &current_sprite);
-      
-      draw_hard_map();
-     }
-    
-     //set the x and y for the tracking sprite
-     &save_x = sp_custom("findstartpx", &current_sprite, -1);
-     &save_y = sp_custom("findstartpy", &current_sprite, -1);
-     
-     //Dink's seq
-     &val1 = sp_custom("pushdir", &current_sprite, -1);
-     &val1 += 70;
-     &val1 = create_sprite(&save_x, &save_y, 0, &val1, 1);
-     sp_base_walk(&val1, 70);
-     sp_speed(&val1, 100);
-     sp_nodraw(&val1, 1);
-    
-     //store the created sprite in a custom key.
-     sp_custom("phisdirtracker", &current_sprite, &val1);
-     
-     //bugfix - also store current sprite in custom key of created sprite
-     //so we can double check sprite against current_sprite
-     sp_custom("phisdirtrackerfix", &val1, &current_sprite);
-      
-     //store the x and y of the fast sprite in a custom key for later retrieval
-     &save_x = sp_x(&val1, -1);
-     &save_y = sp_y(&val1, -1);
-     sp_custom("dirptrack1", &current_sprite, &save_x);
-     sp_custom("dirptrack2", &current_sprite, &save_y); 
-    
-     //set the position to move to
-     &save_y = sp_custom("dirpmax", &current_sprite, -1);
-    
-     //set the direction
-     &save_x = sp_custom("pushdir", &current_sprite, -1);
-    
-     //move the fast sprite
-     move(&val1, &save_x, &save_y, 0);
-     wait(0);
-     
-     //check which cordinate to compare
-     &save_y = sp_custom("move-axis", &current_sprite, -1); 
-     if (&save_y == 2)
-     {
-      //dink is facing north or south, store the old and new y position
-      &save_x = sp_y(&val1, -1);
-      &save_y = sp_custom("dirptrack2", &current_sprite, -1);
-     }
-     else
-     {
-      //dink is facing east or west, store the old and new x position
-      &save_x = sp_x(&val1, -1);
-      &save_y = sp_custom("dirptrack1", &current_sprite, -1);
-     } 
-    
-     if (&save_x == &save_y) 
-     {
-      &save_x = sp_custom("dirpfindtrue", &current_sprite, -1);
-      if (&save_x == 1)
-      {
-       //Dink is in correct position to move, kill off tracking sprites and return to where we came form
-       &save_x = sp_custom("phisdirtracker", &current_sprite, -1);
-       &save_y = sp_custom("phisdirtracker2", &current_sprite, -1);
-       
-       //assure we are killing off the correct sprite
-       //and not a different sprite that has taken the same active sprite#
-       //due to this sprite dying somehow.
-       &val1 = sp_custom("phisdirtrackerfix", &save_x, -1);
-       if (&val1 == &current_sprite)
-        sp_active(&save_x, 0);
-        
-       &val1 = sp_custom("phisdirtrackerfix", &save_y, -1);
-       if (&val1 == &current_sprite)  
-        sp_active(&save_y, 0);
-       
-       sp_custom("dirphisactive", &current_sprite, 0);
-       draw_hard_map(); 
-       goto dirphiscalccont;
-      }
-       
-      //the sprite is stuck against an interfering hardness, not a suitable place - better try a new spot
-      &save_x = sp_custom("findstartpx", &current_sprite, -1);
-      &save_y = sp_custom("findstartpy", &current_sprite, -1);
-      //check whether to subtract or add
-      &val2 = sp_custom("dirphistrackrun", &current_sprite, -1);
-      if (&val2 <= 0)
-      {
-       &save_x += 50;
-       &save_y += 30;
-       goto dirscrcont;
-      }
-      if (&val2 == 1)
-      {
-       &save_x -= 50;
-       &save_y += 30;
-       goto dirscrcont;
-      }
-      if (&val2 == 2)
-      {
-       &save_y += 50;
-       goto dirscrcont;
-      }
-    
-    dirscrcont:  
-      //make sure test will not run off screen, since hardness is NOT drawn off screen.  
-      if (&save_y > 360)
-      {
-       if (&save_x > 100)
-       {
-        if (&save_x < 500)
-        {
-         //We have exhausted most of the screen... just warn the author the auto system is not suitable.
-         wait(1);
-         stop_entire_game(1);
-         choice_start();
-         set_y 280
-         set_title_color 15
-         title_start();
-         There is an error with a PUSH/PULL sprite on this screen. 
-         The automatic detection of hardbox is NOT working in this particularly situation.
-         The hardness on this screen is too busy. 
-         title_end();
-         "Tell me what to do."
-         choice_end(); 
-         
-         if (&result == 1)
-         {
-          //stop_entire_game(1);
-          choice_start();
-          set_y 280
-          set_title_color 15
-          title_start();
-          If you are the author, pass the hardbox values of the sprite to the phisbo procedure,
-          which is called in the Push/pull sprite's MAIN procedure.
-          If you are a tester/player, please notify the author of this dmod.
-          title_end();
-          "Continue Playing - This sprite won't move as it should"
-          "Exit Game"
-          choice_end(); 
-          
-          if (&result == 1)
-           goto directionpushend;
-      
-          if (&result == 2)
-           kill_game(); 
-         }     
-        }
-       }
-       if (&save_x > 560)
-       {
-        &save_x = 570;
-        &save_y = 50;
-        sp_custom("dirphistrackrun", &current_sprite, 1);
-       }
-       if (&save_x < 60)
-       {
-        &save_x = 290;
-        &save_y = 50;
-        sp_custom("dirphistrackrun", &current_sprite, 2);
-       }
-      }
-      
-      sp_custom("findstartpx", &current_sprite, &save_x);
-      sp_custom("findstartpy", &current_sprite, &save_y); 
-     }
-     else
-     {
-      &save_x = sp_custom("dirpfindtrue", &current_sprite, -1);
-      if (&save_x == 1)
-      {
-       //Dink is not in correct position to move, kill off tracking sprites and return to where we came form
-       &save_x = sp_custom("phisdirtracker", &current_sprite, -1);
-       &save_y = sp_custom("phisdirtracker2", &current_sprite, -1);
-    
-       //assure we are killing off the correct sprite
-       //and not a different sprite that has taken the same active sprite#
-       //due to this sprite dying somehow.
-       &val1 = sp_custom("phisdirtrackerfix", &save_x, -1);
-       if (&val1 == &current_sprite)
-        sp_active(&save_x, 0);
-        
-       &val1 = sp_custom("phisdirtrackerfix", &save_y, -1);  
-       if (&val1 == &current_sprite)  
-        sp_active(&save_y, 0);
-    
-       sp_custom("dirphisactive", &current_sprite, 0);    
-       draw_hard_map();
-       sp_custom("reset-required", &current_sprite, 1);
-       kill_this_task();
-      }
-      
-      //Suitable location found - increment the "dirpfindtrue" custom key
-      //so the real test proceeds.
-      &save_x = sp_custom("findstartpx", &current_sprite, -1);
-      &save_y = sp_custom("findstartpy", &current_sprite, -1);
-      sp_custom("dirpfindtrue", &current_sprite, 1);
-     }
-     //kill the tracking sprite and run another one
-     &save_x = sp_custom("phisdirtracker", &current_sprite, -1);
-     &save_y = sp_custom("phisdirtrackerfix", &save_x, -1);
-     if (&save_y == &current_sprite)
-      sp_active(&save_x, 0);
-     
-     goto dirpushfindloop; 
-     
-    directionpushend:
-       sp_custom("dirphisactive", &current_sprite, 0);
-       sp_custom("reset-required", &current_sprite, 1);
-       kill_this_task();
+    external("phispull", "auto_detect");
+    &save_x = &return;
+    if (&save_x == 1)
+    {
+     sp_custom("reset-required", &current_sprite, 1);
+     kill_this_task();
+    }
    }
    else
    {
-    //Hard box boundary values are provided, so that makes things a little easier
- 
-    //First let's get the current position of the sprites hardbox boundaries, and save them away
-    &save_x = sp_x(&current_sprite, -1);
-    &save_y = sp_y(&current_sprite, -1);
-    
-    //current position of left boundary
-    &val1 = sp_custom("LEFT-BOX", &current_sprite, -1);
-    &val1 += &save_x; 
-    sp_custom("LEFTBOX-POS", &current_sprite, &val1);
-    
-    //current position of top boundary
-    &val1 = sp_custom("TOP-BOX", &current_sprite, -1);
-    &val1 += &save_y; 
-    sp_custom("TOPBOX-POS", &current_sprite, &val1);
-    
-    //current position of right boundary
-    &val1 = sp_custom("RIGHT-BOX", &current_sprite, -1);
-    &val1 += &save_x; 
-    &val1 -= 1;
-    sp_custom("RIGHTBOX-POS", &current_sprite, &val1);
-   
-    //current position of bottom boundary
-    &val1 = sp_custom("BOTTOM-BOX", &current_sprite, -1);
-    &val1 += &save_y; 
-    &val1 -= 1;
-    sp_custom("BOTTOMBOX-POS", &current_sprite, &val1);
-   
-    //check if dink is in the correct position and facing the sprites hardness
-    &save_x = sp_custom("pushdir", &current_sprite, -1);
-    if (&save_x == 2)
+    external("phispush", "quick_check");
+    &save_x = &return;
+    if (&save_x == 1)
     {
-     //Dink is facing south, 
-   
-     //assure he is above the sprites hard box
-     &save_y = sp_y(1, -1);
-     &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
-     
-     if (&save_y < &val1)
-     {
-      //there should only be 1 pixel difference if DInk is standing against eh hardbox edge, let's make sure.
-      &val1 -= &save_y;
-      if (&val1 == 1)
-      {
-       //now make sure he is not too far to the right or left (could be right on the corner)
-       &save_y = sp_x(1, -1);
-       &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
-       if (&save_y >= &val1)
-       {
-        &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);  
-        if (&save_y <= &val1)
-        {
-         //Dink is in correct position.
-         goto dirphiscalccont;
-        }
-       }
-      }
-     }    
-    }
-    //OK you get the idea, I will not comment for the other directions.
-    if (&save_x == 4)
-    {
-     &save_y = sp_x(1, -1);
-     &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);
-      
-     if (&save_y > &val1)
-     {
-      &save_y -= &val1;
-      if (&save_y == 1)
-      {
-       &save_y = sp_y(1, -1);
-       &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
-       if (&save_y >= &val1)
-       {
-        &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);  
-        if (&save_y <= &val1)
-        {
-         goto dirphiscalccont;
-        }
-       }
-      }
-     }   
-    }
-    if (&save_x == 6)
-    {
-     &save_y = sp_x(1, -1);
-     &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
-      
-     if (&save_y < &val1)
-     {
-      &val1 -= &save_y;
-      if (&val1 == 1)
-      {
-       &save_y = sp_y(1, -1);
-       &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
-       if (&save_y >= &val1)
-       {
-        &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);
-        if (&save_y <= &val1)
-        {
-         goto dirphiscalccont;
-        }
-       }
-      }
-     }   
-    }
-    if (&save_x == 8)
-    {
-     &save_y = sp_y(1, -1);
-     &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);
-     
-     if (&save_y > &val1)
-     {
-      &save_y -= &val1;
-      if (&save_y == 1)
-      {
-       &save_y = sp_x(1, -1);
-       &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
-       if (&save_y >= &val1)
-       {
-        &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);  
-        if (&save_y <= &val1)
-        {
-         goto dirphiscalccont;
-        }
-       }
-      }
-     } 
+     sp_custom("reset-required", &current_sprite, 1);
+     kill_this_task();
     }
    }    
-   //the below will only be run  if any of the direction calculation checks failed.
-   sp_custom("reset-required", &current_sprite, 1); 
-   kill_this_task(); 
-  /////////////////////////////////////////////////
-  //HARDBOX EDGE TOUCH AND LOOK? - CHECK COMPLETE//
-  /////////////////////////////////////////////////
 
-dirphiscalccont: 
  //if direction calculation took place there was a wait, so let's run a seqcheck again.
  //assures dink's original sequence HAS NOT changed.
  //and also assure his position and direction haven't changed
@@ -599,20 +98,21 @@ dirphiscalccont:
   }  
  }
  
- //If author has chosen to run the ppbypass
+ //If author has chosen to run the push_custom() procedure
  if (&arg1 == 1)
  {
-  &save_x = is_script_attached(&current_sprite);
+  &save_x = sp_custom("push_custom", &current_sprite, -1);
   if (&save_x > 0)
   {
-   run_script_by_number(&save_x, "ppbypass");
-   
-   if (&return == 99)
-   {
-    //The ppbypass procedure exists - cancel this and run it.
+    //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
     //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
-    sp_custom("reset-required", &current_sprite, 1);   
+    sp_custom("reset-required", &current_sprite, 1);
     sp_custom("terminated", &current_sprite, 1);
+    &save_y = is_script_attached(&current_sprite);
+    if (&save_y > 0)
+    {
+     run_script_by_number(&save_y, "push_custom");
+    }
     kill_this_task();
    }
   }
@@ -684,9 +184,11 @@ dirphiscalccont:
  //Store Dink's speed in a custom key for later retrieval
  //we can retrieve the sp_speed equivelant of Dink and convert it to dink_speed value.
    //save both values in custom keys.
- &val1 = sp_speed(1, -1);
+   
+ external("dinkspeed", "getspeed");
+ &val1 = &return;
  sp_custom("PPd-sp_speed", &current_sprite, &val1);
- debug("phishyb dink CHECK SPEED is &val1");
+ debug("phishyb dink CHECK SPEED is &val1 on &current_sprite");
  if (&val1 == 1)
  {
   &val1 = 4;
@@ -704,13 +206,13 @@ dirphiscalccont:
   &val1 = -1111;
  }
  sp_custom("PPd-speed", &current_sprite, &val1);
-
- //Make it so dink can't move in preperation for limit checks initiation of smooth sprite move. 
- set_dink_speed(-1);
  
  //NOTE - Dinks speed setting does not take effect until the next "wait()" AFTER it has been set.
    //The next wait occurs in hyblim.c.
      //Checks are conducted there to assure player hasn't moved >= 1 pixel into sprite hardbox.
+
+ //Make it so dink can't move in preperation for limit checks initiation of smooth sprite move. 
+ set_dink_speed(-1);
    
  //save the speed and timing of the sprite in case we need to change it
  &save_x = sp_speed(&current_sprite, -1);
@@ -732,6 +234,15 @@ dirphiscalccont:
  }
  
  sp_custom("speedlock", &current_sprite, 1);
+ 
+ //failsafe speedlock check
+ &save_x = sp_custom("speedlock", 1, -1);
+ if (&save_x <= 0)
+ {
+  &save_x = 0;
+ }
+ &save_x += 1;
+ sp_custom("speedlock", 1, &save_x); 
 
  //assure Dink's frame delay is correct for sprite move speed
  //also store dink's frame delay in a custom key for later retrieval
@@ -747,16 +258,19 @@ dirphiscalccont:
       
  if (&save_x <= 2)
   sp_frame_delay(1, 0);
- 
-    //get the limit of how far the object can be pushed and pulled on the screen.
-    external("HybLim", "hybridlimit");
 
-    //check the outcome of the above called procedure and if we should continue or end push. 		
+    //get the limit of how far the object can be pushed and pulled on the screen.
+    external("HybLim", "hybridlimit");		
     &save_x = &return;
+    sp_custom("PP-hyblim-return", &current_sprite, &save_x);
+    
+    //check if we should continue or end push. 
+    &save_x = sp_custom("PP-hyblim-return", &current_sprite, -1);
     if (&save_x > 0)
     {
-     //triger the end, and pass dink's original speed and frame_delay to the procedure
+     //trigger the end, and pass dink's original speed and frame_delay to the procedure
      &val1 = sp_custom("PPd-speed", &current_sprite, -1);
+     debug("getspeed phishyb DINKSPEED is &val1 on &current_sprite");
      &val2 = sp_custom("PPdink-fd", &current_sprite, -1);
      external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
      kill_this_task();
@@ -764,7 +278,7 @@ dirphiscalccont:
 
    ////////////////////
    //FAIL SAFE CHECKS//
-   ////////////////////                
+   ////////////////////               
    //check dinks original dir has not changed
    &save_x = sp_dir(1, -1);
    &save_y = sp_custom("pushdir", &current_sprite, -1);
@@ -776,7 +290,6 @@ dirphiscalccont:
      external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
     kill_this_task();
    }   
-   
    //check dinks position hasn't changed
    &save_x = sp_x(1, -1);
    &save_y = sp_y(1, -1);
@@ -798,7 +311,6 @@ dirphiscalccont:
      external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
     kill_this_task();
    } 
-   
    //assures dink's original sequence HAS NOT changed.
    &save_x = sp_pseq(1, -1);
    &save_y = sp_custom("pseq-origin", &current_sprite, -1);

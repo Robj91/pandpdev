@@ -225,27 +225,6 @@ help:
   goto help;
  }
 
- //unused save game from menu option
- if (&result == 7)
- {
-        choice_start();
-        "&savegameinfo"
-        "&savegameinfo"
-        "&savegameinfo"
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "Nevermind"
-        choice_end();
-
-   save_game(&result);
-
- }
-
-  unfreeze(1);
-  kill_this_task();
+ unfreeze(1);
+ kill_this_task();
 }
