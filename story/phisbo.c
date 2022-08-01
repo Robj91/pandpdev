@@ -24,8 +24,8 @@ void main(void)
  //save the speed and timing of the sprite in case we need to change it
  &save_x = sp_speed(&current_sprite, -1);
  &save_y = sp_timing(&current_sprite, -1);
- sp_custom("oldspeed", &current_sprite, &save_x);
- sp_custom("oldtiming", &current_sprite, &save_y); 
+ sp_custom("PPoldspeed", &current_sprite, &save_x);
+ sp_custom("PPoldtiming", &current_sprite, &save_y); 
  
  //we'll update map hardness just in case hardness wasn't set
  draw_hard_sprite(&current_sprite); 
@@ -51,20 +51,20 @@ void main(void)
  if (&save_x == 1)
  {
   //Let future scripts know that hardbox boundaries have been provided, so no need for automatic hardbox detection. Yay for no lag!
-  sp_custom("HBOX", &current_sprite, 1);
+  sp_custom("PPHBOX", &current_sprite, 1);
  
   //let's save the hardbox boundaries for later use
-  sp_custom("LEFT-BOX", &current_sprite, &arg1);
-  sp_custom("TOP-BOX", &current_sprite, &arg2);
-  sp_custom("RIGHT-BOX", &current_sprite, &arg3);
-  sp_custom("BOTTOM-BOX", &current_sprite, &arg4);
+  sp_custom("PPLEFT-BOX", &current_sprite, &arg1);
+  sp_custom("PPTOP-BOX", &current_sprite, &arg2);
+  sp_custom("PPRIGHT-BOX", &current_sprite, &arg3);
+  sp_custom("PPBOTTOM-BOX", &current_sprite, &arg4);
 
   //Check whether to allow collision system or not
   &save_x = sp_custom("setcollision", &current_sprite, -1);
   if (&save_x > 0)
   {
    //allow collision
-   sp_custom("AllowCollision", &current_sprite, 1);
+   sp_custom("PPAllowCollision", &current_sprite, 1);
   }
  }
  
@@ -74,7 +74,7 @@ void main(void)
 void touch(void)
 { 
  //manual termination has been called by author and push/pull has not been re-initiated. Do not proceed.
- &save_x = sp_custom("terminated", &current_sprite, -1);
+ &save_x = sp_custom("PPterminated", &current_sprite, -1);
  if (&save_x > 0)
   return;
 
@@ -115,7 +115,7 @@ void touch(void)
 
    //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
    &save_x = sp_pseq(1, -1);
-   sp_custom("pseq-origin", &current_sprite, &save_x);
+   sp_custom("PPpseq-origin", &current_sprite, &save_x);
    &save_y = math_mod(&save_x, 2);
    //check if seq is correct for pushing and pulling, and save result in custom key 
    if (&save_x > 70)
@@ -125,16 +125,16 @@ void touch(void)
      if (&save_y == 0)
      {
       //Here we have determined that Dink's seq is between 70 and 80, and an even number (we don't want diags)
-      sp_custom("CanPush", &current_sprite, 1);
+      sp_custom("PPCanPush", &current_sprite, 1);
      }
     }
    }
   
-   &save_x = sp_custom("CanPush", &current_sprite, -1);
+   &save_x = sp_custom("PPCanPush", &current_sprite, -1);
    if (&save_x <= 0)
    {
     //no point continuing if Dink can't push
-    sp_custom("reset-required", &current_sprite, 1);    
+    sp_custom("PPreset-required", &current_sprite, 1);    
     goto touchend; 
    }  
 
@@ -216,10 +216,10 @@ void touch(void)
     &save_x = sp_custom("pushdelay", &current_sprite, -1);
     if (&save_x > 0)
     {
-     sp_custom("timerdone", &current_sprite, 0);
+     sp_custom("PPtimerdone", &current_sprite, 0);
      &save_y = &current_sprite;
      &save_x = spawn("hup");
-     sp_custom("timerscript", &current_sprite, &save_x);
+     sp_custom("PPtimerscript", &current_sprite, &save_x);
     }
     else
     {
@@ -240,13 +240,13 @@ void touch(void)
      if (&save_x == &save_y)
      { 
       //retrieve the old direction, compare it agianst the new direction
-      &save_x = sp_custom("pseq-origin", &current_sprite, -1);
+      &save_x = sp_custom("PPpseq-origin", &current_sprite, -1);
       &save_y = sp_pseq(1, -1);
       if (&save_x == &save_y)
       {
        //everything is still correct for push/pull
        //check if the timer is done and if not, loop again
-       &save_x = sp_custom("timerdone", &current_sprite, -1);
+       &save_x = sp_custom("PPtimerdone", &current_sprite, -1);
        if (&save_x > 0)
        {
         goto timercont;
@@ -260,12 +260,12 @@ void touch(void)
     }
 
     //Dinks coords or sequence has changed, this tells us he's no longer pushing against the sprite
-    &save_x = sp_custom("timerscript", &current_sprite, -1);
+    &save_x = sp_custom("PPtimerscript", &current_sprite, -1);
     if (&save_x > 0)
     {
      run_script_by_number(&save_x, "killtimer");
     }
-    sp_custom("reset-required", &current_sprite, 1);    
+    sp_custom("PPreset-required", &current_sprite, 1);    
     goto touchend; 
    /////////////
    //TIMER END//
@@ -278,11 +278,11 @@ void touch(void)
 touchend: 
  //since this touch proc is the start of the external chain, everything will lead back here
  //so I just made a custom key that can be changed to let this part know whether to do the sprite reset.
- &save_x = sp_custom("reset-required", &current_sprite, -1);
+ &save_x = sp_custom("PPreset-required", &current_sprite, -1);
  if (&save_x == 1)
  {  
-  //reset the "reset-required" custom key to 0
-  sp_custom("reset-required", &current_sprite, 0);
+  //reset the "PPreset-required" custom key to 0
+  sp_custom("PPreset-required", &current_sprite, 0);
   
   wait(0);
   //kill off the shadow sprite used to retrieve and identify this moveable object
@@ -292,11 +292,11 @@ touchend:
    sp_active(&save_x, 0);
   
   //reset other custom keys
-  sp_custom("CanPush", &current_sprite, 0);
-  sp_custom("speedlock", &current_sprite, 0);
-  sp_custom("SkipSpeedReset", &current_sprite, 0);
+  sp_custom("PPCanPush", &current_sprite, 0);
+  sp_custom("PPspeedlock", &current_sprite, 0);
+  sp_custom("PPSkipSpeedReset", &current_sprite, 0);
 
-  &save_x = sp_custom("terminated", &current_sprite, -1);
+  &save_x = sp_custom("PPterminated", &current_sprite, -1);
   if (&save_x <= 0)
   {
    //only reset touch damage if a manual termination hasn't been called
@@ -311,7 +311,7 @@ void terminate(void)
 { 
  //Push/Pull is being manually terminated out of course.
  //&arg1 = sprite being terminated (is passed), otherwise, it's &current_sprite.
- sp_custom("terminated", &current_sprite, 1);
+ sp_custom("PPterminated", &current_sprite, 1);
  if (&arg1 > 0)
  {
   sp_touch_damage(&arg1, 0);
@@ -332,12 +332,12 @@ void initiate(void)
  if (&arg1 > 0)
  {
   sp_touch_damage(&arg1, -1);
-  sp_custom("terminated", &arg1, 0);
+  sp_custom("PPterminated", &arg1, 0);
  }
  else
  {
   sp_touch_damage(&current_sprite, -1);
-  sp_custom("terminated", &current_sprite, 0);
+  sp_custom("PPterminated", &current_sprite, 0);
  }
  kill_this_task();
 }
@@ -363,7 +363,7 @@ moveactive:
   if (&save_y == &save_x)
   {
    &save_y = sp_custom("PP-Parent", &save_x, -1);
-   &save_y = sp_custom("hybactive", &save_y, -1);
+   &save_y = sp_custom("PPhybactive", &save_y, -1);
    if (&save_y != 1)
    {
     goto moveactiveinc;
@@ -386,7 +386,7 @@ moveactive:
 
 //checking if Dink is pushing a particular sprite, stored in &arg1
 movespriteactive:
- &save_x = sp_custom("hybactive", &arg1, -1);
+ &save_x = sp_custom("PPhybactive", &arg1, -1);
  if (&save_x != 1)
  {
   return(0);   
@@ -411,7 +411,7 @@ void talk(void)
  //To be able to customise talk lines.
 sp_custom("talkreturn", &current_sprite, 0); 
 talkloop:
- &save_x = sp_custom("hybactive", &current_sprite, -1);
+ &save_x = sp_custom("PPhybactive", &current_sprite, -1);
  if (&save_x != 1)
  { 
   sp_custom("talkreturn", &current_sprite, 1);

@@ -11,7 +11,7 @@ void main(void)
 
  //store the player map for later, in case the player changes screens
  &save_x = &player_map; 
- sp_custom("screen", &hybsprite, &save_x);
+ sp_custom("PPscreen", &hybsprite, &save_x);
 
  //store the player original speed and frame delay. If not using freedink 109.6, two more local variables required for this.
  if (&vcheck <= 1084)
@@ -28,10 +28,10 @@ void main(void)
  }
 
  //reset the custom key which is used to tell this script to kill itself.
- sp_custom("hybkill", &hybsprite, 0);
+ sp_custom("PPhybkill", &hybsprite, 0);
 
- //reset limitreached custom key
- sp_custom("limitreached", &hybsprite, 0);  
+ //reset PPlimitreached custom key
+ sp_custom("PPlimitreached", &hybsprite, 0);  
 
  //update the "MovePosNeg" custom key
  &save_x = sp_custom("PushPosNeg", &hybsprite, -1);
@@ -45,13 +45,13 @@ void main(void)
         //CHECK IF ENOUGH ROOM TO PULL ON INITAL GRAB OF OBJECT//
         /////////////////////////////////////////////////////////
         //Retrieve the FIRST known hardness in DINK'S pull path
-        &save_x = sp_custom("plimittrack1", &hybsprite, -1); 
+        &save_x = sp_custom("PPplimittrack1", &hybsprite, -1); 
         
         //if it's less than 0, hardness tracker sprite exited screen bound and no hardness was found
         //In this case, skip it.
         if (&save_x <= 0)
         {
-         sp_custom("NoRoomStart", &hybsprite, 0);        
+         sp_custom("PPNoRoomStart", &hybsprite, 0);        
         }
         else
         {
@@ -93,34 +93,39 @@ void main(void)
          if (&save_x <= &save_y) 
          {
            //**MARKER (in case of error) - Removed redundant if statement**//
-  	   sp_custom("NoRoomStart", &hybsprite, 1);
+  	   sp_custom("PPNoRoomStart", &hybsprite, 1);
          }
          else
          {
-  	  sp_custom("NoRoomStart", &hybsprite, 0);
+  	  sp_custom("PPNoRoomStart", &hybsprite, 0);
   	 }
         }
 	////////////////////////////
         //PULLSPACE CHECK COMPLETE//
         ////////////////////////////     
 
-  //Check if "Move-Nohard" custom key is set, if so, make sprite ignore hardness
+  //Check if "move_nohard" custom key is set, if so, make sprite ignore hardness
   //So only Dink will stop at hardness when he walks into it.
-  &save_x = sp_custom("Move-Nohard", &hybsprite, -1);
+  &save_x = sp_custom("move_nohard", &hybsprite, -1);
   if (&save_x > 0)
   {
-   &save_x = sp_custom("Dink-Push-Limit", &hybsprite, -1);
-   &save_y = sp_custom("Dink-Pull-Limit", &hybsprite, -1);   
+   &save_x = sp_custom("PPDink-Push-Limit", &hybsprite, -1);
+   &save_y = sp_custom("PPDink-Pull-Limit", &hybsprite, -1);   
   }
   else
   {
-   &save_x = sp_custom("hupmove", &hybsprite, -1); 
-   &save_y = sp_custom("pupmove", &hybsprite, -1); 
+   sp_custom("move_nohard", &hybsprite, 0);
+   &save_x = sp_custom("PPhupmove", &hybsprite, -1); 
+   &save_y = sp_custom("PPpupmove", &hybsprite, -1); 
   }
 
   //save the limit we'll be using in a new custom key so we only have to run this check once.
-  sp_custom("huplimit", &hybsprite, &save_x);
-  sp_custom("puplimit", &hybsprite, &save_y);
+  sp_custom("PPhuplimit", &hybsprite, &save_x);
+  sp_custom("PPpuplimit", &hybsprite, &save_y);
+
+  //save the old move_nohard value in a custom key
+  &save_x = sp_custom("move_nohard", &hybsprite, -1);
+  sp_custom("PPold_move_nohard", &hybsprite, &save_x);
         
  //MARKER - removed wait(0) - should no longer be required
 loop: 
@@ -131,35 +136,65 @@ loop:
   &mco = 0;
   wait(1); 
 
+  //Check if "move_nohard" custom key is set, if so, make sprite ignore hardness
+  //So only Dink will stop at hardness when he walks into it.
+  &save_x = sp_custom("move_nohard", &hybsprite, -1);
+  &save_y = sp_custom("PPold_move_nohard", &hybsprite, -1);
+  if (&save_x != &save_y)
+  {
+   if (&save_x > 0)
+   {
+    &save_x = sp_custom("PPDink-Push-Limit", &hybsprite, -1);
+    &save_y = sp_custom("PPDink-Pull-Limit", &hybsprite, -1);   
+   }
+   else
+   {
+    sp_custom("move_nohard", &hybsprite, 0);
+    &save_x = sp_custom("PPhupmove", &hybsprite, -1); 
+    &save_y = sp_custom("PPpupmove", &hybsprite, -1); 
+   }
+ 
+   //save the limit we'll be using in a new custom key so we only have to run this check once.
+   sp_custom("PPhuplimit", &hybsprite, &save_x);
+   sp_custom("PPpuplimit", &hybsprite, &save_y);
+   
+   //save the old move_nohard value in a custom key
+   &save_x = sp_custom("move_nohard", &hybsprite, -1);
+   sp_custom("PPold_move_nohard", &hybsprite, &save_x);
+   
+   //make sure the move lines are run again for the sprite
+   sp_custom("PPre-move", &hybsprite, 1);
+  }
+
    //record if the sprite moves. If it doesn't move at all(dink grabs then releases), we can skip some stuff in phisend.c
-   &save_x = sp_custom("PosAltered", &hybsprite, -1);
+   &save_x = sp_custom("PPPosAltered", &hybsprite, -1);
    if (&save_x <= 0)
    {
     &save_x = sp_custom("spriteox", &hybsprite, -1);
     &save_y = sp_x(&hybsprite, -1);
     if (&save_x != &save_y)
     {
-     sp_custom("PosAltered", &hybsprite, 1);
+     sp_custom("PPPosAltered", &hybsprite, 1);
     }
      
     &save_x = sp_custom("spriteoy", &hybsprite, -1);
     &save_y = sp_y(&hybsprite, -1);
     if (&save_x != &save_y)
     {
-     sp_custom("PosAltered", &hybsprite, 1);
+     sp_custom("PPPosAltered", &hybsprite, 1);
     }
    }
 
-   //check if this sprite has already ran a phisend instance
-   &save_x = sp_custom("Initiate-END", &hybsprite, -1);
+   //check if this sprite has already run a phisend instance
+   &save_x = sp_custom("PPInitiate-END", &hybsprite, -1);
    if (&save_x > 0)
    {
     //kill the sprite clone
-    &save_x = sp_custom("HybSpriteClone", &hybsprite, -1);
+    &save_x = sp_custom("PPHybSpriteClone", &hybsprite, -1);
     sp_active(&save_x, 0);     
    
     //Run the killpush procedure of Phishyb.c if it's still alive
-    &save_x = sp_custom("hybscript", &hybsprite, -1);
+    &save_x = sp_custom("PPhybscript", &hybsprite, -1);
     if (&save_x > 0)
     {
      run_script_by_number(&save_x, "killhyb"); 
@@ -170,7 +205,7 @@ loop:
 
    //Check if the player has changed screens
    &save_x = &player_map;
-   &save_y = sp_custom("screen", &hybsprite, -1);
+   &save_y = sp_custom("PPscreen", &hybsprite, -1);
    if (&save_x != &save_y)
    {
     //player changed screens
@@ -205,7 +240,7 @@ loop:
    {
     //assure the speed of the sprite isn't too fast, we don't want dink walking faster than his speed
     &save_x = sp_speed(1, -1);
-    &save_y = sp_custom("oldspeed", &hybsprite, -1);
+    &save_y = sp_custom("PPoldspeed", &hybsprite, -1);
     if (&save_y > &save_x)
     {
      //Sprite's original speed is higher than Dinks new speed, set it's current speed to match Dink's
@@ -236,12 +271,12 @@ loop:
     }
     
     //copy frame delay to fakedink sprite
-    &save_x = sp_custom("fdink", &hybsprite, -1);
+    &save_x = sp_custom("PPfdink", &hybsprite, -1);
     &save_y = sp_frame_delay(1, -1);
     sp_frame_delay(&save_x, &save_y);
     
     //make clone sprite's speed match &hybsprite
-    &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);
+    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
     sp_speed(&save_y, &save_x);
     
     //store dink's new speed
@@ -284,7 +319,7 @@ loop:
       if (&mco == 1)
       {
        //Dink is IDLE - check if should skip checks.
-       &save_x = sp_custom("Idle-SkipChecks", &hybsprite, -1);
+       &save_x = sp_custom("PPIdle-SkipChecks", &hybsprite, -1);
        if (&save_x == 1)
        {
         &save_y = 1;
@@ -295,20 +330,20 @@ loop:
        //The calculations will be the same for each respective direction for both push and pull
        //So we just need to retrieve the correct seq and move limit. 
        //Direction checks can be used as is. 
-       //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other. 
+       //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other. 
        &mco = 0;  
        &val1 = sp_custom("last-status", &hybsprite, -1);
        if (&val1 >= 2)
        {
         if (&val1 == 2)
         {
-         &mco = sp_custom("hupseq", &hybsprite, -1);
-         &save_y = sp_custom("huplimit", &hybsprite, -1);
+         &mco = sp_custom("PPhupseq", &hybsprite, -1);
+         &save_y = sp_custom("PPhuplimit", &hybsprite, -1);
         }
         if (&val1 == 3)
         {
-         &mco = sp_custom("pupseq", &hybsprite, -1);
-         &save_y = sp_custom("puplimit", &hybsprite, -1);   
+         &mco = sp_custom("PPpupseq", &hybsprite, -1);
+         &save_y = sp_custom("PPpuplimit", &hybsprite, -1);   
         }
         
         if (&mco > 0)
@@ -320,7 +355,7 @@ loop:
           &save_x = 9999;           
          
           //save the current move limit in a custom key and return the value to &val1
-          &val1 = sp_custom("SLR-limit", &hybsprite, &save_y);     
+          &val1 = sp_custom("PPSLR-limit", &hybsprite, &save_y);     
          
           //override move limit with custom specification
           //and make sure overrided limit does not breach original detected limit.
@@ -361,7 +396,7 @@ loop:
           &val1 = sp_custom("Enable-Limit", &hybsprite, -1);
           if (&val1 == 2)
           {
-           &val1 = sp_custom("SLR-limit", &hybsprite, -1);
+           &val1 = sp_custom("PPSLR-limit", &hybsprite, -1);
            if (&save_y == 0)
            {
             &save_x = &val1;
@@ -371,7 +406,7 @@ loop:
             &save_x = &val1;
            }
           }
-          &val1 = sp_custom("SLR-limit", &hybsprite, -1);
+          &val1 = sp_custom("PPSLR-limit", &hybsprite, -1);
           if (&save_y == 9999)
           {
            &save_x = &val1;
@@ -400,12 +435,12 @@ loop:
          }
          
          //Check if sprite is passed it's limit, and if so, shift+lock it's position accordingly.
-         &val1 = sp_custom("HybSpriteClone", &hybsprite, -1);
+         &val1 = sp_custom("PPHybSpriteClone", &hybsprite, -1);
          if (&mco == 312)
          {
           if (&save_x >= &save_y) 
           {
-           sp_y(&val1 &save_y);
+           sp_y(&val1, &save_y);
           }
          } 
          if (&mco == 314) 
@@ -419,7 +454,7 @@ loop:
          {
           if (&save_x >= &save_y) 
           { 
-           sp_x(&val1, &save_y);           
+           sp_x(&val1, &save_y);       
           }  
          }   
          if (&mco == 318) 
@@ -431,7 +466,7 @@ loop:
          }
          
          //relock sprite to clone sprite
-         &mco = sp_custom("HybSpriteClone", &hybsprite, -1); 
+         &mco = sp_custom("PPHybSpriteClone", &hybsprite, -1); 
          &save_x = sp_x(&mco, -1);
          &save_y = sp_y(&mco, -1);
          sp_x(&hybsprite, &save_x);
@@ -457,7 +492,7 @@ loop:
        if (&save_x == 1)
        {
         //Dink is IDLE - check if should skip checks.
-        &save_x = sp_custom("Idle-SkipChecks", &hybsprite, -1);
+        &save_x = sp_custom("PPIdle-SkipChecks", &hybsprite, -1);
         if (&save_x == 1)
         {
          &save_y = 1;
@@ -470,21 +505,21 @@ loop:
         //The calculations will be the same for each respective direction for both push and pull
         //So we just need to retrieve the correct seq and move limit. 
         //Direction checks can be used as is. 
-        //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other.
+        //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.
         &save_x = sp_custom("last-status", &hybsprite, -1);
         if (&save_x >= 2)
         {
          if (&save_x == 2)
          {
           //pushing - do some juggling in a new custom key so we don't have to declare another variable.
-          &save_y = sp_custom("hupseq", &hybsprite, -1);
-          &mco = sp_custom("huplimit", &hybsprite, -1);
+          &save_y = sp_custom("PPhupseq", &hybsprite, -1);
+          &mco = sp_custom("PPhuplimit", &hybsprite, -1);
          }
          if (&save_x == 3)
          {
           //pulling - do some juggling in a new custom key so we don't have to declare another variable.
-          &save_y = sp_custom("pupseq", &hybsprite, -1);
-          &mco = sp_custom("puplimit", &hybsprite, -1);   
+          &save_y = sp_custom("PPpupseq", &hybsprite, -1);
+          &mco = sp_custom("PPpuplimit", &hybsprite, -1);   
          }
          
          //set whether to use x or y
@@ -498,8 +533,8 @@ loop:
           &val1 = sp_y(&hybsprite, -1); 
          }
          
-         //hupdiff and pupdiff are the same, so doesn't matter which one we run.
-         &save_x = sp_custom("hupdiff", &hybsprite, -1);
+         //PPhupdiff and PPpupdiff are the same, so doesn't matter which one we run.
+         &save_x = sp_custom("PPhupdiff", &hybsprite, -1);
          if (&save_x == -1111)
          {
           &save_x = -1;
@@ -555,16 +590,16 @@ loop:
       //RELOCK COMPLETE//
       ///////////////////
       
-  //SET "Idle-SkipChecks" custom key for next time
+  //SET "PPIdle-SkipChecks" custom key for next time
   //This makes it so the above checks only run ONCE when Dink is idle (holding the object but not moving it)
    //But will re-run as soon as he starts moving it again.
   &save_x = sp_custom("move-status", &hybsprite, -1);
   if (&save_x == 1)
   {
-   &save_x = sp_custom("Idle-SkipChecks", &hybsprite, -1);
+   &save_x = sp_custom("PPIdle-SkipChecks", &hybsprite, -1);
    if (&save_x == 0)  
    {
-    sp_custom("Idle-SkipChecks", &hybsprite, 1); 
+    sp_custom("PPIdle-SkipChecks", &hybsprite, 1); 
    }
   }
 
@@ -585,13 +620,13 @@ loop:
   {
    //the player does have one of the above custom keys set. If the sprite hasn't moved, skip the MoveDetectDuring procedure.
    //initial check to block movedetectduring from running initially
-   &save_x = sp_custom("PosAltered", &hybsprite, -1);
+   &save_x = sp_custom("PPPosAltered", &hybsprite, -1);
    if (&save_x <= 0)
    {
     &save_y = 1;
    }
    //constant check for the duration of Dink holding the sprite
-   &save_x = sp_custom("Idle-SkipChecks", &hybsprite, -1);
+   &save_x = sp_custom("PPIdle-SkipChecks", &hybsprite, -1);
    if (&save_x == 1)
    {
     &save_y = 1;
@@ -619,11 +654,11 @@ loop:
 
   //Check if the sprite's speed has changed(maybe the author changed it as part of the "movedetectduring" procedure)
   &save_x = sp_speed(&hybsprite, -1);
-  &save_y = sp_custom("oldspeed", &hybsprite, -1);
+  &save_y = sp_custom("PPoldspeed", &hybsprite, -1);
   if (&save_x != &save_y)
   {
    //update the visible clone sprite to the new speed too.
-   &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);
+   &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
    sp_speed(&save_y, &save_x);
 
    //update Dink's frame delay to match the sprite  move speed.
@@ -642,18 +677,18 @@ loop:
    }
    
    //copy frame delay to fakedink sprite
-   &save_x = sp_custom("fdink", &hybsprite, -1);
+   &save_x = sp_custom("PPfdink", &hybsprite, -1);
    &save_y = sp_frame_delay(1, -1);
    sp_frame_delay(&save_x, &save_y);
   }
 
    //check to see if the player has disengaged, if so the seq will not match the expected push, pull or holding-idle seq.
-   &save_x = sp_custom("pupseq", &hybsprite, -1);
+   &save_x = sp_custom("PPpupseq", &hybsprite, -1);
    &save_x -= 240;
    &save_y = sp_pseq(1, -1);
    if (&save_y != &save_x)
    {
-     &save_x = sp_custom("hupseq", &hybsprite, -1);
+     &save_x = sp_custom("PPhupseq", &hybsprite, -1);
      &save_x -= 240;
      if (&save_y != &save_x)
      {
@@ -672,13 +707,13 @@ loop:
    }
 
   //a manual termination has occured and ended push/pull, kill off this script.  
-  &save_x = sp_custom("hybkill", &hybsprite, -1);
+  &save_x = sp_custom("PPhybkill", &hybsprite, -1);
   if (&save_x > 0)
   {
    //no need to kill off the phishyb.c instance here.
    //the same script that called for this to be killed will handle that also.
    //kill the sprite clone and end this
-   &save_x = sp_custom("HybSpriteClone", &hybsprite, -1);
+   &save_x = sp_custom("PPHybSpriteClone", &hybsprite, -1);
    sp_active(&save_x, 0);
    kill_this_task();
   }
@@ -702,40 +737,40 @@ loop:
         //The calculations will be the same for each respective direction for both push and pull
         //So we just need to retrieve the correct seq and move limit. 
         //Direction checks can be used as is. 
-        //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other. 
+        //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other. 
         &mco = 0;
-        sp_custom("SLR-limit", &hybsprite, 0);
+        sp_custom("PPSLR-limit", &hybsprite, 0);
         &val1 = sp_custom("move-status", &hybsprite, -1);
         if (&val1 <= 1)
         {
          //make sure Dink isn't actually pushing or pulling(could be initilising or move-status hasn't updated yet)
          &save_y = sp_pseq(1, -1);
          &save_y += 240;
-         &save_x = sp_custom("hupseq", &hybsprite, -1);
+         &save_x = sp_custom("PPhupseq", &hybsprite, -1);
          if (&save_x == &save_y)  
          {
-          &mco = sp_custom("hupseq", &hybsprite, -1);  
-          &save_y = sp_custom("huplimit", &hybsprite, -1);  
+          &mco = sp_custom("PPhupseq", &hybsprite, -1);  
+          &save_y = sp_custom("PPhuplimit", &hybsprite, -1);  
          }                     
          else
          {
-          &save_x = sp_custom("pupseq", &hybsprite, -1);
+          &save_x = sp_custom("PPpupseq", &hybsprite, -1);
           if (&save_x == &save_y)  
           {
-           &mco = sp_custom("pupseq", &hybsprite, -1);
-           &save_y = sp_custom("puplimit", &hybsprite, -1);  
+           &mco = sp_custom("PPpupseq", &hybsprite, -1);
+           &save_y = sp_custom("PPpuplimit", &hybsprite, -1);  
           }   
          }   
         }
         if (&val1 == 2)
         {
-         &mco = sp_custom("hupseq", &hybsprite, -1);
-         &save_y = sp_custom("huplimit", &hybsprite, -1);
+         &mco = sp_custom("PPhupseq", &hybsprite, -1);
+         &save_y = sp_custom("PPhuplimit", &hybsprite, -1);
         }  
         if (&val1 == 3)
         {
-         &mco = sp_custom("pupseq", &hybsprite, -1); 
-         &save_y = sp_custom("puplimit", &hybsprite, -1);   
+         &mco = sp_custom("PPpupseq", &hybsprite, -1); 
+         &save_y = sp_custom("PPpuplimit", &hybsprite, -1);   
         } 
      
         if (&mco > 0)
@@ -747,7 +782,7 @@ loop:
           &save_x = 9999;
          
           //save the current move limit in a custom key and return the value to &val1
-          &val1 = sp_custom("SLR-limit", &hybsprite, &save_y);
+          &val1 = sp_custom("PPSLR-limit", &hybsprite, &save_y);
           
           //override move limit with custom specification
           //and make sure overrided limit does not breach original detected limit.
@@ -788,7 +823,7 @@ loop:
           &val1 = sp_custom("Enable-Limit", &hybsprite, -1);
           if (&val1 == 2)
           {
-           &val1 = sp_custom("SLR-limit", &hybsprite, -1);
+           &val1 = sp_custom("PPSLR-limit", &hybsprite, -1);
            if (&save_y == 0)
            {
             &save_x = &val1;
@@ -798,7 +833,7 @@ loop:
             &save_x = &val1;
            }
           }
-          &val1 = sp_custom("SLR-limit", &hybsprite, -1);
+          &val1 = sp_custom("PPSLR-limit", &hybsprite, -1);
           if (&save_y == 9999)
           {
            &save_x = &val1;
@@ -826,35 +861,35 @@ loop:
           &save_x = sp_y(&hybsprite, -1);
          }
          
-         //reset limitreached to 0 (default)
+         //reset PPlimitreached to 0 (default)
          //and then run checks to see if move limit has been reached.
-         sp_custom("limitreached", &hybsprite, 0);       
+         sp_custom("PPlimitreached", &hybsprite, 0);       
          if (&mco == 312)
          {
           if (&save_x >= &save_y) 
           {
-           sp_custom("limitreached", &hybsprite, 1);
+           sp_custom("PPlimitreached", &hybsprite, 1);
           }
          } 
          if (&mco == 314) 
          { 
           if (&save_x <= &save_y) 
           {
-           sp_custom("limitreached", &hybsprite, 1);   
+           sp_custom("PPlimitreached", &hybsprite, 1); 
           }
          } 
          if (&mco == 316) 
          {
           if (&save_x >= &save_y)  
           {
-           sp_custom("limitreached", &hybsprite, 1);  
+           sp_custom("PPlimitreached", &hybsprite, 1); 
           }
          }   
          if (&mco == 318) 
          {
           if (&save_x <= &save_y) 
           {
-           sp_custom("limitreached", &hybsprite, 1);
+           sp_custom("PPlimitreached", &hybsprite, 1);
           }
          } 
         }
@@ -866,10 +901,9 @@ loop:
   &mco = 0; 
 
   //Check if Dink is pushing the sprite 
-  &save_x = sp_custom("hupseq", &hybsprite, -1); 
+  &save_x = sp_custom("PPhupseq", &hybsprite, -1); 
   &save_x -= 240;
   &save_y = sp_pseq(1, -1); 
-  sp_custom
   if (&save_x == &save_y)
   {
    //update the "MovePosNeg" custom key
@@ -877,39 +911,52 @@ loop:
    sp_custom("MovePosNeg", &hybsprite, &save_x);
  
    //if limit is reached, skip this.
-   &save_x = sp_custom("limitreached", &hybsprite, -1);
+   &save_x = sp_custom("PPlimitreached", &hybsprite, -1);
    if (&save_x > 0)
     goto limit;
 
    //change the fake dink to push seq
-   &save_x = sp_custom("fdink", &hybsprite, -1);
-   &save_y = sp_custom("hupseq", &hybsprite, -1); 
+   &save_x = sp_custom("PPfdink", &hybsprite, -1);
+   &save_y = sp_custom("PPhupseq", &hybsprite, -1); 
    sp_brain(&save_x, 6);
    sp_seq(&save_x, &save_y);
    sp_brain(&save_x, 15);
    sp_brain_parm(&save_x, 1);
    sp_reverse(&save_x, 0);
 
-   //skip the move lines if the sprite is continuing in the same direction
+   //skip the move lines if the sprite is continuing in the same direction, unless the move limit has changed
+   &save_y = 0;
    &save_x = sp_custom("move-status", &hybsprite, -1);
-   if (&save_x != 2)
+   if (&save_x == 2)
+   {
+    &save_x = sp_custom("PPre-move", &hybsprite, -1);
+    if (&save_x <= 0)
+    {
+     //Sprite is already moving, and limit does not need updating - we can skip the move lines
+     &save_y = 1;
+    }
+   }
+   if (&save_y == 0)
    {
     //retrieve the clone sprite for movement handling without interruption
-    &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);
+    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
     
     //make object keep moving up to it's set PUSH limit.
-    &save_x = sp_custom("huplimit", &hybsprite, -1);
-    if (sp_custom("hupseq", &hybsprite, -1) == 312)
+    &save_x = sp_custom("PPhuplimit", &hybsprite, -1);
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 312)
      move(&save_y, 2, &save_x, 1);
  
-    if (sp_custom("hupseq", &hybsprite, -1) == 314)
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 314)
      move(&save_y, 4, &save_x, 1);
  
-    if (sp_custom("hupseq", &hybsprite, -1) == 316)
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 316)
      move(&save_y, 6, &save_x, 1); 
  
-    if (sp_custom("hupseq", &hybsprite, -1) == 318)
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 318)
      move(&save_y, 8, &save_x, 1);
+
+    //reset the "PPre-move" custom key, so we know we have run the move line again after the move limit was updated
+    sp_custom("PPre-move", &hybsprite, 0);
    }
 
    sp_custom("move-status", &hybsprite, 2);
@@ -918,26 +965,26 @@ loop:
    &mco = 1; 
   }
 
-  &save_x = sp_custom("pupseq", &hybsprite, -1); 
+  &save_x = sp_custom("PPpupseq", &hybsprite, -1); 
   &save_x -= 240; 
   &save_y = sp_pseq(1, -1); 
   if (&save_x == &save_y)
   {
-   //Check "NoRoomStart" key, which will tell us if Dink has clearance to pull
-   &save_x = sp_custom("NoRoomStart", &hybsprite, -1);
+   //Check "PPNoRoomStart" key, which will tell us if Dink has clearance to pull
+   &save_x = sp_custom("PPNoRoomStart", &hybsprite, -1);
    if (&save_x > 0)
    {
 	//////////////////////
         //Re-Check pullspace//
         //////////////////////
         //Retrieve the FIRST known hardness, in DINK'S pull path
-        &save_x = sp_custom("plimittrack1", &hybsprite, -1); 
+        &save_x = sp_custom("PPplimittrack1", &hybsprite, -1); 
         
         //if it's less than 0, hardness tracker sprite exited screen bound and no hardness was found
         //In this case, skip it.
         if (&save_x <= 0)
         {
-         sp_custom("NoRoomStart", &hybsprite, 0);        
+         sp_custom("PPNoRoomStart", &hybsprite, 0);        
         }
         else
         {
@@ -977,18 +1024,18 @@ loop:
          if (&save_x <= &save_y) 
          {
           if (&save_x <= 0)
-  	   sp_custom("NoRoomStart", &hybsprite, 0);
+  	   sp_custom("PPNoRoomStart", &hybsprite, 0);
           else
           {
-  	   sp_custom("NoRoomStart", &hybsprite, 1);
+  	   sp_custom("PPNoRoomStart", &hybsprite, 1);
            say("Not enough room to pull it.", 1);
-           sp_custom("limitreached", &hybsprite, 1);
+           sp_custom("PPlimitreached", &hybsprite, 1);
            &mco = 0;
            goto limit;
   	  }
          }
          else
-  	   sp_custom("NoRoomStart", &hybsprite, 0);
+  	   sp_custom("PPNoRoomStart", &hybsprite, 0);
         }
 	/////////////////////////////////////
         //RE-CHECK PULLSPACE CHECK COMPLETE//
@@ -1000,42 +1047,53 @@ loop:
    sp_custom("MovePosNeg", &hybsprite, &save_x);
    
    //if limit is reached.. skip this.
-   &save_x = sp_custom("limitreached", &hybsprite, -1);
+   &save_x = sp_custom("PPlimitreached", &hybsprite, -1);
    if (&save_x > 0)
     goto limit;
 
    //change the fake dink to pull seq
-   &save_x = sp_custom("fdink", &hybsprite, -1);
-   &save_y = sp_custom("hupseq", &hybsprite, -1); 
+   &save_x = sp_custom("PPfdink", &hybsprite, -1);
+   &save_y = sp_custom("PPhupseq", &hybsprite, -1); 
    sp_brain(&save_x, 6);
    sp_seq(&save_x, &save_y);
    sp_brain(&save_x, 15);
    sp_brain_parm(&save_x, 1); 
    sp_reverse(&save_x, 1); 
 
-   //skip the move lines if the sprite is continuing in the same direction
+   //skip the move lines if the sprite is continuing in the same direction, unless the move limit has changed
+   &save_y = 0;
    &save_x = sp_custom("move-status", &hybsprite, -1);
-   if (&save_x != 3)
+   if (&save_x == 3)
+   {
+    &save_x = sp_custom("PPre-move", &hybsprite, -1);
+    if (&save_x <= 0)
+    {
+     //Sprite is already moving, and limit does not need updating - we can skip the move lines
+     &save_y = 1;
+    }
+   }
+   if (&save_y == 0)
    {
     //retrieve the clone sprite for movement handling without interruption
-    &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);
+    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
  
     //make object keep moving up to it's set move limit.
-    &save_x = sp_custom("puplimit", &hybsprite, -1);
-    if (sp_custom("pupseq", &hybsprite, -1) == 312)
+    &save_x = sp_custom("PPpuplimit", &hybsprite, -1);
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 312)
      move(&save_y, 2, &save_x, 1);
  
-    if (sp_custom("pupseq", &hybsprite, -1) == 314)
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 314)
      move(&save_y, 4, &save_x, 1);
  
-    if (sp_custom("pupseq", &hybsprite, -1) == 316)
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 316)
      move(&save_y, 6, &save_x, 1);
      
-    if (sp_custom("pupseq", &hybsprite, -1) == 318)
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 318)
      move(&save_y, 8, &save_x, 1);
+     
+    //reset the "PPre-move" custom key, so we know we have run the move line again after the move limit was updated
+    sp_custom("PPre-move", &hybsprite, 0);
    }
-
-   sp_custom("test", &hybsprite, 1);
 
    sp_custom("move-status", &hybsprite, 3);
    
@@ -1048,25 +1106,25 @@ limit:
    if (&mco == 0)
    {
     //retrieve the clone sprite for movement handling without interruption
-    &save_y = sp_custom("HybSpriteClone", &hybsprite, -1);  
+    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);  
 
     //Dink is idle, walking towards the sprite, or a move limit was reached - stop the sprite
-    //just use pupseq - either way we are stopping the sprite so doesn't matter.
-     if (sp_custom("pupseq", &hybsprite, -1) == 316) 
+    //just use PPpupseq - either way we are stopping the sprite so doesn't matter.
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 316) 
       move(&save_y, 6, -200, 0);
     
-     if (sp_custom("pupseq", &hybsprite, -1) == 314) 
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 314) 
       move(&save_y, 4, 750, 1);
     
-     if (sp_custom("pupseq", &hybsprite, -1) == 312) 
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 312) 
       move(&save_y, 2, -200, 1);
     
-     if (sp_custom("pupseq", &hybsprite, -1) == 318) 
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 318) 
       move(&save_y, 8, 600, 1);
      
     sp_custom("move-status", &hybsprite, 1);       
  
-   //check player sequence, limitreached, and stopmove
+   //check player sequence, PPlimitreached, and stopmove
    &save_y = 0;
    &save_x = sp_pseq(1, -1);
    if (&save_x >= 12)
@@ -1077,7 +1135,7 @@ limit:
     }
    }
     
-   &save_x = sp_custom("limitreached", &hybsprite, -1);
+   &save_x = sp_custom("PPlimitreached", &hybsprite, -1);
    if (&save_x > 0)
    {
     &save_y += 1;
@@ -1094,7 +1152,7 @@ limit:
     //at least one of the above checks returned true - halt the move.
     //make fake dink a static frame when he's idle while still moving an object
        //change the fake dink to pull seq
-    &save_x = sp_custom("fdink", &hybsprite, -1);
+    &save_x = sp_custom("PPfdink", &hybsprite, -1);
     sp_seq(&save_x, 0);
     sp_frame(&save_x, 0);
     sp_brain(&save_x, 0);
@@ -1125,7 +1183,7 @@ limit:
     }
 
     //let script know limit checks and relock need to be performed.
-    sp_custom("Idle-SkipChecks", &hybsprite, 0);
+    sp_custom("PPIdle-SkipChecks", &hybsprite, 0);
    }
   }
 
@@ -1143,14 +1201,14 @@ void hybkill(void)
 hybkill: 
 
  //kill the sprite clone and end this
- &save_x = sp_custom("HybSpriteClone", &hybsprite, -1);
+ &save_x = sp_custom("PPHybSpriteClone", &hybsprite, -1);
  sp_active(&save_x, 0);
    
- &save_x = sp_custom("terminated", &hybsprite, -1);
+ &save_x = sp_custom("PPterminated", &hybsprite, -1);
  if (&save_x <= 0)
  { 
   //kill the fakedink and deactivate nodraw on dink
-  &save_x = sp_custom("fdink", &hybsprite, -1);
+  &save_x = sp_custom("PPfdink", &hybsprite, -1);
   sp_active(&save_x, 0);
   sp_nodraw(1, 0); 
   if (&vcheck > 1084)

@@ -24,7 +24,7 @@ waitloop:
   goto waitloop;
  }
  
- sp_custom("timerdone", &val1, 1);
+ sp_custom("PPtimerdone", &val1, 1);
  
  kill_this_task();
 }

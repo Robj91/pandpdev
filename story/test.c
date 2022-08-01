@@ -18,6 +18,10 @@ void main(void)
 
  sp_custom("move_idle", &current_sprite, 1);
 
+ sp_custom("Enable-Limit", &current_sprite, 2);
+ sp_custom("setXmax", &current_sprite, 188);
+ sp_custom("move_nohard", &current_sprite, 1);
+ 
  //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
  //also does other important checks to set the push/pull system up properly.
  //external("phisbo", "main", -21, -35, 23, 9); 
@@ -48,29 +52,21 @@ void push_custom(void)
 
 void MoveDetectDuring(void)
 {
- &gold += 1;
- draw_status();
  goto stopex;
 }
 
 void IdleDetectDuring(void)
 {
- &magic += 1;
- draw_status();
  goto stopex;
 }
 
 void MoveDetectAfter(void)
 {
- &strength += 1;
- draw_status();
  goto stopex;
 }
 
 void IdleDetectAfter(void)
 {
- &defense += 10;
- draw_status();
  goto stopex;
 }
 

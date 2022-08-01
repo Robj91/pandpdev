@@ -49,15 +49,15 @@ void end(void)
  DEBUG("Phisend speed is &arg5");
 
  //This is to indicate that an instance of Phisend.c has initiated.
- sp_custom("Initiate-END", &arg4, 1);
+ sp_custom("PPInitiate-END", &arg4, 1);
 
    //failsafe speedlock check
-   &save_x = sp_custom("speedlock", 1, -1);
+   &save_x = sp_custom("PPspeedlock", 1, -1);
    &save_x -= 1;
-   sp_custom("speedlock", 1, &save_x);  
+   sp_custom("PPspeedlock", 1, &save_x);  
    if (&save_x > 0)
    {
-    sp_custom("SkipSpeedReset", &arg4, 1); 
+    sp_custom("PPSkipSpeedReset", &arg4, 1); 
    }    
 
  if (&arg1 > 0)
@@ -76,7 +76,7 @@ void end(void)
   {  
    if (&arg2 == 2)
    {
-    &save_x = sp_custom("SkipSpeedReset", &arg4, -1);
+    &save_x = sp_custom("PPSkipSpeedReset", &arg4, -1);
     if (&save_x <= 0)
     {
      debug("Phisend confirm(1) DINKSPEED IS &val1 on &current_sprite");
@@ -86,8 +86,8 @@ void end(void)
 
     //reset the sprites speed and timing
     debug("Phisend confirm(1) ARG4 SET TO &arg4");
-    &save_x = sp_custom("oldspeed", &arg4, -1);
-    &save_y = sp_custom("oldtiming", &arg4, -1);
+    &save_x = sp_custom("PPoldspeed", &arg4, -1);
+    &save_y = sp_custom("PPoldtiming", &arg4, -1);
     sp_speed(&arg4, &save_x);
     sp_timing(&arg4, &save_y);
    } 
@@ -116,10 +116,10 @@ void end(void)
   if (&arg1 == 9)
   {
    //manual termination out of course, let's make sure any auto-update scripts are killed off.
-   sp_custom("hybkill", &arg4, 1);
+   sp_custom("PPhybkill", &arg4, 1);
    
    //Also kill off the main script if it's been started
-   &save_x = sp_custom("hybscript", &arg4, -1);
+   &save_x = sp_custom("PPhybscript", &arg4, -1);
    if (&save_x > 0)
    {
     run_script_by_number(&save_x, "killhyb");
@@ -130,10 +130,10 @@ void end(void)
 //Initial &arg checks complete - continue with normal push and pull system Termination.. 
 
  //check if Dink is currently moving this sprite
- &save_x = sp_custom("hybactive", &arg4, -1);
+ &save_x = sp_custom("PPhybactive", &arg4, -1);
  if (&save_x != 1)
  { 
-  sp_custom("INACTIVE", &arg4, 1);
+  sp_custom("PPINACTIVE", &arg4, 1);
  }
  else
  {
@@ -144,14 +144,14 @@ void end(void)
   sp_frame(1, 1);
 
   //Dink stopped pulling so assure the obect stops too - just make it move forwards to a position behind it  - Lol. It works.
-  &save_x = sp_custom("pupseq", &arg4, -1); 
+  &save_x = sp_custom("PPpupseq", &arg4, -1); 
   if (&save_x == 316) move(&arg4, 6, -200, 1);
   if (&save_x == 314) move(&arg4, 4, 750, 1);
   if (&save_x == 312) move(&arg4, 2, -200, 1);
   if (&save_x == 318) move(&arg4, 8, 600, 1);
  }
 
-    &save_x = sp_custom("PosAltered", &arg4, -1);
+    &save_x = sp_custom("PPPosAltered", &arg4, -1);
     if (&save_x > 0)
     {
 
@@ -161,15 +161,15 @@ void end(void)
            //The calculations will be the same for each respective direction for both push and pull
            //So we just need to retrieve the correct seq and move limit. 
            //Direction checks can be used as is. 
-           //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other.   
+           //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.   
            &save_x = sp_custom("move-status", &arg4, -1);
            if (&save_x > 0)
            {
             if (sp_custom("last-status", &arg4, -1) == 2)
-             &mco = sp_custom("huplimit", &arg4, -1);
+             &mco = sp_custom("PPhuplimit", &arg4, -1);
 
             if (sp_custom("last-status", &arg4, -1) == 3)
-             &mco = sp_custom("puplimit", &arg4, -1); 
+             &mco = sp_custom("PPpuplimit", &arg4, -1); 
 
             &save_x = sp_custom("Enable-Limit", &arg4, -1);
             if (&save_x > 0)
@@ -226,10 +226,10 @@ void end(void)
             &save_x = sp_y(&arg4, -1); 
 
             if (sp_custom("last-status", &arg4, -1) == 2)
-             &mco = sp_custom("hupseq", &arg4, -1);
+             &mco = sp_custom("PPhupseq", &arg4, -1);
 
             if (sp_custom("last-status", &arg4, -1) == 3)
-             &mco = sp_custom("pupseq", &arg4, -1);
+             &mco = sp_custom("PPpupseq", &arg4, -1);
              
            if (sp_custom("last-status", &arg4, -1) <= 0)
            {
@@ -270,7 +270,7 @@ void end(void)
        //The calculations will be the same for each respective direction for both push and pull
        //So we just need to retrieve the correct seq and move limit. 
        //Direction checks can be used as is. 
-       //Remember: hupseq and pupseq are opposite seqs so we can't just use one or the other.
+       //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.
        &save_x = sp_x(1, -1);
        &save_x = sp_custom("move-status", &arg4, -1);
        &save_y = 0;
@@ -279,30 +279,30 @@ void end(void)
         if (sp_custom("last-status", &arg4, -1) == 2)
         {
          //pushing - do some juggling in a new custom key so we don't have to declare another variable.
-         &save_x = sp_custom("hupdiff", &arg4, -1);
+         &save_x = sp_custom("PPhupdiff", &arg4, -1);
          if (&save_x == -1111)
           &save_x = -1;
  
-         &save_y = sp_custom("hupseq", &arg4, -1);
-         sp_custom("RelockSeq", &arg4, &save_y);
-         &val1 = sp_custom("huplimit", &arg4, -1);
+         &save_y = sp_custom("PPhupseq", &arg4, -1);
+         sp_custom("PPRelockSeq", &arg4, &save_y);
+         &val1 = sp_custom("PPhuplimit", &arg4, -1);
         }
         if (sp_custom("last-status", &arg4, -1) == 3)
         {
          //pulling - do some juggling in a new custom key so we don't have to declare another variable.
-         &save_x = sp_custom("pupdiff", &arg4, -1);
+         &save_x = sp_custom("PPpupdiff", &arg4, -1);
          if (&save_x == -1111)
           &save_x = -1;
           
-         &save_y = sp_custom("pupseq", &arg4, -1);
-         sp_custom("RelockSeq", &arg4, &save_y);
-         &val1 = sp_custom("puplimit", &arg4, -1);   
+         &save_y = sp_custom("PPpupseq", &arg4, -1);
+         sp_custom("PPRelockSeq", &arg4, &save_y);
+         &val1 = sp_custom("PPpuplimit", &arg4, -1);   
         }
         if (sp_custom("last-status", &arg4, -1) <= 0)
         {
          //Dink was neither pushing or pulling.
          //just don't let any of the if statements below run.
-         sp_custom("RelockSeq", &arg4, 9999);
+         sp_custom("PPRelockSeq", &arg4, 9999);
         }
   
         //set whether to use x or y
@@ -312,7 +312,7 @@ void end(void)
         else
          &save_y = sp_y(&arg4, -1); 
         
-        if (sp_custom("RelockSeq", &arg4, -1) == 312)
+        if (sp_custom("PPRelockSeq", &arg4, -1) == 312)
         {
          &save_y += &save_x;
          
@@ -323,7 +323,7 @@ void end(void)
           
          sp_y(1, &save_y);
         }
-        if (sp_custom("RelockSeq", &arg4, -1) == 314)
+        if (sp_custom("PPRelockSeq", &arg4, -1) == 314)
         {
          &save_y += &save_x;
          
@@ -333,7 +333,7 @@ void end(void)
           
          sp_x(1, &save_y);
         }
-        if (sp_custom("RelockSeq", &arg4, -1) == 316)
+        if (sp_custom("PPRelockSeq", &arg4, -1) == 316)
         {
          &save_y += &save_x;
          
@@ -343,7 +343,7 @@ void end(void)
 
          sp_x(1, &save_y);
         } 
-        if (sp_custom("RelockSeq", &arg4, -1) == 318)
+        if (sp_custom("PPRelockSeq", &arg4, -1) == 318)
         {
          &save_y += &save_x;
          
@@ -359,7 +359,7 @@ void end(void)
       ///////////////////
     }
  
- &save_x = sp_custom("INACTIVE", &arg4, -1);
+ &save_x = sp_custom("PPINACTIVE", &arg4, -1);
  if (&save_x <= 0)
  {
   //Dink is currently moving this object
@@ -373,12 +373,12 @@ void end(void)
   sp_base_walk(1, 70);
 
   //kill the fakedink and deactivate nodraw on dink
-  &save_x = sp_custom("fdink", &arg4, -1);
+  &save_x = sp_custom("PPfdink", &arg4, -1);
   sp_active(&save_x, 0);
   sp_nodraw(1, 0);    
  
   //reset dink speed
-  &save_x = sp_custom("SkipSpeedReset", &arg4, -1);
+  &save_x = sp_custom("PPSkipSpeedReset", &arg4, -1);
   if (&save_x <= 0)
   {
    if (&arg1 == 9)
@@ -401,7 +401,7 @@ void end(void)
     &save_x = &arg6;
    }
 
-   &save_x = sp_custom("SkipSpeedReset", &arg4, -1);
+   &save_x = sp_custom("PPSkipSpeedReset", &arg4, -1);
    if (&save_x <= 0)
    {   
     debug("Phisend confirm(3) DINKSPEED IS &val1");
@@ -411,8 +411,8 @@ void end(void)
   }
 
   //reset the sprites speed and timing
-  &save_x = sp_custom("oldspeed", &arg4, -1);
-  &save_y = sp_custom("oldtiming", &arg4, -1);
+  &save_x = sp_custom("PPoldspeed", &arg4, -1);
+  &save_y = sp_custom("PPoldtiming", &arg4, -1);
   debug("Phisend confirm(1) ARG4 SET TO &arg4");
   sp_speed(&arg4, &save_x);
   sp_timing(&arg4, &save_y);
@@ -436,7 +436,7 @@ void end(void)
   if (&val1 == 1)
   {
    //the player does have it set, if the sprite hasn't moved, skip the MoveDetectAfter procedure.
-   &save_x = sp_custom("PosAltered", &arg4, -1);
+   &save_x = sp_custom("PPPosAltered", &arg4, -1);
    if (&save_x <= 0)
    {
     &save_y = 1;
@@ -463,31 +463,31 @@ void end(void)
  }
 
 keyresets:
- //reset custom keys
+ //reset custom keys that need to be reset
  sp_custom("PPMoving", &arg4, 0); 
- sp_custom("hybactive", &arg4, 0); 
- sp_custom("hybscript", &arg4, 0);
+ sp_custom("PPhybactive", &arg4, 0); 
+ sp_custom("PPhybscript", &arg4, 0);
  
- sp_custom("hupmove", &arg4, 0);
- sp_custom("huplimit", &arg4, 0);
- sp_custom("hupseq", &arg4, 0);
- sp_custom("hupdiff", &arg4, 0);
+ sp_custom("PPhupmove", &arg4, 0);
+ sp_custom("PPhuplimit", &arg4, 0);
+ sp_custom("PPhupseq", &arg4, 0);
+ sp_custom("PPhupdiff", &arg4, 0);
 
- sp_custom("pupmove", &arg4, 0);
- sp_custom("puplimit", &arg4, 0);
- sp_custom("pupseq", &arg4, 0);
- sp_custom("pupdiff", &arg4, 0);
+ sp_custom("PPpupmove", &arg4, 0);
+ sp_custom("PPpuplimit", &arg4, 0);
+ sp_custom("PPpupseq", &arg4, 0);
+ sp_custom("PPpupdiff", &arg4, 0);
  
- sp_custom("CanPush", &arg4, 0);
- sp_custom("speedlock", &arg4, 0);
- sp_custom("SkipSpeedReset", &arg4, 0);
+ sp_custom("PPCanPush", &arg4, 0);
+ sp_custom("PPspeedlock", &arg4, 0);
+ sp_custom("PPSkipSpeedReset", &arg4, 0);
 
  sp_custom("move-status", &arg4, 0);
- sp_custom("Idle-SkipChecks", &arg4, 0);
- sp_custom("INACTIVE", &arg4, 0);
+ sp_custom("PPIdle-SkipChecks", &arg4, 0);
+ sp_custom("PPINACTIVE", &arg4, 0);
  sp_custom("PPd-sp_speed", &arg4, 0);
  sp_custom("PPd-speed", &arg4, 0);
- sp_custom("PosAltered", &arg4, 0);
+ sp_custom("PPPosAltered", &arg4, 0);
 
  //let phisbo.c "touch" proc know to reset the sprite. 
  //unless manual termination by author, then just run the killshadow.
@@ -502,11 +502,11 @@ keyresets:
   }
   
   //reset other custom keys
-  sp_custom("CanPush", &arg4, 0);
-  sp_custom("speedlock", &arg4, 0);
-  sp_custom("SkipSpeedReset", &arg4, 0);
+  sp_custom("PPCanPush", &arg4, 0);
+  sp_custom("PPspeedlock", &arg4, 0);
+  sp_custom("PPSkipSpeedReset", &arg4, 0);
  
-  &save_x = sp_custom("terminated", &arg4, -1);
+  &save_x = sp_custom("PPterminated", &arg4, -1);
   if (&save_x <= 0)
   {
    //only reset touch damage if a manual termination hasn't been called

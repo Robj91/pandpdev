@@ -1,8 +1,6 @@
 //REMINDER OF WHAT’S DONE:
 
 bugs and ideas:
-- Add "PP" prefix to all core push and pull custom keys.
-- remove/combine redundant custom keys
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
@@ -18,154 +16,54 @@ TUTNOTES:
 - move_during_idle custom key, ignores movedetectduring procedure if sprite didn’t move, and enables the additional IdleDetectDuring procedure
 - move_idle custom key, is the equivelant to setting “move_after_idle” and “move_during_idle” to 1
 
+//////////////////////
+//Config custom keys//
+//////////////////////
+The below sp_custom() keys are used to configure/customise push and pull on a sprite, setting these to certain values, as described below will change the way push and pull will work with them.
+Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sprite ignore hardness when being moved.
 
-
-//////////////////////////////
-//CUSTOM KEYS AND THEIR USES//
-//////////////////////////////
+------------------------------------------
 
 “push_custom”: Used to enable the “push_custom” procedure, instead of using the push/pull system
+               0 = push_custom() procedure will not be enabled
+	       1 = push_custom() procedure will be enabled - the push/pull system will look into the script and run push_custom(), rather than using the normal push/pull system
 
-“SLR-limit”: Used in hybup.c to temporarily store the move limit value when calculating custom override of move limits.
+------------------------------------------
 
-“terminated”: Used to set and determine when a sprite is being manually terminated out of course.
-
-“PPd-speed”: Used to store dink’s s "set_dink_speed” equivelant before push and pull system locks it to -1.
-“PPd-sp_speed”: Used to store dink’s sp_speed equivelant before push and pull system locks it to -1.
-
-“PPdink-fd”: Used to store dink’s frame delay before it is changed to match the speed of the sprite being moved.
-
-"PosAltered": Used to determine whether the sprite's position changed after a push or pull was initiated.
-	      0 = No change
-	      1 = Position changed.
-
-"Move-Nohard": Used to let the sprite move through hardness when moving it. With this active, the sprite will ignore hardness when being push or pulled.
-	       The value inputted in this custom key will ONLY be updated and take effect when Dink grabs hold of a sprite to move it. 
-	       If you alter the "Move-Nohard" value while Dink is still holding a sprite, the new value will not take effect until Dink releases and grabs the sprite again.
+"move_nohard": Used to let the sprite move through hardness when moving it. With this active, the sprite will ignore hardness when being moved.
 	       0 = Will not move through hardness
 	       1 = Will move through hardness
 
-"Initiate-END": Used to determine if an instance of phisend.c has run for the moveable sprite.
+------------------------------------------
 
-"HybSpriteClone": Used to store the active sprite number of the cloned moveable sprite, for movement handling when PULLING.
+"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite. Set the value to the desired delay (in millseconds)
 
-"INACTIVE": Used during ending of a push/pull to determine if Dink is currently moving the sprite on which push/pull is being ended.
-   	    0 = Dink IS currently moving the sprite
-	    1 = Dink IS NOT currently moving the sprite
+------------------------------------------
 
-"screen": Used to store the current screen number on initiation of push/pull, for later comparison.
-	  This allows us to detect when Dink changes screens.
-
-"hybkill": Used to force hybup.c to kill itself on it's next loop.
-	   1 = Cause hybup.c to kill itself by running "kill_this_task()".
-
-"dirpmax": Used to store the position Dink's tracker sprite should move to, in order to detect if he is facing and touching the moveable sprites hardbox edge.
-
-"dirpfindtrue": Used to determine if a suitable location has been found to conduct a true direciton/harbox test, when hardbox values have not been passed.
-		1 = Suitable location found
-
-"dirphisactive": Used to indicate whether the moveable sprite has begun direction/hbox manual calaculation when hardbox values have not been passed.
-		 1 = Calculation in progress
-
-"phishybridactive": Used to indicate whether the moveable sprite has begun move limit calculation for STICKY PUSH.
-		    1 = Calculation in progress
-
-"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite.
-
-"talkreturn": Used in the phisbo.c "talk" procedure to store whether the player is currently moving an object to customise "say()" lines.
- 	      Not actually needed as of Push and Pull version 2.05, but left in to retain compatibility of any old moveable sprite scripts.	
-
-"timeractive": Used to check if the push timer conditions have all PASSED succesfully.
-	       1 = push timer if statements all PASSED and a push or pull procedure is safe to proceed.
-   	       2 = push timer if statements failed and push and pull procedure should NOT proceed.
-
-"reset-required": Let's the touch procedure in phisbo.c know whether to reset touch damage and other stuff as well
-                  1 = reset required.
-
-"Initiate-Hybrid": Used to indicate when phishyb.c has been sucessfuly called, and the initiating checks have been started.
-		   1 = phishyb.c has been called.
-
-"pushdir": The direction the sprite is being pushed. 
-	    Returns 2, 4, 6, or 8
-
-"pulldir": The direction the sprite is being pulled.
-	    Returns 2, 4, 6, or 8
-
-"CanPush": Used to determine if Dink's sequence is correct for Push to initiate.
-  	   1 = Dink's sequence is correct for Push to initiate.
-
-"AllowCollision": Used to set whether collision can be allowed to run based on the "setcollision" custom key and the Dink Engine in use.
-		  1 = Collision allowed
-
-"PP-shadow": Used to store the active sprite number of the shadow sprite created in the phisbo.c "touch" procedure.
-             For later use to prevent conflicts and bugs between multiple moveable sprites.
-
-"pseq-origin": Used to store Dink's original sequence BEFORE Push or Pull has initiated, for later comparison.
-
-"dinkox": Used to store Dink's original X position BEFORE Push or Pull has initiated, for later comparison.
-
-"dinkoy": Used to store Dink's original Y position BEFORE Push or Pull has initiated, for later comparison.
-
-"spriteox": Used to store the sprite's original X position BEFORE Push or Pull has initiated, for later comparison.
-
-"spriteoy": Used to store the sprite's original Y position BEFORE Push or Pull has initiated, for later comparison.
-
-"move-axis": Returns which axis Dink is moving the sprite on. 
-             	1 = x       
-	     	2 = y
-
-"stopmove": Used to halt a sprite while being moved by Dink. Dink will not release the sprite, it will simply act as if it cannot move in any direction while this is active.
+"stopmove": Used to halt a sprite immediately, when it is being moved. Dink will not release the sprite, it will simply act as if it cannot move in any direction while this is active.
             Basically, it will act the same as when it is stopped by hardness. Dink will also say the default say line for a sprite unable to move any further (found in "dsmove.c" - "limit" procedure.).
 	    0 = Sprite is free to move
 	    1 = Sprite will halt movement
 
-"hybscript": Used to store the phishyb.c script number, called by the sprite being moved.
+------------------------------------------
 
-"dotchange": Used to slightly alter the calculation of Dink's X or Y position difference to the moveable sprite when PULLING, without actually altering his physical position (so he won’t suddenly shift when pulling).
-	     This allows us to make him stop when the back of his feet hit hardness, even though his depth dot is at the front of him. 
-	     Makes it look more aesthetically pleasing because he won't be walking through things.
-	     This is set accurately at the back of his feet on both the x and y axis. 
-             On the X axis the script will +/- 30 pixels. On the Y axis the script will +/- 20 pixels.
+"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits a sprite, rather than it's depth dot.
+	          1(or higher) = Collision enabled.
 
-"Idle-SkipChecks": Used to automatically limit the checks constantly run every "wait(1)", during a sprite move, so that they only run ONE TIME when the object becomes idle, and then restart when it moves again.
-		   This increases performance by skipping executing redundant stuff. Changing this will have no effect, it’s handled automatically by the push and pull system and activates and deactivates when it determines is best.
-	                0 = DO NOT skip checks
-		   1 = Skip checks
+ 			"trimleft": see below
+ 			"trimtop" : see below
+ 			"trimright": see below
+ 			"trimbottom": see below
+  
+     			The above trim custom keys are used to trim a certain amount of pixels from the designated hardbox side when calculating collision only.
+     			This is useful to allow the sprites to move a bit closer to other sprites, rather than stopping precisely when the hardbox edge meets hardness.
+     			e.g, if you set "trimleft" to 10,  it'll act as if 10 pixels are trimmed off the left harbox edge when calculating collision with other hardness, in all directions.
+          	     	    i.e, the sprite will literally behave as if the hardbox is 10 pixels shorter on the left side, while the sprite is being moved.
 
-"hupmove": Used to store the X or Y cordinate the current sprite is allowed to move to when pushing, based on hardness tracking tests and move axis.
-
-"pupmove": Used to store the X or Y cordinate the current sprite is allowed to move to when pulling, based on hardness tracking tests and move axis.
-
-"huplimit": Used to store the correct limit value to constantly check against when pushing the sprite, taking into account the "Move-Nohard" custom key.
-
-"limitreached": Used to determine if the sprite has reached it's current move limit.
-		1 = move limit reached
-
-"RelockSeq": Either hupseq or pupseq is copied into this custom key, to save on local variables during the Sticky Push move loop.
-
-"HybLim-Moved": Used to determine if certain lines in hybrid limit calculation have already run, and can be skipped on any further loops.
-
- "NoRoomStart": Stores whether there is anough room for Dink to Pull or not on activation of Sticky Push.
-		1 = Not enough room to pull
-
--------------------------
-
-"Dink-Push-Limit": Used to store the objects position, based on Dink's detected push limit. 
-	            i.e, hardness detected in Dink's push path, and then position of rock calculated in relation to where Dink would be when limit is reached, and sprite limit set to the result.
-
-"Sprite-Push-Limit": Used to store the objects detected push limit regardless of Dink’s push limit (if it was calculated that dink hits hardness first and the object must stop, this value DOES NOT take that into account)
-                      i.e, the first hardness the object will come in contact with along the path it’s being moved.
-
-"Dink-Pull-Limit": Used to store the objects position, based on Dink's detected pull limit. 
-	            i.e, hardness detected in Dink's pull path, and then position of rock calculated in relation to where Dink would be when limit is reached, and sprite limit set to the result.
-
-"Sprite-Pull-Limit": Used to store the objects detected pull limit regardless of Dink’s pull limit (if it was calculated that dink hits hardness first and the object must stop, this value DOES NOT take that into account)
-                      i.e, the first hardness the object will come in contact with along the path it’s being moved.
-
--------------------------
+------------------------------------------
 
 "Enable-Limit": Used to enable the X/Y, Min/Max override custom keys. This will make it so the sprite cannot exceed these set X/Y limit values.
-		You cannot use this to override detected hard limits, the sprite will still stop at hardness.
+		You cannot use this to override detected hard limits - use the custom key “move_nohard” to make a sprite ignore hardness when being moved.
 		0 = Disabled
 		1 = Enabled
  		2 = Enabled, and IGNORE values of 0 or -1 in Push and Pull Calculations.
@@ -181,156 +79,78 @@ TUTNOTES:
 - These limits are STRICTLY and PRECISELY enforced as the min/max X and Y position the sprite is allowed to achieve. It's like a hard boundary which will not be breached even by 1 pixel, even with sprite timing issues.
   The X/Y conditions are checked constantly when the sprite is moved in the direction related to a particular limit, and then enforced.
   If you set a limit to a value that the sprite has already breached, the next time it is pushed in the direction of that limit, it will instantly snap back to it's limit so it's not in breach of it.
-  So avoid setting limits that have already been breached by the sprite. Or use the "stopmove" custom key instead if you want to achieve an exceeded limit where the sprite simply can't be moved anymore.
+  SO avoid setting limits that have already been breached by the sprite. Or use the "stopmove" custom key instead if you want to achieve an exceeded limit where the sprite simply can't be moved anymore.
 
 - If you need to set a value to "-1" (which can't be done in a custom key, because "-1" retrieves the custom keys value), set it to "-1111" and push and pull will interpret it as "-1" instead.
 
 - A value of "9999" will cause an individual key to be ignored when “Enable-Limit” is higher than 0. (e.g, you might want to set the "setXmax" value only. You would then set all the others to "9999" so they are ignored).
   OR ALTERNATIVELY - when “Enable-Limit” is ‘2’ any custom key value of ’0’ or ‘-1’ will be ignored. So you can use this setting, set the keys you want, leave the others untouched.
 
--------------------------
+-------------------------------------------
 
-"Col-Hyb-Pull": Stores the script number of the Col-Pull.c instance, spawned when the collision system is active, while calculations are in progress.
+////////////////////////////////
+//Custom Keys to retrieve info//
+////////////////////////////////
 
-"Col-Hyb-Fin": Stores the script number of the Col-Fin.c instance, spawned when the collision system is active, while calculations are in progress.
+Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X position at the time he grabbed the sprite (but before he moved it).
 
--------------------------
+------------------------------------------
 
-"MovePosNeg": Used to set whether Dink will be moving the sprite in a positive or negative direction along the move axis. 
-	      This is updated whenever Dink moves an object in a different direction. In the case of sticky push, it'll update when you swap between pushing and pulling as well.
-              i.e: If sprite's co-ordinate will INCREASE while being pushed, that's a positive direction, if it will DECREASE, it's a negative direction.
+"pushdir": Returns the last known push direction of the sprite(stored at the time Dink last grabbed the sprite)
+	    Returns 2, 4, 6, or 8
+
+"pulldir": Returns the last known pull direction of the sprite(stored at the time Dink last grabbed the sprite)
+	    Returns 2, 4, 6, or 8
+
+------------------------------------------
+
+"dinkox": Returns Dinks X position at the time he grabbed the sprite (but before he moved it).
+
+"dinkoy": Returns Dinks Y position at the time he grabbed the sprite (but before he moved it).
+
+------------------------------------------
+
+"spriteox": Returns a sprites X position at the time Dink grabbed it (but before he moved it).
+
+"spriteoy": Returns a sprites Y position at the time Dink grabbed it (but before he moved it).
+
+------------------------------------------
+
+"move-axis": Returns which axis Dink is currently moving the sprite on. 
+             Returns 1 or 2.
+             1 = x axis   
+	     2 = y axis
+
+------------------------------------------
+
+"move_after_idle": Used to make the “MoveDetectAfter” procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
+                   0 = Run MoveDetectAfter always (even if sprite never moved)
+                   1 = Only run MoveDetectAfter if sprite moved positions
+
+"move_during_idle": Used to make the “MoveDetectDuring” procedure only run if the sprite is currently moving.
+                    0 = Run MoveDetectDuring always (even if sprite isn’t moving)
+                    1 = Only run MoveDetectDuring if sprite is currently moving
+
+"move_idle": A combination of the above. Setting this to 1, is the same as setting both “move_after_idle” and “move_during_idle” to 1.
+
+------------------------------------------
+
+"MovePosNeg": Returns whether Dink is currently moving a sprite in a positive or negative direction. Constantly updated during moving the sprite.
+              i.e: If sprite's co-ordinate is increasing while being moved, that's a positive direction, if it's decreasing, that’s a negative direction.
 	      1 = Negative
 	      2 = Positive
 
-"PushPosNeg": Used to set whether Dink will be pushing the sprite in a positive or negative direction along the move axis.
-              i.e: If sprite's co-ordinate will INCREASE while being pushed, that's a positive direction, if it will DECREASE, it's a negative direction.
+"PushPosNeg": Returns whether Dink will be pushing the sprite in a positive or negative direction. Set at the time Dink grabs the sprite.
 	      1 = Negative
 	      2 = Positive
 
-"PullPosNeg": Used to set whether Dink will be pulling the sprite in a positive or negative direction along the move axis.
-              i.e: If sprite's co-ordinate will INCREASE while being pushed, that's a positive direction, if it will DECREASE, it's a negative direction.
+"PullPosNeg": Returns whether Dink will be pulling the sprite in a positive or negative direction. Set at the time Dink grabs the sprite.
 	      1 = Negative
 	      2 = Positive
 
--------------------------
+------------------------------------------
 
-"phislimit": Used to store the first detected hardness in Dink's path when PUSHING, along the intended move axis, during move limit calculation.
-
-"phislimit2": Used to store the first detected hardness in the moveable sprite's path when PUSHING, along the intended move axis, during move limit calculation.
-
-"plimit": Used to store the first detected hardness in Dink's path when PULLING, along the intended move axis, during move limit calculation.
-
-"plimit2": Used to store the first detected hardness in the moveable sprite's path when PULLING, along the intended move axis, during move limit calculation.
-
--------------------------
-
-"DinkPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in Dink's path along the intended move axis.
-
-"ObjectPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
-
-
-"DinkTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in Dink's path along the intended move axis.
-
-"ObjectTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
-
--------------------------
-
-"phislimittrack1": Used to store Dink's tracker sprite's X or Y position before the move limit test is conducted to later check if hardness has been found.
-		   Used to detect PUSH limit
-
-"phislimittrack2": Used to store the moveable sprite's tracker's X or Y position before the move limit test is conducted to later check if hardness has been found.
-		   Used to detect PUSH limit
-
-"plimittrack1": Used to store Dink's tracker sprite's X or Y position before the move limit test is conducted to later check if hardness has been found.
-		Used to detect PULL limit
-
-"plimittrack2": Used to store the moveable sprite's tracker's X or Y position before the move limit test is conducted to later check if hardness has been found.
-		Used to detect PULL limit
-
--------------------------
-
-"phisdirtracker": Used to store the active sprite number of Dink's tracker sprite, spawned to detect if Dink is correctly facing and touching the moveable sprite's hardbox edge.
-
-"phisdirtracker2": Used to store the active sprite number of the moveable sprite's tracker sprite, spawned as a clone of the moveable sprite, in the detected suitable test location.
-
--------------------------
-
-"dirptrack1": Used to store Dink's tracker sprite's X position before the test os conducted to check if Dink is facing and touching the moveable sprite's hardbox edge.
-
-"dirptrack2": Used to store Dink's tracker sprite's Y position before the test os conducted to check if Dink is facing and touching the moveable sprite's hardbox edge.
-
--------------------------
-
-"hupdiff": Used to store either the X or Y difference between the moveable sprite and Dink When pushing a sprite, depending on which axis he is moving the sprite along.
-	   When Sticky Push is active, hupdiff and pupdiff will still both be stored, even though they will be equal.
-
-"pupdiff": Used to store either the X or Y difference between the moveable sprite and Dink when pulling a sprite, depending on which axis he is moving the sprite along.
-	   When Sticky Push is active, hupdiff and pupdiff will still both be stored, even though they will be equal.
-
--------------------------
-
-"findstartpx": Used to set the X coordinate on the screen, where the manual direction/hardbox detection test should start, if hardbox values were not passed.
-
-"findstartpy": Used to set the Y coordinate on the screen, where the manual direction/hardbox detection test should start, if hardbox values were not passed.
-
-"dirphistrackrun": Used to determine how much to add or subtract from the previous "findstartpx" and "findstartpy" custom keys, to test for the next suitable hardbox face/touch test location.
-
--------------------------
-
-"dirrelpx": Used to store the X position difference between Dink and the object during direction/hardbox calculation.
-
-"dirrelpy": Used to store the Y position difference between Dink and the object during direction/hardbox calculation.
-
--------------------------
-
-"hupseq": Used to store the correct sequence for Dink Pushing, based on his current direction and which hardbox edge of the current sprite is being touched/faced by Dink.
-           (would usually be the "pushdir" custom key + 310)
-
-"pupseq": Used to store the correct sequence for Dink Pulling, based on his current direction and which hardbox edge of the current sprite is being touched/faced by Dink.
-           (would usually be the "pulldir" custom key + 310)
-
--------------------------
-
-"PPMoving" - Custom key used to store if any move(push, pull, or sticky push) has succesfully  completed all checks on a sprite.
-	   1 = checks completed succesfully
-
-"hybactive" - Used to store whether Phishyb.c has succesfully completed all checks on a sprite.
-	       1 = phishyb.c completed succesfully
-
--------------------------
-
-"oldspeed": Used in phisbo.c "main" procedure (called by moveable sprites "main" procedure), to store the sprite's speed.
-	    For use when resetting push and pull, to return the sprite to it's original speed.
- 
-"oldtiming": Used in phisbo.c "main" procedure (called by moveable sprites "main" procedure), to store the sprite's timing.
-	    For use when resetting push and pull, to return the sprite to it's original timing.
-
--------------------------
-
-"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits a sprite, rather than it's depth dot.
-	          1(or higher) = Collision enabled.
-
- 			"trimleft": see below
- 			"trimtop" : see below
- 			"trimright": see below
- 			"trimbottom": see below
-  
-     			The above trim custom keys are used to trim a certain amount of pixels from the designated hardbox side when calculating collision only.
-     			This is useful to allow the sprites to move a bit closer to other sprites, rather than stopping precisely when the hardbox edge meets hardness.
-     			e.g, if you set "trimleft" to 10,  it'll act as if 10 pixels are trimmed off the left harbox edge when calculating collision with other hardness, in all directions.
-          	     	    i.e, the sprite will literally behave as if the hardbox is 10 pixels shorter on the left side, while it is being pushed or pulled.
-
--------------------------
-
-"speedlock": Used to inidicate when a sprite runs speedlock, so other sprites know NOT to reset speed.
-	     1 = speedlock procedure has been called.
-
-  "SkipSpeedReset": Used in conjunction with the "speedlock" custom key, to tell individual sprites to skip their speedreset upon release of a sprite.
-		    1 = (Speedlock custom key > 0) detected on at least one other moveable sprite other than &current_sprite - Skip speed reset on termination of push/pull.
-
--------------------------
-
-"move-status": Returns the CURRENT status of move. 
+"move-status": Returns the CURRENT status of sprite movement. 
 	       	0 = Null (Dink has not initiated push or pull)    
 	       	1 = Dink holding sprite but idle (e.g: reached hardness or sticky push idle). 
 	       	2 = pushing. 
@@ -344,83 +164,300 @@ TUTNOTES:
 		2 = pushing. 
 		3 = pulling.
 
+------------------------------------------
+
+"move-dinkx": Returns Dink's last X position BEFORE the sprite was last moved (Stored/updated only when Dink grabs the sprite)
+
+"move-dinky": Returns Dink's last Y position BEFORE the sprite was last moved (Stored/updated only when Dink grabs the sprite)
+
+"move-sprx": Returns the sprite's last X position BEFORE it was last moved (Stored/updated only when Dink grabs the sprite)
+
+"move-spry": Returns the sprite's last Y position BEFORE it was last moved (Stored/updated only when Dink grabs the sprite)
+
+------------------------------------------
+
+////////////////////
+//CORE custom keys//
+////////////////////
+
+"PPtimerscript": Used to store the spawned pushdelay timer script number.
+
+"PPfdink": Used to store the fake Dink sprite that plays the move animation while a sprite is being moved.
+
+"PPtimerdone": Used to determine when the pushdelay timer is complete.
+
+"PPAllowCollision": Used to set whether collision can be allowed to run based on the "setcollision" custom key and the Dink Engine in use.
+		  1 = Collision allowed
+
+“PPSLR-limit”: Used in hybup.c to temporarily store the move limit value when calculating custom override of move limits.
+
+“PPterminated”: Used to set and determine when a sprite is being manually terminated out of course.
+
+“PPd-speed”: Used to store dink’s s "set_dink_speed” equivelant before push and pull system locks it to -1.
+“PPd-sp_speed”: Used to store dink’s sp_speed equivelant before push and pull system locks it to -1.
+
+“PPdink-fd”: Used to store dink’s frame delay before it is changed to match the speed of the sprite being moved.
+
+"PPPosAltered": Used to determine whether the sprite's position changed after a push or pull was initiated.
+	      0 = No change
+	      1 = Position changed.
+
+"PPInitiate-END": Used to determine if an instance of phisend.c has run for the moveable sprite.
+
+"PPHybSpriteClone": Used to store the active sprite number of the cloned moveable sprite, for movement handling when PULLING.
+
+"PPINACTIVE": Used during ending of a push/pull to determine if Dink is currently moving the sprite on which push/pull is being ended.
+   	    0 = Dink IS currently moving the sprite
+	    1 = Dink IS NOT currently moving the sprite
+
+"PPscreen": Used to store the current screen number on initiation of push/pull, for later comparison.
+	  This allows us to detect when Dink changes screens.
+
+"PPhybkill": Used to force hybup.c to kill itself on it's next loop.
+	   1 = Cause hybup.c to kill itself by running "kill_this_task()".
+
+"PPdirpmax": Used to store the position Dink's tracker sprite should move to, in order to detect if he is facing and touching the moveable sprites hardbox edge.
+
+"PPdirpfindtrue": Used to determine if a suitable location has been found to conduct a true direciton/harbox test, when hardbox values have not been passed.
+		1 = Suitable location found
+
+"PPdirphisactive": Used to indicate whether the moveable sprite has begun direction/hbox manual calaculation when hardbox values have not been passed.
+		 1 = Calculation in progress
+
+"PPphishybridactive": Used to indicate whether the moveable sprite has begun move limit calculation for STICKY PUSH.
+		    1 = Calculation in progress
+
+"PPreset-required": Let's the touch procedure in phisbo.c know whether to reset touch damage and other stuff as well
+                  1 = reset required.
+
+"PPInitiate-Hybrid": Used to indicate when phishyb.c has been sucessfuly called, and the initiating checks have been started.
+		   1 = phishyb.c has been called.
+
+"PPCanPush": Used to determine if Dink's sequence is correct for Push to initiate.
+  	   1 = Dink's sequence is correct for Push to initiate.
+
+"PP-shadow": Used to store the active sprite number of the shadow sprite created in the phisbo.c "touch" procedure.
+             For later use to prevent conflicts and bugs between multiple moveable sprites.
+
+"PPpseq-origin": Used to store Dink's original sequence BEFORE Push or Pull has initiated, for later comparison.
+
+"PPhybscript": Used to store the phishyb.c script number, called by the sprite being moved.
+
+"PPdotchange": Used to slightly alter the calculation of Dink's X or Y position difference to the moveable sprite when PULLING, without actually altering his physical position (so he won’t suddenly shift when pulling).
+	     This allows us to make him stop when the back of his feet hit hardness, even though his depth dot is at the front of him. 
+	     Makes it look more aesthetically pleasing because he won't be walking through things.
+	     This is set accurately at the back of his feet on both the x and y axis. 
+             On the X axis the script will +/- 30 pixels. On the Y axis the script will +/- 20 pixels.
+
+"PPIdle-SkipChecks": Used to automatically limit the checks constantly run every "wait(1)", during a sprite move, so that they only run ONE TIME when the object becomes idle, and then restart when it moves again.
+		   This increases performance by not executing redundant blocks of code. 
+	           0 = DO NOT skip checks
+		   1 = Skip checks
+
+"PPhupmove": Used to store the X or Y cordinate the current sprite is allowed to move to when pushing, based on hardness tracking tests and move axis.
+
+"PPpupmove": Used to store the X or Y cordinate the current sprite is allowed to move to when pulling, based on hardness tracking tests and move axis.
+
+"PPhuplimit": Used to store the correct limit value to constantly check against when pushing the sprite, taking into account the "move_nohard" custom key.
+
+"PPpuplimit": Used to store the correct limit value to constantly check against when pulling the sprite, taking into account the "move_nohard" custom key.
+
+"PPlimitreached": Used to determine if the sprite has reached it's current move limit.
+		1 = move limit reached
+
+"PPRelockSeq": Either PPhupseq or PPpupseq is copied into this custom key, to save on local variables during phisend.c.
+
+"PPHybLim-Moved": Used to determine if certain lines in hybrid limit calculation have already run, and can be skipped on any further loops.
+
+"PPNoRoomStart": Stores whether there is anough room for Dink to Pull or not on activation of Sticky Push.
+	       1 = Not enough room to pull
+
 -------------------------
 
-"HBOX": Used to determine if hardbox values have been passed to phisbo.c by the dmod developer, allowing many calculations to be bypassed and lag removal.
+"PPDink-Push-Limit": Used to store the objects position, based on Dink's detected push limit. 
+	            i.e, hardness detected in Dink's push path, and then position of rock calculated in relation to where Dink would be when limit is reached, and sprite limit set to the result.
+
+"PPSprite-Push-Limit": Used to store the objects detected push limit regardless of Dink’s push limit (if it was calculated that dink hits hardness first and the object must stop, this value DOES NOT take that into account)
+                      i.e, the first hardness the object will come in contact with along the path it’s being moved.
+
+"PPDink-Pull-Limit": Used to store the objects position, based on Dink's detected pull limit. 
+	            i.e, hardness detected in Dink's pull path, and then position of rock calculated in relation to where Dink would be when limit is reached, and sprite limit set to the result.
+
+"PPSprite-Pull-Limit": Used to store the objects detected pull limit regardless of Dink’s pull limit (if it was calculated that dink hits hardness first and the object must stop, this value DOES NOT take that into account)
+                      i.e, the first hardness the object will come in contact with along the path it’s being moved.
+
+
+-------------------------
+
+"PPCol-Hyb-Pull": Stores the script number of the Col-Pull.c instance, spawned when the collision system is active, while calculations are in progress.
+
+"PPCol-Hyb-Fin": Stores the script number of the Col-Fin.c instance, spawned when the collision system is active, while calculations are in progress.
+
+-------------------------
+
+"PPphislimit": Used to store the first detected hardness in Dink's path when PUSHING, along the intended move axis, during move limit calculation.
+
+"PPphislimit2": Used to store the first detected hardness in the moveable sprite's path when PUSHING, along the intended move axis, during move limit calculation.
+
+"PPplimit": Used to store the first detected hardness in Dink's path when PULLING, along the intended move axis, during move limit calculation.
+
+"PPplimit2": Used to store the first detected hardness in the moveable sprite's path when PULLING, along the intended move axis, during move limit calculation.
+
+-------------------------
+
+"PPDinkPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in Dink's path along the intended move axis.
+“PPDinkPhisTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkPhisTracker". Used to cross-reference for a bugfix.
+
+"PPObjectPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
+“PPObjectPhisTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPObjectPhisTracker". Used to cross-reference for a bugfix
+
+"PPDinkTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in Dink's path along the intended move axis.
+“PPDinkTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkTracker". Used to cross-reference for a bugfix
+
+"PPObjectTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
+"PPObjectTrackerfix": Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPObjectTracker". Used to cross-reference for a bugfix
+
+-------------------------
+
+"PPphislimittrack1": Used to store Dink's tracker sprite's X or Y position before the move limit test is conducted to later check if hardness has been found.
+		     Used to detect PUSH limit
+
+"PPphislimittrack2": Used to store the moveable sprite's tracker's X or Y position before the move limit test is conducted to later check if hardness has been found.
+		     Used to detect PUSH limit
+
+"PPplimittrack1": Used to store Dink's tracker sprite's X or Y position before the move limit test is conducted to later check if hardness has been found.
+		  Used to detect PULL limit
+
+"PPplimittrack2": Used to store the moveable sprite's tracker's X or Y position before the move limit test is conducted to later check if hardness has been found.
+		  Used to detect PULL limit
+
+-------------------------
+
+"PPphisdirtracker": Used to store the active sprite number of Dink's tracker sprite, spawned to detect if Dink is correctly facing and touching the moveable sprite's hardbox edge.
+
+"PPphisdirtracker2": Used to store the active sprite number of the moveable sprite's tracker sprite, spawned as a clone of the moveable sprite, in the detected suitable test location.
+
+"PPphisdirtrackerfix": Used to store the sprite being moved in a custom key attached to the sprites stored in "PPphisdirtracker" and "PPphisdirtracker2". Used as cross-reference for a bugfix.
+
+-------------------------
+
+"PPdirptrack1": Used to store Dink's tracker sprite's X position before the test os conducted to check if Dink is facing and touching the moveable sprite's hardbox edge.
+
+"PPdirptrack2": Used to store Dink's tracker sprite's Y position before the test os conducted to check if Dink is facing and touching the moveable sprite's hardbox edge.
+
+-------------------------
+
+"PPhupdiff": Used to store either the X or Y difference between the moveable sprite and Dink When pushing a sprite, depending on which axis he is moving the sprite along.
+	   When Sticky Push is active, PPhupdiff and PPpupdiff will still both be stored, even though they will be equal.
+
+"PPpupdiff": Used to store either the X or Y difference between the moveable sprite and Dink when pulling a sprite, depending on which axis he is moving the sprite along.
+	   When Sticky Push is active, PPhupdiff and PPpupdiff will still both be stored, even though they will be equal.
+
+-------------------------
+
+"PPfindstartpx": Used to set the X coordinate on the screen, where the manual direction/hardbox detection test should start, if hardbox values were not passed.
+
+"PPfindstartpy": Used to set the Y coordinate on the screen, where the manual direction/hardbox detection test should start, if hardbox values were not passed.
+
+"PPdirphistrackrun": Used to determine how much to add or subtract from the previous "PPfindstartpx" and "PPfindstartpy" custom keys, to test for the next suitable hardbox face/touch test location.
+
+-------------------------
+
+"PPdirrelpx": Used to store the X position difference between Dink and the object during direction/hardbox calculation.
+
+"PPdirrelpy": Used to store the Y position difference between Dink and the object during direction/hardbox calculation.
+
+-------------------------
+
+"PPhupseq": Used to store the correct sequence for Dink Pushing, based on his current direction and which hardbox edge of the current sprite is being touched/faced by Dink.
+           (would usually be the "pushdir" custom key + 310)
+
+"PPpupseq": Used to store the correct sequence for Dink Pulling, based on his current direction and which hardbox edge of the current sprite is being touched/faced by Dink.
+           (would usually be the "pulldir" custom key + 310)
+
+-------------------------
+
+"PPMoving": Custom key used to store if any move(push, pull, or sticky push) has succesfully  completed all checks on a sprite.
+	     1 = checks completed succesfully
+
+"PPhybactive": Used to store whether Phishyb.c has succesfully completed all checks on a sprite.
+	       1 = phishyb.c completed succesfully
+
+-------------------------
+
+"PPoldspeed": Used in phisbo.c "main" procedure (called by move-able sprites "main" procedure), to store the sprite's speed.
+	    For use when resetting push and pull, to return the sprite to it's original speed.
+ 
+"PPoldtiming": Used in phisbo.c "main" procedure (called by moveable sprites "main" procedure), to store the sprite's timing.
+	    For use when resetting push and pull, to return the sprite to it's original timing.
+
+-------------------------
+
+"PPspeedlock": Used to inidicate when a sprite runs speedlock, so other sprites know NOT to reset speed.
+	     1 = speedlock procedure has been called.
+
+  "PPSkipSpeedReset": Used in conjunction with the "PPspeedlock" custom key, to tell individual sprites to skip their speedreset upon release of a sprite.
+		    1 = (Speedlock custom key > 0) detected on at least one other moveable sprite other than &current_sprite - Skip speed reset on termination of push/pull.
+
+-------------------------
+
+"PPHBOX": Used to determine if hardbox values have been passed to phisbo.c by the dmod developer, allowing many calculations to be bypassed and lag removal.
 	1 = Hardbox values passed.
 
-"LEFT-BOX": Used to store the value of the LEFT hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
+"PPLEFT-BOX": Used to store the value of the LEFT hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
 
-"TOP-BOX": Used to store the value of the TOP hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
+"PPTOP-BOX": Used to store the value of the TOP hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
 
-"RIGHT-BOX": Used to store the value of the RIGHT hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
+"PPRIGHT-BOX": Used to store the value of the RIGHT hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
 
-"BOTTOM-BOX": Used to store the value of the BOTTOM hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
-
--------------------------
-
-"LEFTBOX-POS": Used to store the current X value of the moveable sprite's LEFT hardbox edge, on the screen.
-
-"TOPBOX-POS": Used to store the current Y value of the moveable sprite's TOP hardbox edge, on the screen.
-
-"RIGHTBOX-POS": Used to store the current X value of the moveable sprite's RIGHT hardbox edge, on the screen.
-
-"BOTTOMBOX-POS": Used to store the current Y value of the moveable sprite's BOTTOM hardbox edge, on the screen.
+"PPBOTTOM-BOX": Used to store the value of the BOTTOM hardbox value from dink.ini, if passed to the phisbo.c "main" procedure by the author.
 
 -------------------------
 
-"move-dinkx": Returns Dink's last X position BEFORE the sprite was last moved.
+"PPLEFTBOX-POS": Used to store the current X value of the moveable sprite's LEFT hardbox edge, on the screen.
 
-"move-dinky": Returns Dink's last Y position BEFORE the sprite was last moved.
+"PPTOPBOX-POS": Used to store the current Y value of the moveable sprite's TOP hardbox edge, on the screen.
 
-"move-sprx": Returns the sprite's last X position BEFORE it was last moved
+"PPRIGHTBOX-POS": Used to store the current X value of the moveable sprite's RIGHT hardbox edge, on the screen.
 
-"move-spry": Returns the sprite's last Y position BEFORE it was last moved
-
-------------------------
-
-"move_after_idle": Used to make the “MoveDetectAfter” procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
-                          0 = Run MoveDetectAfter always (even if sprite never moved)
-                          1 = Only run MoveDetectAfter if sprite moved positions
-
-"move_during_idle": Used to make the “MoveDetectDuring” procedure only run if the sprite mis moving (If Dink is holding it but not moving, it won’t run)
-                           0 = Run MoveDetectDuring always (even if sprite isn’t moving)
-                           1 = Only run MoveDetectDuring if sprite is currently moving
-
-"move_idle": A combination of the above. Setting this to 1, is the same as setting both “move_after_idle” and “move_during_idle” to 1.
+"PPBOTTOMBOX-POS": Used to store the current Y value of the moveable sprite's BOTTOM hardbox edge, on the screen.
 
 ------------------------
 
-"TrackerPhis#": Used to store the active sprite number of the tracker sprites created to detect hardness for the hardbox collision system, when PUSHING.
+"PPHBOX-VERT": Used to store the HEIGHT of the moveable sprite's hardbox during collision calculation.
+
+"PPHBOX-HORIZ": Used to store the LENGTH of the moveable sprite's hardbox during collision calculation.
+
+"PPHBOX-HorV": Used to indicate wheter to base collision calculations of Height or Length of moveable sprite's hardbox.
+
+------------------------
+
+"PPTrackerPhis#": Used to store the active sprite number of the tracker sprites created to detect hardness for the hardbox collision system, when PUSHING.
                 (# ranges from 1 - 7 inclusive)
 
-"TrackerPhisLimit#": Used to store tracker sprite's X or Y position before the collision test is conducted to later check if hardness has been found.
+"PPTrackerPhisLimit#": Used to store tracker sprite's X or Y position before the collision test is conducted to later check if hardness has been found.
 		     Used to detect PUSH limit
                      (# ranges from 1 - 7 inclusive). 
 
-"TrackerPhisLimit#-ret": Used to store the first detected hardness in the tracker sprite's path when PUSHING, along the intended move axis, during collision calculation.
+"PPTrackerPhisLimit#-ret": Used to store the first detected hardness in the tracker sprite's path when PUSHING, along the intended move axis, during collision calculation.
                          (# ranges from 1 - 7 inclusive).
 
-"Tracker#": Used to store the active sprite number of the tracker sprites created to detect hardness for the hardbox collision system, when PULLING.
+"PPTracker#": Used to store the active sprite number of the tracker sprites created to detect hardness for the hardbox collision system, when PULLING.
             (# ranges from 1 - 7 inclusive)
 
-"TrackerLimit#": Used to store tracker sprite's X or Y position before the collision test is conducted to later check if hardness has been found.
+"PPTrackerLimit#": Used to store tracker sprite's X or Y position before the collision test is conducted to later check if hardness has been found.
 		 Used to detect PULL limit
                  (# ranges from 1 - 7 inclusive). 
 
-"TrackerLimit#-ret": Used to store the first detected hardness in the tracker sprite's path when PULLING, along the intended move axis, during collision calculation.
+"PPTrackerLimit#-ret": Used to store the first detected hardness in the tracker sprite's path when PULLING, along the intended move axis, during collision calculation.
                      (# ranges from 1 - 7 inclusive). 
 
-"TrackerPhisCounter": Used to count the created Tracker sprites during the creation loop, during the initiating phase of the collision system, when PUSHING.
+"PPTrackerPhisCounter": Used to count the created Tracker sprites during the creation loop, during the initiating phase of the collision system, when PUSHING.
 
-"TrackerPhismax": Used to set a limit on the maximum allowed number of tracker sprites to be created along a sprite's hardbox edge during collision calculation, when PUSHING.
+"PPTrackerPhismax": Used to set a limit on the maximum allowed number of tracker sprites to be created along a sprite's hardbox edge during collision calculation, when PUSHING.
 
-"TrackerCounter": Used to count the created Tracker sprites during the creation loop, during the initiating phase of the collision system, when PULLING.
+"PPTrackerCounter": Used to count the created Tracker sprites during the creation loop, during the initiating phase of the collision system, when PULLING.
 
-"Trackermax": Used to set a limit on the maximum allowed number of tracker sprites to be created along a sprite's hardbox edge during collision calculation, when PULLING.
+"PPTrackermax": Used to set a limit on the maximum allowed number of tracker sprites to be created along a sprite's hardbox edge during collision calculation, when PULLING.
 
-"HBOX-VERT": Used to store the HEIGHT of the moveable sprite's hardbox during collision calculation.
-
-"HBOX-HORIZ": Used to store the LENGTH of the moveable sprite's hardbox during collision calculation.
-
-"HBOX-HorV": Used to indicate wheter to base collision calculations of Height or Length of moveable sprite's hardbox.
+“PPdone”: Used to determine when tracker sprites have done their job.

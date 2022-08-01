@@ -2,15 +2,15 @@ void hybrid(void)
 {
 //HYBRID "Sticky push" system- gets all the stuff ready in preperation for push and pull, and spawns hybup.c
  //a custom key to mark this proc has proceeded
- sp_custom("Initiate-Hybrid", &current_sprite, 1);
+ sp_custom("PPInitiate-Hybrid", &current_sprite, 1);
 
  //assures dink's original sequence HAS NOT changed.
  &save_x = sp_pseq(1, -1);
- &save_y = sp_custom("pseq-origin", &current_sprite, -1);
+ &save_y = sp_custom("PPpseq-origin", &current_sprite, -1);
  if (&save_x != &save_y)
  {
   //it has changed - end it
-  sp_custom("reset-required", &current_sprite, 1);
+  sp_custom("PPreset-required", &current_sprite, 1);
   kill_this_task();
  }
 
@@ -19,26 +19,26 @@ void hybrid(void)
  	int &val2 = 0; 
 
  //make sure Dink is trying to push the object, and not just idling
- &save_x = sp_custom("pseq-origin", &current_sprite, -1);
+ &save_x = sp_custom("PPpseq-origin", &current_sprite, -1);
  if (&save_x > 10)
  { 
   if (&save_x < 20)
   {
    //he's idling - end this now.
-   sp_custom("reset-required", &current_sprite, 1);
+   sp_custom("PPreset-required", &current_sprite, 1);
    kill_this_task();
   }
  }
 
   //If HBOX custom key is 0, no hardbox values have been passed to phisbo.c - so we'll have to call a script to figure out if Dink is standing next to the hardbox
-   &val1 = sp_custom("HBOX", &current_sprite, -1);
+   &val1 = sp_custom("PPHBOX", &current_sprite, -1);
    if (&val1 == 0)
    {
     external("phispull", "auto_detect");
     &save_x = &return;
     if (&save_x == 1)
     {
-     sp_custom("reset-required", &current_sprite, 1);
+     sp_custom("PPreset-required", &current_sprite, 1);
      kill_this_task();
     }
    }
@@ -48,7 +48,7 @@ void hybrid(void)
     &save_x = &return;
     if (&save_x == 1)
     {
-     sp_custom("reset-required", &current_sprite, 1);
+     sp_custom("PPreset-required", &current_sprite, 1);
      kill_this_task();
     }
    }    
@@ -56,16 +56,16 @@ void hybrid(void)
  //if direction calculation took place there was a wait, so let's run a seqcheck again.
  //assures dink's original sequence HAS NOT changed.
  //and also assure his position and direction haven't changed
- &val1 = sp_custom("HBOX", &current_sprite, -1);
+ &val1 = sp_custom("PPHBOX", &current_sprite, -1);
  if (&val1 == 0) 
  {
   //seq check
   &save_x = sp_pseq(1, -1);
-  &save_y = sp_custom("pseq-origin", &current_sprite, -1);
+  &save_y = sp_custom("PPpseq-origin", &current_sprite, -1);
   if (&save_x != &save_y)
   {
    //it has changed - end it
-   sp_custom("reset-required", &current_sprite, 1);
+   sp_custom("PPreset-required", &current_sprite, 1);
    kill_this_task();
   }
 
@@ -77,13 +77,13 @@ void hybrid(void)
   if (&save_x != &val1)
   {
    //it has changed - end it
-   sp_custom("reset-required", &current_sprite, 1);
+   sp_custom("PPreset-required", &current_sprite, 1);
    kill_this_task();
   }  
   if (&save_y != &val2)
   {
    //it has changed - end it
-   sp_custom("reset-required", &current_sprite, 1);
+   sp_custom("PPreset-required", &current_sprite, 1);
    kill_this_task();
   } 
  
@@ -93,7 +93,7 @@ void hybrid(void)
   if (&save_x != &save_y)
   {
    //it has changed - end it
-   sp_custom("reset-required", &current_sprite, 1);
+   sp_custom("PPreset-required", &current_sprite, 1);
    kill_this_task();  
   }  
  }
@@ -106,8 +106,8 @@ void hybrid(void)
   {
     //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
     //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
-    sp_custom("reset-required", &current_sprite, 1);
-    sp_custom("terminated", &current_sprite, 1);
+    sp_custom("PPreset-required", &current_sprite, 1);
+    sp_custom("PPterminated", &current_sprite, 1);
     &save_y = is_script_attached(&current_sprite);
     if (&save_y > 0)
     {
@@ -121,7 +121,7 @@ void hybrid(void)
    //let's store Dink's required push sequence away in a custom key
    &save_x = sp_custom("pushdir", &current_sprite, -1);
    &save_x += 310;
-   sp_custom("hupseq", &current_sprite, &save_x);
+   sp_custom("PPhupseq", &current_sprite, &save_x);
 
    //Let's store Dink's required pull sequence away in a custom key
    //Dink's pull sequence will be the opposite to his push sequence
@@ -133,7 +133,7 @@ void hybrid(void)
    //This way we can differentiate the players seq and dir, but visually it's the same.
    &save_x = sp_custom("pulldir", &current_sprite, -1);
    &save_x += 310;
-   sp_custom("pupseq", &current_sprite, &save_x);
+   sp_custom("PPpupseq", &current_sprite, &save_x);
 
    //let's get the difference between the object and dink
    //First we check if we need the x or y coordinate
@@ -157,10 +157,10 @@ void hybrid(void)
     &save_y = -1111;
    
    //save the difference between dink and the object for later
-   sp_custom("hupdiff", &current_sprite, &save_y);
-   sp_custom("pupdiff", &current_sprite, &save_y);
+   sp_custom("PPhupdiff", &current_sprite, &save_y);
+   sp_custom("PPpupdiff", &current_sprite, &save_y);
 
-     //"dotchange" custom key - basically wanting to shift where the depth dot would be
+     //"PPdotchange" custom key - basically wanting to shift where the depth dot would be
       	//(without actually doing it)
      //the normal Dink push depth dot is at the FRONT of him.
      //but when pulling, we want him to stop when his back foot hits hardness
@@ -170,16 +170,16 @@ void hybrid(void)
      //so he stops some pixels before the detected hardness instead. 
        &save_x = sp_custom("pulldir", &current_sprite, -1);
        if (&save_x == 2)
-        sp_custom("dotchange", &current_sprite, -20);
+        sp_custom("PPdotchange", &current_sprite, -20);
 
        if (&save_x == 4)
-        sp_custom("dotchange", &current_sprite, 30);
+        sp_custom("PPdotchange", &current_sprite, 30);
 
        if (&save_x == 6)
-        sp_custom("dotchange", &current_sprite, -30);
+        sp_custom("PPdotchange", &current_sprite, -30);
 
        if (&save_x == 8)
-        sp_custom("dotchange", &current_sprite, 20);
+        sp_custom("PPdotchange", &current_sprite, 20);
 
  //Store Dink's speed in a custom key for later retrieval
  //we can retrieve the sp_speed equivelant of Dink and convert it to dink_speed value.
@@ -217,8 +217,8 @@ void hybrid(void)
  //save the speed and timing of the sprite in case we need to change it
  &save_x = sp_speed(&current_sprite, -1);
  &save_y = sp_timing(&current_sprite, -1);
- sp_custom("oldspeed", &current_sprite, &save_x);
- sp_custom("oldtiming", &current_sprite, &save_y);    
+ sp_custom("PPoldspeed", &current_sprite, &save_x);
+ sp_custom("PPoldtiming", &current_sprite, &save_y);    
    
  //assure the speed of the sprite isn't too fast, we don't want dink walking faster than his speed
    //We COULD check dink's speed directly, since a wait line hasn't occured since setting it to -1
@@ -233,16 +233,16 @@ void hybrid(void)
   sp_timing(&current_sprite, 0);
  }
  
- sp_custom("speedlock", &current_sprite, 1);
+ sp_custom("PPspeedlock", &current_sprite, 1);
  
  //failsafe speedlock check
- &save_x = sp_custom("speedlock", 1, -1);
+ &save_x = sp_custom("PPspeedlock", 1, -1);
  if (&save_x <= 0)
  {
   &save_x = 0;
  }
  &save_x += 1;
- sp_custom("speedlock", 1, &save_x); 
+ sp_custom("PPspeedlock", 1, &save_x); 
 
  //assure Dink's frame delay is correct for sprite move speed
  //also store dink's frame delay in a custom key for later retrieval
@@ -313,7 +313,7 @@ void hybrid(void)
    } 
    //assures dink's original sequence HAS NOT changed.
    &save_x = sp_pseq(1, -1);
-   &save_y = sp_custom("pseq-origin", &current_sprite, -1);
+   &save_y = sp_custom("PPpseq-origin", &current_sprite, -1);
    if (&save_x != &save_y)
    {
      //trigger the end, and pass dink's original speed and frame_delay to the procedure
@@ -348,7 +348,7 @@ void hybrid(void)
       if (&save_y == &save_x)
       {
        //make sure the push procedure has actually run on the other detected object, or else cancel this
-       &save_y = sp_custom("hybactive", &val1, -1);
+       &save_y = sp_custom("PPhybactive", &val1, -1);
        if (&save_y <= 0)
        {
         &save_x += 1;
@@ -370,7 +370,7 @@ void hybrid(void)
     //////////////////////////
 
  //this is to store the fact that all checks have passed and 'Hybrid' is active.
- sp_custom("hybactive", &current_sprite, 1);  
+ sp_custom("PPhybactive", &current_sprite, 1);  
 
  //generic active key, regardless of push, pull or sticky push for use in button4.c
  sp_custom("PPMoving", &current_sprite, 1); 
@@ -382,14 +382,14 @@ void hybrid(void)
  //MARKER - "INIT" Lines removed in favor of fakedink creation sprite.
 
  //create the fake dink and shadow it to dink
- &save_y = sp_custom("hupseq", &current_sprite, -1);
+ &save_y = sp_custom("PPhupseq", &current_sprite, -1);
  &val1 = sp_x(1, -1);
  &val2 = sp_y(1, -1);
  &save_x = create_sprite(&val1, &val2, 6, &save_y, 1);
  sp_seq(&save_x, &save_y);
  sp_brain(&save_x, 15);
  sp_brain_parm(&save_x, 1);
- sp_custom("fdink", &current_sprite, &save_x);
+ sp_custom("PPfdink", &current_sprite, &save_x);
  &save_y = sp_frame_delay(1, -1);
  sp_frame_delay(&save_x, &save_y);
 
@@ -398,7 +398,7 @@ void hybrid(void)
   
  //save the current script in custom key "pullscript"
  &save_x = &current_script;
- sp_custom("hybscript", &current_sprite, &save_x);
+ sp_custom("PPhybscript", &current_sprite, &save_x);
 
    //create a clone of this sprite to handle the moving so it won't get interrupted by procedures.
    &save_x = sp_pseq(&current_sprite, -1);
@@ -413,10 +413,10 @@ void hybrid(void)
    &val2 = sp_timing(&current_sprite, -1);
    sp_speed(&save_x, &val1);
    sp_timing(&save_x, &val2);
-   sp_custom("HybSpriteClone", &current_sprite, &save_x);
+   sp_custom("PPHybSpriteClone", &current_sprite, &save_x);
 
  //reset the initiate end custom key
- sp_custom("Initiate-END", &current_sprite, 0);
+ sp_custom("PPInitiate-END", &current_sprite, 0);
 
  //update the x and y coordinate custom keys to retain last position before move
  &save_x = sp_x(1, -1);
@@ -435,13 +435,13 @@ void hybrid(void)
  //Spawn hybup.c - hybup.c does a few different things, see the comments in that script for more info
  spawn("hybup"); 
  
- sp_custom("hybscript", &current_sprite, 0); 
+ sp_custom("PPhybscript", &current_sprite, 0); 
  kill_this_task();
 }
 
 void end(void)
 {
- sp_custom("hybscript", &current_sprite, 0);
+ sp_custom("PPhybscript", &current_sprite, 0);
  external("PhisEnd", "end", 0, 0, 0, &current_sprite);
  
  kill_this_task();
@@ -449,13 +449,13 @@ void end(void)
 
 void multipushend(void)
 {
- sp_custom("hybscript", &current_sprite, 0);
+ sp_custom("PPhybscript", &current_sprite, 0);
  external("PhisEnd", "end", 10, 0, 0, &current_sprite);
  kill_this_task();
 }
 
 void killhyb(void)
 {
- sp_custom("hybscript", &current_sprite, 0); 
+ sp_custom("PPhybscript", &current_sprite, 0); 
  kill_this_task();
 }

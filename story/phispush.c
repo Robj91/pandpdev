@@ -14,26 +14,26 @@ void quick_check(void)
     &save_y = sp_y(&current_sprite, -1);
     
     //current position of left boundary
-    &val1 = sp_custom("LEFT-BOX", &current_sprite, -1);
+    &val1 = sp_custom("PPLEFT-BOX", &current_sprite, -1);
     &val1 += &save_x; 
-    sp_custom("LEFTBOX-POS", &current_sprite, &val1);
+    sp_custom("PPLEFTBOX-POS", &current_sprite, &val1);
     
     //current position of top boundary
-    &val1 = sp_custom("TOP-BOX", &current_sprite, -1);
+    &val1 = sp_custom("PPTOP-BOX", &current_sprite, -1);
     &val1 += &save_y; 
-    sp_custom("TOPBOX-POS", &current_sprite, &val1);
+    sp_custom("PPTOPBOX-POS", &current_sprite, &val1);
     
     //current position of right boundary
-    &val1 = sp_custom("RIGHT-BOX", &current_sprite, -1);
+    &val1 = sp_custom("PPRIGHT-BOX", &current_sprite, -1);
     &val1 += &save_x; 
     &val1 -= 1;
-    sp_custom("RIGHTBOX-POS", &current_sprite, &val1);
+    sp_custom("PPRIGHTBOX-POS", &current_sprite, &val1);
    
     //current position of bottom boundary
-    &val1 = sp_custom("BOTTOM-BOX", &current_sprite, -1);
+    &val1 = sp_custom("PPBOTTOM-BOX", &current_sprite, -1);
     &val1 += &save_y; 
     &val1 -= 1;
-    sp_custom("BOTTOMBOX-POS", &current_sprite, &val1);
+    sp_custom("PPBOTTOMBOX-POS", &current_sprite, &val1);
    
     //check if dink is in the correct position and facing the sprites hardness
     &save_x = sp_custom("pushdir", &current_sprite, -1);
@@ -43,7 +43,7 @@ void quick_check(void)
    
      //assure he is above the sprites hard box
      &save_y = sp_y(1, -1);
-     &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
+     &val1 = sp_custom("PPTOPBOX-POS", &current_sprite, -1);
      
      if (&save_y < &val1)
      {
@@ -53,10 +53,10 @@ void quick_check(void)
       {
        //now make sure he is not too far to the right or left (could be right on the corner)
        &save_y = sp_x(1, -1);
-       &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
+       &val1 = sp_custom("PPLEFTBOX-POS", &current_sprite, -1);
        if (&save_y >= &val1)
        {
-        &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);  
+        &val1 = sp_custom("PPRIGHTBOX-POS", &current_sprite, -1);  
         if (&save_y <= &val1)
         {
          //Dink is in correct position.
@@ -70,7 +70,7 @@ void quick_check(void)
     if (&save_x == 4)
     {
      &save_y = sp_x(1, -1);
-     &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);
+     &val1 = sp_custom("PPRIGHTBOX-POS", &current_sprite, -1);
       
      if (&save_y > &val1)
      {
@@ -78,10 +78,10 @@ void quick_check(void)
       if (&save_y == 1)
       {
        &save_y = sp_y(1, -1);
-       &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
+       &val1 = sp_custom("PPTOPBOX-POS", &current_sprite, -1);
        if (&save_y >= &val1)
        {
-        &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);  
+        &val1 = sp_custom("PPBOTTOMBOX-POS", &current_sprite, -1);  
         if (&save_y <= &val1)
         {
          return(0);
@@ -93,7 +93,7 @@ void quick_check(void)
     if (&save_x == 6)
     {
      &save_y = sp_x(1, -1);
-     &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
+     &val1 = sp_custom("PPLEFTBOX-POS", &current_sprite, -1);
       
      if (&save_y < &val1)
      {
@@ -101,10 +101,10 @@ void quick_check(void)
       if (&val1 == 1)
       {
        &save_y = sp_y(1, -1);
-       &val1 = sp_custom("TOPBOX-POS", &current_sprite, -1);
+       &val1 = sp_custom("PPTOPBOX-POS", &current_sprite, -1);
        if (&save_y >= &val1)
        {
-        &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);
+        &val1 = sp_custom("PPBOTTOMBOX-POS", &current_sprite, -1);
         if (&save_y <= &val1)
         {
          return(0);
@@ -116,7 +116,7 @@ void quick_check(void)
     if (&save_x == 8)
     {
      &save_y = sp_y(1, -1);
-     &val1 = sp_custom("BOTTOMBOX-POS", &current_sprite, -1);
+     &val1 = sp_custom("PPBOTTOMBOX-POS", &current_sprite, -1);
      
      if (&save_y > &val1)
      {
@@ -124,10 +124,10 @@ void quick_check(void)
       if (&save_y == 1)
       {
        &save_y = sp_x(1, -1);
-       &val1 = sp_custom("LEFTBOX-POS", &current_sprite, -1);
+       &val1 = sp_custom("PPLEFTBOX-POS", &current_sprite, -1);
        if (&save_y >= &val1)
        {
-        &val1 = sp_custom("RIGHTBOX-POS", &current_sprite, -1);  
+        &val1 = sp_custom("PPRIGHTBOX-POS", &current_sprite, -1);  
         if (&save_y <= &val1)
         {
          return(0);
