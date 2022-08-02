@@ -113,20 +113,8 @@ void touch(void)
     kill_this_task();
    } 
 
-   //decide on which base custom keys we are using (Dink, sprite, or none(default)
-   //idle
-   &save_y = sp_custom("base_idle", &current_sprite, -1);
-   if (&save_y <= 0)
-   {
-    &save_y = sp_custom("base_idle", 1, -1);
-    if (&save_y <= 0)
-    {
-     &save_y = 10;
-    }
-    sp_custom("base_idle", &current_sprite, &save_y);
-   }
-
-   //walk
+   //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
+   &save_x = sp_pseq(1, -1);
    &save_y = sp_custom("base_walk", &current_sprite, -1);
    if (&save_y <= 0)
    {
@@ -135,24 +123,7 @@ void touch(void)
     {
      &save_y = 70;
     }
-    sp_custom("base_walk", &current_sprite, &save_y);
    }
-
-   //push
-   &save_y = sp_custom("base_push", &current_sprite, -1);
-   if (&save_y <= 0)
-   {
-    &save_y = sp_custom("base_push", 1, -1);
-    if (&save_y <= 0)
-    {
-     &save_y = 310;
-    }
-    sp_custom("base_push", &current_sprite, &save_y);
-   }
-
-   //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
-   &save_x = sp_pseq(1, -1);
-   &save_y = sp_custom("base_walk", &current_sprite, -1);
    sp_custom("PPpseq-origin", &current_sprite, &save_x);
    //check if seq is correct for pushing and pulling, and save result in custom key 
    if (&save_x > &save_y)

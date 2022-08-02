@@ -40,17 +40,6 @@ void main(void)
  //declare locals
  int &mco;
  int &val1;
- int &val2;
-
- //save the difference between base walk and base push in a custom key
- &save_x = sp_custom("base_walk", &hybsprite, -1);
- &save_y = sp_custom("base_push", &hybsprite, -1);
- &save_x -= &save_y;
- if (&save_x < 0)
- {
-  &save_x *= -1;
- }
- sp_custom("PPbw_bp_diff", &hybsprite, &save_x);
 
 	/////////////////////////////////////////////////////////
         //CHECK IF ENOUGH ROOM TO PULL ON INITAL GRAB OF OBJECT//
@@ -370,43 +359,38 @@ loop:
          
           //override move limit with custom specification
           //and make sure overrided limit does not breach original detected limit.
-          &val2 = sp_custom("base_push", &hybsprite, -1);
-          &val2 += 2;
-          if (&mco == &hybuppseq)
+          if (&mco == 312)
           {
            &save_y = sp_custom("setYmax", &hybsprite, -1);
            if (&save_y >= &val1)
            {
             &save_x = &val1;
            }
-          }
-          &val2 += 2;
-          if (&mco == &hybuppseq) 
+          } 
+          if (&mco == 314) 
           { 
            &save_y = sp_custom("setXmin", &hybsprite, -1); 
            if (&save_y <= &val1)
            {
             &save_x = &val1;
            }  
-          }
-          &val2 += 2;
-          if (&mco == &hybuppseq) 
+          } 
+          if (&mco == 316) 
           {
            &save_y = sp_custom("setXmax", &hybsprite, -1);
            if (&save_y >= &val1)
            {
             &save_x = &val1;
            }
-          }
-          &val2 += 2;
-          if (&mco == &hybuppseq) 
+          }   
+          if (&mco == 318) 
           {
            &save_y = sp_custom("setYmin", &hybsprite, -1);
            if (&save_y <= &val1)
            {
             &save_x = &val1;
            }
-          }
+          } 
           
           //check for ignore value set by dmod developer
           &val1 = sp_custom("Enable-Limit", &hybsprite, -1);
@@ -452,40 +436,35 @@ loop:
          
          //Check if sprite is passed it's limit, and if so, shift+lock it's position accordingly.
          &val1 = sp_custom("PPHybSpriteClone", &hybsprite, -1);
-         &val2 = sp_custom("base_push", &hybsprite, -1);
-         &val2 += 2;
-         if (&mco == &val2)
+         if (&mco == 312)
          {
           if (&save_x >= &save_y) 
           {
            sp_y(&val1, &save_y);
           }
-         }
-         &val2 += 2;
-         if (&mco == &val2)
+         } 
+         if (&mco == 314) 
          { 
           if (&save_x <= &save_y) 
           {
-           sp_x(&val1, &save_y);
+           sp_x(&val1, &save_y); 
           }     
-         }
-         &val2 += 2;
-         if (&mco == &val2)
+         } 
+         if (&mco == 316) 
          {
           if (&save_x >= &save_y) 
           { 
            sp_x(&val1, &save_y);       
           }  
-         }
-         &val2 += 2;
-         if (&mco == &val2)
+         }   
+         if (&mco == 318) 
          {
           if (&save_x <= &save_y) 
           {            
            sp_y(&val1, &save_y);                
           }
          }
-
+         
          //relock sprite to clone sprite
          &mco = sp_custom("PPHybSpriteClone", &hybsprite, -1); 
          &save_x = sp_x(&mco, -1);
@@ -560,10 +539,8 @@ loop:
          {
           &save_x = -1;
          }
-
-         &val2 = sp_custom("base_push", &hybsprite, -1);
-         &val2 += 2;
-         if (&save_y == &val2)
+         
+         if (&save_y == 312)
          {
           &val1 += &save_x;
           
@@ -576,8 +553,7 @@ loop:
           
           sp_y(1, &val1);
          }
-         &val2 += 2;
-         if (&save_y == &val2)
+         if (&save_y == 314)
          {
           &val1 += &save_x;
           &mco += &save_x;
@@ -587,8 +563,7 @@ loop:
           }
           sp_x(1, &val1);
          }
-         &val2 += 2;
-         if (&save_y == &val2)
+         if (&save_y == 316)
          {
           &val1 += &save_x;
           &mco += &save_x;
@@ -597,9 +572,8 @@ loop:
            &val1 = &mco;
           } 
           sp_x(1, &val1);
-         }
-         &val2 += 2;
-         if (&save_y == &val2)
+         } 
+         if (&save_y == 318)
          {
           &val1 += &save_x;
           &mco += &save_x;
@@ -608,7 +582,7 @@ loop:
            &val1 = &mco;
           }
           sp_y(1, &val1);
-         }
+         } 
         }
        }        
       }
@@ -709,27 +683,23 @@ loop:
   }
 
    //check to see if the player has disengaged, if so the seq will not match the expected push, pull or holding-idle seq.
-   //Change-note: - changed pupseq/hupseq checks to pulldir/pushdir
-   &val1 = sp_custom("base_walk", &hybsprite, -1);
-   &save_x = sp_custom("pulldir", &hybsprite, -1);
-   &save_x += &val1;
+   &save_x = sp_custom("PPpupseq", &hybsprite, -1);
+   &save_x -= 240;
    &save_y = sp_pseq(1, -1);
    if (&save_y != &save_x)
    {
-     &save_x = sp_custom("pushdir", &hybsprite, -1);
-     &save_x += &val1;
+     &save_x = sp_custom("PPhupseq", &hybsprite, -1);
+     &save_x -= 240;
      if (&save_y != &save_x)
      {
-      &save_x = sp_custom("base_idle", &hybsprite, -1);
-      &save_x += 2;
-      if (&save_y < &save_x)
-      {
+      //522 - 528 is Dink's temporary base idle seq for sticky push, loaded over the top of pigfeed graphics. 
+      if (&save_y < 12)
+      { 
        goto hybkill;
        kill_this_task();
       }
-      &save_x += 6;
-      if (&save_y > &save_x)
-      {
+      if (&save_y > 18)
+      {    
        goto hybkill;
        kill_this_task();
       }
@@ -775,8 +745,7 @@ loop:
         {
          //make sure Dink isn't actually pushing or pulling(could be initilising or move-status hasn't updated yet)
          &save_y = sp_pseq(1, -1);
-         &val2 = sp_custom("PPbw_bp_diff", &hybsprite, -1);
-         &save_y += &val2;
+         &save_y += 240;
          &save_x = sp_custom("PPhupseq", &hybsprite, -1);
          if (&save_x == &save_y)  
          {
@@ -817,36 +786,31 @@ loop:
           
           //override move limit with custom specification
           //and make sure overrided limit does not breach original detected limit.
-          &val2 = sp_custom("base_push", &hybsprite, -1);
-          &val2 += 2;
-          if (&mco == &val2)
+          if (&mco == 312)
           {
            &save_y = sp_custom("setYmax", &hybsprite, -1);
            if (&save_y >= &val1)
            {
             &save_x = &val1;
            }
-          }
-          &val2 += 2;
-          if (&mco == &val2)
+          } 
+          if (&mco == 314) 
           { 
            &save_y = sp_custom("setXmin", &hybsprite, -1); 
            if (&save_y <= &val1)
            {
             &save_x = &val1;
            }  
-          }
-          &val2 += 2;
-          if (&mco == &val2)
+          } 
+          if (&mco == 316) 
           {
            &save_y = sp_custom("setXmax", &hybsprite, -1);
            if (&save_y >= &val1)
            {
             &save_x = &val1;
            }
-          }
-          &val2 += 2;
-          if (&mco == &val2)
+          }   
+          if (&mco == 318) 
           {
            &save_y = sp_custom("setYmin", &hybsprite, -1);
            if (&save_y <= &val1)
@@ -899,34 +863,29 @@ loop:
          
          //reset PPlimitreached to 0 (default)
          //and then run checks to see if move limit has been reached.
-         sp_custom("PPlimitreached", &hybsprite, 0);
-         &val2 = sp_custom("base_push", &hybsprite, -1);
-         &val2 += 2;
-         if (&mco == &val2)
+         sp_custom("PPlimitreached", &hybsprite, 0);       
+         if (&mco == 312)
          {
           if (&save_x >= &save_y) 
           {
            sp_custom("PPlimitreached", &hybsprite, 1);
           }
          } 
-         &val2 += 2;
-         if (&mco == &val2)
+         if (&mco == 314) 
          { 
           if (&save_x <= &save_y) 
           {
            sp_custom("PPlimitreached", &hybsprite, 1); 
           }
          } 
-         &val2 += 2;
-         if (&mco == &val2)
+         if (&mco == 316) 
          {
           if (&save_x >= &save_y)  
           {
            sp_custom("PPlimitreached", &hybsprite, 1); 
           }
          }   
-         &val2 += 2;
-         if (&mco == &val2) 
+         if (&mco == 318) 
          {
           if (&save_x <= &save_y) 
           {
@@ -942,9 +901,8 @@ loop:
   &mco = 0; 
 
   //Check if Dink is pushing the sprite 
-  &save_x = sp_custom("PPhupseq", &hybsprite, -1);
-  &val2 = sp_custom("PPbw_bp_diff", &hybsprite, -1);
-  &save_x -= &val2;
+  &save_x = sp_custom("PPhupseq", &hybsprite, -1); 
+  &save_x -= 240;
   &save_y = sp_pseq(1, -1); 
   if (&save_x == &save_y)
   {
@@ -985,22 +943,16 @@ loop:
     
     //make object keep moving up to it's set PUSH limit.
     &save_x = sp_custom("PPhuplimit", &hybsprite, -1);
-    &val1 = sp_custom("PPhupseq", &hybsprite, -1);
-    &val2 = sp_custom("base_push", &hybsprite, -1);
-    &val2 += 2;
-    if (&val1 == &val2)
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 312)
      move(&save_y, 2, &save_x, 1);
-
-    &val2 += 2;
-    if (&val1 == &val2)
+ 
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 314)
      move(&save_y, 4, &save_x, 1);
-
-    &val2 += 2;
-    if (&val1 == &val2)
+ 
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 316)
      move(&save_y, 6, &save_x, 1); 
-
-    &val2 += 2;
-    if (&val1 == &val2)
+ 
+    if (sp_custom("PPhupseq", &hybsprite, -1) == 318)
      move(&save_y, 8, &save_x, 1);
 
     //reset the "PPre-move" custom key, so we know we have run the move line again after the move limit was updated
@@ -1014,8 +966,7 @@ loop:
   }
 
   &save_x = sp_custom("PPpupseq", &hybsprite, -1); 
-  &val2 = sp_custom("PPbw_bp_diff", &hybsprite, -1);
-  &save_x -= &val2;
+  &save_x -= 240; 
   &save_y = sp_pseq(1, -1); 
   if (&save_x == &save_y)
   {
@@ -1128,22 +1079,16 @@ loop:
  
     //make object keep moving up to it's set move limit.
     &save_x = sp_custom("PPpuplimit", &hybsprite, -1);
-    &val1 = sp_custom("PPpupseq", &hybsprite, -1);
-    &val2 = sp_custom("base_push", &hybsprite, -1);
-    &val2 += 2;
-    if (&val1 == &val2)
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 312)
      move(&save_y, 2, &save_x, 1);
-
-    &val2 += 2;
-    if (&val1 == &val2)
+ 
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 314)
      move(&save_y, 4, &save_x, 1);
-
-    &val2 += 2;
-    if (&val1 == &val2)
+ 
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 316)
      move(&save_y, 6, &save_x, 1);
-
-    &val2 += 2;
-    if (&val1 == &val2)
+     
+    if (sp_custom("PPpupseq", &hybsprite, -1) == 318)
      move(&save_y, 8, &save_x, 1);
      
     //reset the "PPre-move" custom key, so we know we have run the move line again after the move limit was updated
@@ -1165,22 +1110,16 @@ limit:
 
     //Dink is idle, walking towards the sprite, or a move limit was reached - stop the sprite
     //just use PPpupseq - either way we are stopping the sprite so doesn't matter.
-    &save_x = sp_custom("PPpupseq", &hybsprite, -1);
-    &val2 = sp_custom("base_push", &hybsprite, -1);
-    &val2 += 2;
-     if (&save_x == &val2)
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 316) 
       move(&save_y, 6, -200, 0);
-
-    &val2 += 2;
-     if (&save_x == &val2)  
+    
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 314) 
       move(&save_y, 4, 750, 1);
-
-    &val2 += 2;
-     if (&save_x == &val2) 
+    
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 312) 
       move(&save_y, 2, -200, 1);
-
-    &val2 += 2;
-     if (&save_x == &val2) 
+    
+     if (sp_custom("PPpupseq", &hybsprite, -1) == 318) 
       move(&save_y, 8, 600, 1);
      
     sp_custom("move-status", &hybsprite, 1);       
@@ -1188,12 +1127,9 @@ limit:
    //check player sequence, PPlimitreached, and stopmove
    &save_y = 0;
    &save_x = sp_pseq(1, -1);
-   &val2 = sp_custom("base_idle", &hybsprite, -1);
-   &val2 += 2;
-   if (&save_x >= &val2)
+   if (&save_x >= 12)
    {
-    &val2 += 6;
-    if (&save_x <= &val2)
+    if (&save_x <= 18)
     {
      &save_y += 11;
     }

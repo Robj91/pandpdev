@@ -111,8 +111,16 @@ void hybrid(void)
    {
     //play the push animation
     &save_x = sp_custom("pushdir", &current_sprite, -1);
-    &val1 = sp_custom("base_push", &current_sprite, -1);
-    &save_x += &val1;
+    &save_y = sp_custom("base_push", &current_sprite, -1);
+    if (&save_y <= 0)
+    {
+     &save_y = sp_custom("base_push", 1, -1);
+     if (&save_y <= 0)
+     {
+      &save_y = 310;
+     }
+    }
+    &save_x += &save_y;
     sp_seq(1, &save_x);
     sp_frame(1, 1);
     sp_kill_wait(1);
@@ -141,9 +149,8 @@ void hybrid(void)
  }
      
    //let's store Dink's required push sequence away in a custom key
-   &val1 = sp_custom("base_push", &current_sprite, -1);
    &save_x = sp_custom("pushdir", &current_sprite, -1);
-   &save_x += &val1;
+   &save_x += 310;
    sp_custom("PPhupseq", &current_sprite, &save_x);
 
    //Let's store Dink's required pull sequence away in a custom key
@@ -155,7 +162,7 @@ void hybrid(void)
    //eg. in above example, 314 gets loaded also into 316.
    //This way we can differentiate the players seq and dir, but visually it's the same.
    &save_x = sp_custom("pulldir", &current_sprite, -1);
-   &save_x += &val1;
+   &save_x += 310;
    sp_custom("PPpupseq", &current_sprite, &save_x);
 
    //let's get the difference between the object and dink

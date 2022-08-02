@@ -2,7 +2,8 @@
 
 bugs and ideas:
 - Make dink sequence checks customisable
-
+- remove redundant procedures from all scripts
+- remove freedink 1084 stuff
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
@@ -62,6 +63,11 @@ Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sp
 “base_idle”: Used to tell the push/pull system Dink is currently using a different base_idle sequence than his default. This needs to be set if Dinks base idle is different.
 
 Alternatively, set the above “base” custom keys on Dink, rather than every sprite. If set on a sprite though, they will take priority over Dinks custom key setting.
+
+------------------------------------------
+
+“pull_depthdot_adjust”: Used to adjust the point at which Dink will collide with hardness when pulling. By default, it is set to the back of Dinks feet.
+                        If you change Dinks base push using the “base_push” custom key, you have this as an option to fine tune it.
 
 ------------------------------------------
 
@@ -197,6 +203,8 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 ////////////////////
 //CORE custom keys//
 ////////////////////
+
+“PPbw_bp_diff”: Used to store the difference between base_walk and base_push.
 
 "PPtimerscript": Used to store the spawned pushdelay timer script number.
 
