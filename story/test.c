@@ -18,9 +18,7 @@ void main(void)
 
  sp_custom("move_idle", &current_sprite, 1);
 
- sp_custom("Enable-Limit", &current_sprite, 2);
- sp_custom("setXmax", &current_sprite, 188);
- sp_custom("move_nohard", &current_sprite, 1);
+ //sp_custom("push_custom", &current_sprite, 400);
  
  //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
  //also does other important checks to set the push/pull system up properly.
@@ -34,19 +32,32 @@ void touch(void)
 {
  //ADD ANY TOUCH PROCEDURE STUFF HERE.
 
- external("phisbo", "touch", 1); 
+ external("phisbo", "touch"); 
+ goto stopex;
+}
+
+void push(void)
+{
+  return;  //Don't delete - required to stop it this procedure running twice, due to run_script_by_number, and then external returning to where it left off in this script
+
+ //To use this, you need to set set "sp_custom("push", &current_sprite, 1);", in the main procedure(before the phisbo external line)
+ //it will not use the push/pull system at all, and will instead run this procedure when Dink pushes the sprite
+
+ //please note, to run this procedure, the push/pull system entirely terminates itself
+ //so at the end of this procedure, to enable push/pull deteciton on the sprite again, do: external("phisbo", "initiate");
  goto stopex;
 }
 
 void push_custom(void)
 {
- //This procedure is used to create your own push procedure, instead of the actual push/pull system activating.
+  return;  //Don't delete - required to stop it this procedure running twice, due to run_script_by_number, and then external returning to where it left off in this script
+
  //To use this, you need to set set "sp_custom("push_custom", &current_sprite, 1);", in the main procedure(before the phisbo external line)
  //it will not use the push/pull system at all, and will instead run this procedure when Dink pushes the sprite
-   //(won't even play dink pushing anim by default - this is your own push procedure built from scratch)
+   // (won't even play dink pushing anim by default - this is your own push procedure built from scratch)
 
  //please note, to run this procedure, the push/pull system entirely terminates itself
- //so at the end of this procedure, to enable push/pull deteciton on the sprite again, do: external("phisbo", "initiate");
+  //so at the end of this procedure, to enable push/pull deteciton on the sprite again, do: external("phisbo", "initiate");
  goto stopex;
 }
 
@@ -62,6 +73,8 @@ void IdleDetectDuring(void)
 
 void MoveDetectAfter(void)
 {
+ //probably best to run external("phisbo", "terminate"); first up here to remove interruption from the push/pullsystem
+   //Then at the end, to make the sprite move-able again do: external("phisbo", "initiate");
  goto stopex;
 }
 
@@ -76,8 +89,6 @@ void talk(void)
  if (&return <= 0)
  {
   //ADD ANY TALK STUFF HERE.
-  external("phisbo", "terminate", &current_sprite);
-  external("phisbo", "initiate", &current_sprite);
  }
  else
  {

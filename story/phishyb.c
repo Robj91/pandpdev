@@ -97,24 +97,54 @@ void hybrid(void)
    kill_this_task();  
   }  
  }
+
+ //If author has chosen to run the push_custom() procedure
+ &save_x = sp_custom("push", &current_sprite, -1);
+ if (&save_x > 0)
+ {
+   //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
+   //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
+   sp_custom("PPreset-required", &current_sprite, 1);
+   sp_custom("PPterminated", &current_sprite, 1);
+   &save_y = is_script_attached(&current_sprite);
+   if (&save_y > 0)
+   {
+    //play the push animation
+    &save_x = sp_custom("pushdir", &current_sprite, -1);
+    &save_y = sp_custom("base_push", &current_sprite, -1);
+    if (&save_y <= 0)
+    {
+     &save_y =sp_custom("base_push", 1, -1);
+     if (&save_y <= 0)
+     {
+      &save_y = 310;
+     }
+    }
+    &save_x += &save_y;
+    sp_seq(1, &save_x);
+    sp_frame(1, 1);
+    sp_kill_wait(1);
+    sp_nocontrol(1, 1);
+    run_script_by_number(&save_y, "push");
+   }
+   kill_this_task();
+  }
+ }
  
  //If author has chosen to run the push_custom() procedure
- if (&arg1 == 1)
+ &save_x = sp_custom("push_custom", &current_sprite, -1);
+ if (&save_x > 0)
  {
-  &save_x = sp_custom("push_custom", &current_sprite, -1);
-  if (&save_x > 0)
-  {
-    //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
-    //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
-    sp_custom("PPreset-required", &current_sprite, 1);
-    sp_custom("PPterminated", &current_sprite, 1);
-    &save_y = is_script_attached(&current_sprite);
-    if (&save_y > 0)
-    {
-     run_script_by_number(&save_y, "push_custom");
-    }
-    kill_this_task();
+   //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
+   //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
+   sp_custom("PPreset-required", &current_sprite, 1);
+   sp_custom("PPterminated", &current_sprite, 1);
+   &save_y = is_script_attached(&current_sprite);
+   if (&save_y > 0)
+   {
+    run_script_by_number(&save_y, "push_custom");
    }
+   kill_this_task();
   }
  }
      

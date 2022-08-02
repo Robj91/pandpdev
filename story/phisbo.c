@@ -115,13 +115,23 @@ void touch(void)
 
    //save the players directional sequence in a custom key so we can assure it hasn't changed later on.
    &save_x = sp_pseq(1, -1);
-   sp_custom("PPpseq-origin", &current_sprite, &save_x);
-   &save_y = math_mod(&save_x, 2);
-   //check if seq is correct for pushing and pulling, and save result in custom key 
-   if (&save_x > 70)
+   &save_y = sp_custom("base_walk", &current_sprite, -1);
+   if (&save_y <= 0)
    {
-    if (&save_x < 80)
+    &save_y =sp_custom("base_walk", 1, -1);
+    if (&save_y <= 0)
     {
+     &save_y = 70;
+    }
+   }
+   sp_custom("PPpseq-origin", &current_sprite, &save_x);
+   //check if seq is correct for pushing and pulling, and save result in custom key 
+   if (&save_x > &save_y)
+   {
+    &save_y += 10;
+    if (&save_x < &save_y)
+    {
+     &save_y = math_mod(&save_x, 2);
      if (&save_y == 0)
      {
       //Here we have determined that Dink's seq is between 70 and 80, and an even number (we don't want diags)
@@ -138,7 +148,7 @@ void touch(void)
     goto touchend; 
    }  
 
-   //store dinks direction - this won't return any diags - thats was filtered out above with the math_mod checks.
+   //store dinks direction - this won't return any diags - that was filtered out above with the math_mod checks.
    &save_x = sp_dir(1, -1);
    sp_custom("pushdir", &current_sprite, &save_x);
 
@@ -207,7 +217,19 @@ void touch(void)
    &save_y = sp_y(&current_sprite, -1);
    sp_custom("spriteox", &current_sprite, &save_x);
    sp_custom("spriteoy", &current_sprite, &save_y);
-   
+
+   //copy push delays from relevant custom keys if they are set
+   &save_x = sp_custom("push", &current_sprite, -1);
+   if (&save_x > 1)
+   {
+    sp_custom("pushdelay", &current_sprite, &save_x);
+   }
+   &save_y = sp_custom("push_custom", &current_sprite, -1);
+   if (&save_y > 1)
+   {
+    sp_custom("pushdelay", &current_sprite, &save_y);
+   }
+
    /////////
    //TIMER//
    /////////
@@ -283,8 +305,7 @@ touchend:
  {  
   //reset the "PPreset-required" custom key to 0
   sp_custom("PPreset-required", &current_sprite, 0);
-  
-  wait(0);
+
   //kill off the shadow sprite used to retrieve and identify this moveable object
   &save_x = sp_custom("PP-Shadow", &current_sprite, -1);
   &save_y = sp_custom("PP-Parent", &save_x, -1);

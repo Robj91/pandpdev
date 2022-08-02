@@ -1,6 +1,8 @@
 //REMINDER OF WHAT’S DONE:
 
 bugs and ideas:
+- Make dink sequence checks customisable
+
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
@@ -22,11 +24,17 @@ TUTNOTES:
 The below sp_custom() keys are used to configure/customise push and pull on a sprite, setting these to certain values, as described below will change the way push and pull will work with them.
 Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sprite ignore hardness when being moved.
 
+ "push": Used to make push and pull run the normal push() prcedure. Basically, this mimicks vanilla push system when enabled on a sprite, except with no delay before push activates, by default.
+         0 = push() procedure will not be enabled
+         1 = push() procedure will be enabled - the push/pull system will look into the sprite script and run push(), rather than using the push/pull system
+         Higher than 1: Will use the value as a delay before push() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate “pushdelay” custom key.
+
 ------------------------------------------
 
-“push_custom”: Used to enable the “push_custom” procedure, instead of using the push/pull system
+“push_custom”: Used to enable the “push_custom” procedure, instead of using the push/pull system. When enabled, it will even skip playing the push sequence.
                0 = push_custom() procedure will not be enabled
-	       1 = push_custom() procedure will be enabled - the push/pull system will look into the script and run push_custom(), rather than using the normal push/pull system
+	       1 = push_custom() procedure will be enabled - the push/pull system will look into the sprite script and run push_custom(), rather than using the push/pull system (won’t even play a push sequence)
+               Higher than 1: Will use the value as a delay before push_custom() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate “pushdelay” custom key.
 
 ------------------------------------------
 
@@ -44,6 +52,16 @@ Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sp
             Basically, it will act the same as when it is stopped by hardness. Dink will also say the default say line for a sprite unable to move any further (found in "dsmove.c" - "limit" procedure.).
 	    0 = Sprite is free to move
 	    1 = Sprite will halt movement
+
+------------------------------------------
+
+"base_walk": Used to tell the push/pull system Dink is currently using a different base_walk sequence than his default. This needs to be set if Dinks base walk is different.
+
+“base_push”: Used to tell the push/pull system Dink is currently using a different base_push sequence than his default. This needs to be set if Dinks base push is different.
+
+“base_idle”: Used to tell the push/pull system Dink is currently using a different base_idle sequence than his default. This needs to be set if Dinks base idle is different.
+
+Alternatively, set the above “base” custom keys on Dink, rather than every sprite. If set on a sprite though, they will take priority over Dinks custom key setting.
 
 ------------------------------------------
 
