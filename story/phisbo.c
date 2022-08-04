@@ -3,11 +3,52 @@
 
 void main(void)
 {
+ //decide on which base custom keys we are using (Dink, sprite, or none(default)
+ //idle
+ &save_y = sp_custom("base_idle", &current_sprite, -1);
+ if (&save_y <= 0)
+ {
+  &save_y = sp_custom("base_idle", 1, -1);
+  if (&save_y <= 0)
+  {
+   &save_y = 10;
+  }
+  sp_custom("base_idle", &current_sprite, &save_y);
+ }
+
+ //walk
+ &save_y = sp_custom("base_walk", &current_sprite, -1);
+ if (&save_y <= 0)
+ {
+  &save_y = sp_custom("base_walk", 1, -1);
+  if (&save_y <= 0)
+  {
+   &save_y = 70;
+  }
+  sp_custom("base_walk", &current_sprite, &save_y);
+ }
+
+ //push
+ &save_y = sp_custom("base_push", &current_sprite, -1);
+ if (&save_y <= 0)
+ {
+  &save_y = sp_custom("base_push", 1, -1);
+  if (&save_y <= 0)
+  {
+   &save_y = 310;
+  }
+  sp_custom("base_push", &current_sprite, &save_y);
+ }
+
  //preload push sequence
- preload_seq(312);
- preload_seq(314);
- preload_seq(316);
- preload_seq(318);
+ &save_y += 2;
+ preload_seq(&save_y);
+ &save_y += 2;
+ preload_seq(&save_y);
+ &save_y += 2;
+ preload_seq(&save_y);
+ &save_y += 2;
+ preload_seq(&save_y);
 
  //make sure this sprite has a touch damage of -1, and it's hard.
  sp_touch_damage(&current_sprite, -1);
@@ -163,7 +204,7 @@ void touch(void)
      &save_y = math_mod(&save_x, 2);
      if (&save_y == 0)
      {
-      //Here we have determined that Dink's seq is between 70 and 80, and an even number (we don't want diags)
+      //Here we have determined that Dink's seq is a correct walk seq, and an even number (we don't want diags)
       sp_custom("PPCanPush", &current_sprite, 1);
      }
     }

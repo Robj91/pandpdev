@@ -186,9 +186,10 @@ void auto_detect(void)
      
      //Dink's seq
      &val1 = sp_custom("pushdir", &current_sprite, -1);
-     &val1 += 70;
+     &val2 = sp_custom("base_walk", &current_sprite, -1);
+     &val1 += &val2;
      &val1 = create_sprite(&save_x, &save_y, 0, &val1, 1);
-     sp_base_walk(&val1, 70);
+     sp_base_walk(&val1, &val2);
      sp_speed(&val1, 100);
      sp_nodraw(&val1, 1);
     

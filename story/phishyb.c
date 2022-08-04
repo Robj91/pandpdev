@@ -20,9 +20,11 @@ void hybrid(void)
 
  //make sure Dink is trying to push the object, and not just idling
  &save_x = sp_custom("PPpseq-origin", &current_sprite, -1);
- if (&save_x > 10)
+ &save_y = sp_custom("base_idle", &current_sprite, -1);
+ if (&save_x > &save_y)
  { 
-  if (&save_x < 20)
+  &save_y += 10;
+  if (&save_x < &save_y)
   {
    //he's idling - end this now.
    sp_custom("PPreset-required", &current_sprite, 1);
@@ -459,21 +461,6 @@ void hybrid(void)
  spawn("hybup"); 
  
  sp_custom("PPhybscript", &current_sprite, 0); 
- kill_this_task();
-}
-
-void end(void)
-{
- sp_custom("PPhybscript", &current_sprite, 0);
- external("PhisEnd", "end", 0, 0, 0, &current_sprite);
- 
- kill_this_task();
-}
-
-void multipushend(void)
-{
- sp_custom("PPhybscript", &current_sprite, 0);
- external("PhisEnd", "end", 10, 0, 0, &current_sprite);
  kill_this_task();
 }
 

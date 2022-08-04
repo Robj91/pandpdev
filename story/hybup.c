@@ -13,19 +13,11 @@ void main(void)
  &save_x = &player_map; 
  sp_custom("PPscreen", &hybsprite, &save_x);
 
- //store the player original speed and frame delay. If not using freedink 109.6, two more local variables required for this.
- if (&vcheck <= 1084)
- {
-  int &dspeed = sp_custom("PPd-speed", &hybsprite, -1);
-  int &dframed = sp_custom("PPdink-fd", &hybsprite, -1);
- }
- else
- {
-  &save_x = sp_custom("PPd-speed", &hybsprite, -1);
-  &save_y = sp_custom("PPdink-fd", &hybsprite, -1);
-  sp_custom("PPd-speed", 1, &save_x);
-  sp_custom("PPdink-fd", 1, &save_y);
- }
+ //store the player original speed and frame delay.
+ &save_x = sp_custom("PPd-speed", &hybsprite, -1);
+ &save_y = sp_custom("PPdink-fd", &hybsprite, -1);
+ sp_custom("PPd-speed", 1, &save_x);
+ sp_custom("PPdink-fd", 1, &save_y);
 
  //reset the custom key which is used to tell this script to kill itself.
  sp_custom("PPhybkill", &hybsprite, 0);
@@ -220,18 +212,10 @@ loop:
    if (&save_x != &save_y)
    {
     //player changed screens
-    if (&vcheck > 1084)
-    {
-     &save_x = sp_custom("PPd-speed", 1, -1);
-     &save_y = sp_custom("PPdink-fd", 1, -1);
-     debug("hybup dink RETRIEVE FREEDINK SPEED is &save_x");
-    }
-    else
-    {
-     &save_x = &dspeed;
-     &save_y = &dframed;
-     debug("hybup dink RETRIEVE DINK SPEED is &dspeed");
-    }
+    &save_x = sp_custom("PPd-speed", 1, -1);
+    &save_y = sp_custom("PPdink-fd", 1, -1);
+    debug("hybup dink RETRIEVE FREEDINK SPEED is &save_x");
+
     external("PhisEnd", "end", 8, 0, 0, &hybsprite, &save_x, &save_y);
     kill_this_task();
    }
@@ -1275,18 +1259,10 @@ hybkill:
   &save_x = sp_custom("PPfdink", &hybsprite, -1);
   sp_active(&save_x, 0);
   sp_nodraw(1, 0); 
-  if (&vcheck > 1084)
-  {
-   &save_x = sp_custom("PPd-speed", 1, -1);
-   &save_y = sp_custom("PPdink-fd", 1, -1);
-   debug("hybup - hybkill - dink RETRIEVE FREEDINK SPEED is &save_x");
-  }
-  else
-  {
-   &save_x = &dspeed;
-   &save_y = &dframed;
-   debug("hybup - hybkill - dink RETRIEVE DINK SPEED is &dspeed");
-  }
+  &save_x = sp_custom("PPd-speed", 1, -1);
+  &save_y = sp_custom("PPdink-fd", 1, -1);
+  debug("hybup - hybkill - dink RETRIEVE FREEDINK SPEED is &save_x");
+
   external("PhisEnd", "end", 0, 0, 0, &hybsprite, &save_x, &save_y);
  }
     

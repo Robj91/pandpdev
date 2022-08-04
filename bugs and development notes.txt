@@ -1,9 +1,7 @@
 //REMINDER OF WHAT’S DONE:
 
 bugs and ideas:
-- Make dink sequence checks customisable
 - remove redundant procedures from all scripts
-- remove freedink 1084 stuff
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.

@@ -44,7 +44,9 @@ void end(void)
   return;
 
  //we need 1 local
+ int &mco;
  int &val1;
+ int &val2;
 
  DEBUG("Phisend speed is &arg5");
 
@@ -98,7 +100,8 @@ void end(void)
   if (&arg1 == 8)
   {
    //corect dinks idle
-   sp_base_idle(1, 10); 
+   &val2 = sp_custom("base_idle", &arg4, -1);
+   sp_base_idle(1, &val2); 
    sp_reverse(1, 0);
    sp_frame(1, 1);
    
@@ -110,7 +113,8 @@ void end(void)
    sp_nodraw(1, 0);
 
    //corect dinks base walk
-   sp_base_walk(1, 70);
+   &val2 = sp_custom("base_walk", &arg4, -1);
+   sp_base_walk(1, &val2);
    kill_this_task(); 
   } 
   if (&arg1 == 9)
@@ -139,221 +143,296 @@ void end(void)
  {
   //HYBRID SYSTEM IN USE (STICKY PUSH)
   //corect dinks base idle
-  sp_base_idle(1, 10);
+  &val2 = sp_custom("base_idle", &arg4, -1);
+  sp_base_idle(1, &val2);
   sp_reverse(1, 0);
   sp_frame(1, 1);
 
   //Dink stopped pulling so assure the obect stops too - just make it move forwards to a position behind it  - Lol. It works.
   &save_x = sp_custom("PPpupseq", &arg4, -1); 
-  if (&save_x == 316) move(&arg4, 6, -200, 1);
-  if (&save_x == 314) move(&arg4, 4, 750, 1);
-  if (&save_x == 312) move(&arg4, 2, -200, 1);
-  if (&save_x == 318) move(&arg4, 8, 600, 1);
+  &save_y = sp_custom("base_push", &arg4, -1);
+  &save_y += 2;
+  if (&save_x == &save_y) move(&arg4, 2, -200, 1);
+  &save_y += 2;  
+  if (&save_x == &save_y) move(&arg4, 4, 750, 1);
+  &save_y += 2;
+  if (&save_x == &save_y) move(&arg4, 6, -200, 1);
+  &save_y += 2;
+  if (&save_x == &save_y) move(&arg4, 8, 600, 1);
  }
 
     &save_x = sp_custom("PPPosAltered", &arg4, -1);
     if (&save_x > 0)
     {
-
-          /////////////////////////////////////////
-          //ASSURE SPRITE HASN'T PASSED ITS LIMIT//
-          /////////////////////////////////////////      
-           //The calculations will be the same for each respective direction for both push and pull
-           //So we just need to retrieve the correct seq and move limit. 
-           //Direction checks can be used as is. 
-           //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.   
-           &save_x = sp_custom("move-status", &arg4, -1);
-           if (&save_x > 0)
+     /////////////////////////////////////////
+     //ASSURE SPRITE HASN'T PASSED ITS LIMIT//
+     ///////////////////////////////////////// 
+     //don't need to run this the first time around.       
+    
+       //The calculations will be the same for each respective direction for both push and pull
+       //So we just need to retrieve the correct seq and move limit. 
+       //Direction checks can be used as is. 
+       //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other. 
+       &mco = 0;  
+       &val1 = sp_custom("last-status", &arg4, -1);
+       if (&val1 >= 2)
+       {
+        if (&val1 == 2)
+        {
+         &mco = sp_custom("PPhupseq", &arg4, -1);
+         &save_y = sp_custom("PPhuplimit", &arg4, -1);
+        }
+        if (&val1 == 3)
+        {
+         &mco = sp_custom("PPpupseq", &arg4, -1);
+         &save_y = sp_custom("PPpuplimit", &arg4, -1);   
+        }
+        
+        if (&mco > 0)
+        { 
+         &save_x = sp_custom("Enable-Limit", &arg4, -1);
+         if (&save_x > 0)
+         {
+          //starting &save_x value for detection whether usable value was saved
+          &save_x = 9999;           
+         
+          //save the current move limit in a custom key and return the value to &val1
+          &val1 = sp_custom("PPSLR-limit", &arg4, &save_y);     
+         
+          //override move limit with custom specification
+          //and make sure overrided limit does not breach original detected limit.
+          &val2 = sp_custom("base_push", &arg4, -1);
+          &val2 += 2;
+          if (&mco == &hybuppseq)
+          {
+           &save_y = sp_custom("setYmax", &arg4, -1);
+           if (&save_y >= &val1)
            {
-            if (sp_custom("last-status", &arg4, -1) == 2)
-             &mco = sp_custom("PPhuplimit", &arg4, -1);
-
-            if (sp_custom("last-status", &arg4, -1) == 3)
-             &mco = sp_custom("PPpuplimit", &arg4, -1); 
-
-            &save_x = sp_custom("Enable-Limit", &arg4, -1);
-            if (&save_x > 0)
-            {
-             //override detected limit- check move axis (x or y) and direction (positive or negative along axis)
-             //and set manual limit accordingly
-             &save_x = sp_custom("move-axis", &arg4, -1);
-             if (&save_x == 1)
-             {
-              &save_x = sp_custom("MovePosNeg", &arg4, -1);
-              if (&save_x == 1)
-               &save_y = sp_custom("setXmin", &arg4, -1);
-              else
-               &save_y = sp_custom("setXmax", &arg4, -1);
-             }
-             else
-             {
-              &save_x = sp_custom("MovePosNeg", &arg4, -1);
-              if (&save_x == 1)
-               &save_y = sp_custom("setYmin", &arg4, -1);
-              else
-               &save_y = sp_custom("setYmax", &arg4, -1);
-             }
-             
-             //check for ignore value set by dmod developer
-             if (&save_y == 9999)
-              &save_y = &mco;
-             
-             //check for "-1111" value to interpret as "-1"
-             if (&save_y == -1111)
-              &save_y = -1;
-             
-             //assure new limit does not breach our original detected hardness limits
-             &save_x = sp_custom("MovePosNeg", &arg4, -1);
-             if (&save_x == 1)
-             {
-              if (&save_y <= &mco)
-               &save_y = &mco;
-             }
-             else
-             {
-              if (&save_y >= &mco)
-               &save_y = &mco;
-             }
-            }  
-            else
-             &save_y = &mco; 
- 
-           //set whether to use x or y
-           &val1 = sp_custom("move-axis", &arg4, -1);
-           if (&val1 == 1)
-            &save_x = sp_x(&arg4, -1);
-           else
-            &save_x = sp_y(&arg4, -1); 
-
-            if (sp_custom("last-status", &arg4, -1) == 2)
-             &mco = sp_custom("PPhupseq", &arg4, -1);
-
-            if (sp_custom("last-status", &arg4, -1) == 3)
-             &mco = sp_custom("PPpupseq", &arg4, -1);
-             
-           if (sp_custom("last-status", &arg4, -1) <= 0)
-           {
-            //Dink was neither pushing or pulling.
-            //just don't let any of the if statements below run.
-            &val1 = 9999;
+            &save_x = &val1;
            }
-             
-           if (&val1 == 312)
-           {
-            if (&save_x >= &save_y) 
-             sp_y(&arg4, &save_y);
-           } 
-           if (&val1 == 314) 
-           { 
-            if (&save_x <= &save_y) 
-             sp_x(&arg4, &save_y);       
-           } 
-           if (&val1 == 316) 
-           {
-            if (&save_x >= &save_y)  
-             sp_x(&arg4, &save_y);    
-           }   
-           if (&val1 == 318) 
-           {
-            if (&save_x <= &save_y) 
-             sp_y(&arg4, &save_y);
-           } 
           }
-    	  /////////////////////////////
-          //LIMIT PASS CHECK COMPLETE//
-          /////////////////////////////  
+          &val2 += 2;
+          if (&mco == &hybuppseq) 
+          { 
+           &save_y = sp_custom("setXmin", &arg4, -1); 
+           if (&save_y <= &val1)
+           {
+            &save_x = &val1;
+           }  
+          }
+          &val2 += 2;
+          if (&mco == &hybuppseq) 
+          {
+           &save_y = sp_custom("setXmax", &arg4, -1);
+           if (&save_y >= &val1)
+           {
+            &save_x = &val1;
+           }
+          }
+          &val2 += 2;
+          if (&mco == &hybuppseq) 
+          {
+           &save_y = sp_custom("setYmin", &arg4, -1);
+           if (&save_y <= &val1)
+           {
+            &save_x = &val1;
+           }
+          }
+          
+          //check for ignore value set by dmod developer
+          &val1 = sp_custom("Enable-Limit", &arg4, -1);
+          if (&val1 == 2)
+          {
+           &val1 = sp_custom("PPSLR-limit", &arg4, -1);
+           if (&save_y == 0)
+           {
+            &save_x = &val1;
+           }
+           if (&save_y == -1)
+           {
+            &save_x = &val1;
+           }
+          }
+          &val1 = sp_custom("PPSLR-limit", &arg4, -1);
+          if (&save_y == 9999)
+          {
+           &save_x = &val1;
+          }  
+          //check for "-1111" value to interpret as "-1"
+          if (&save_y == -1111)
+          {
+           &save_x = -1;
+          }
+          
+          if (&save_x != 9999)
+          {
+           &save_y = &save_x;
+          }
+         }          
+         
+          //set whether to use x or y
+         &val1 = sp_custom("move-axis", &arg4, -1);
+         if (&val1 == 1)
+         {
+          &save_x = sp_x(&arg4, -1);
+         }
+         else
+         {
+          &save_x = sp_y(&arg4, -1);
+         }
+         
+         //Check if sprite is passed it's limit, and if so, shift+lock it's position accordingly.
+         &val2 = sp_custom("base_push", &arg4, -1);
+         &val2 += 2;
+         if (&mco == &val2)
+         {
+          if (&save_x >= &save_y) 
+          {
+           sp_y(&arg4, &save_y);
+          }
+         }
+         &val2 += 2;
+         if (&mco == &val2)
+         { 
+          if (&save_x <= &save_y) 
+          {
+           sp_x(&arg4, &save_y);
+          }     
+         }
+         &val2 += 2;
+         if (&mco == &val2)
+         {
+          if (&save_x >= &save_y) 
+          { 
+           sp_x(&arg4, &save_y);       
+          }  
+         }
+         &val2 += 2;
+         if (&mco == &val2)
+         {
+          if (&save_x <= &save_y) 
+          {            
+           sp_y(&arg4, &save_y);                
+          }
+         }
+        }
+       }        
+     /////////////////////////////
+     //LIMIT PASS CHECK COMPLETE//
+     ///////////////////////////// 
 
       //////////////////////////////////////
       //relock Dink relative to the sprite//
       //////////////////////////////////////
-       //Relock Dink relative to object - push and pull.
-       //The calculations will be the same for each respective direction for both push and pull
-       //So we just need to retrieve the correct seq and move limit. 
-       //Direction checks can be used as is. 
-       //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.
-       &save_x = sp_x(1, -1);
-       &save_x = sp_custom("move-status", &arg4, -1);
-       &save_y = 0;
-       if (&save_x > 0)
+      //don't need to run this the first time around.
+      &save_x = sp_custom("move-status", &arg4, -1);
+      &save_y = 0;
+      &val1 = 0;
+      if (&save_x > 0)
+      {
+       //also don't run this if the sprite hasn't moved since last limit check..
+       if (&save_x == 1)
        {
-        if (sp_custom("last-status", &arg4, -1) == 2)
+        //Dink is IDLE - check if should skip checks.
+        &save_x = sp_custom("PPIdle-SkipChecks", &arg4, -1);
+        if (&save_x == 1)
         {
-         //pushing - do some juggling in a new custom key so we don't have to declare another variable.
+         &save_y = 1;
+        }
+       }
+       if (&save_y <= 0)
+       {
+        //Relock Dink relative to object - push and pull
+        
+        //The calculations will be the same for each respective direction for both push and pull
+        //So we just need to retrieve the correct seq and move limit. 
+        //Direction checks can be used as is. 
+        //Remember: PPhupseq and PPpupseq are opposite seqs so we can't just use one or the other.
+        &save_x = sp_custom("last-status", &arg4, -1);
+        if (&save_x >= 2)
+        {
+         if (&save_x == 2)
+         {
+          //pushing - do some juggling in a new custom key so we don't have to declare another variable.
+          &save_y = sp_custom("PPhupseq", &arg4, -1);
+          &mco = sp_custom("PPhuplimit", &arg4, -1);
+         }
+         if (&save_x == 3)
+         {
+          //pulling - do some juggling in a new custom key so we don't have to declare another variable.
+          &save_y = sp_custom("PPpupseq", &arg4, -1);
+          &mco = sp_custom("PPpuplimit", &arg4, -1);   
+         }
+         
+         //set whether to use x or y
+         &val1 = sp_custom("move-axis", &arg4, -1);
+         if (&val1 == 1)
+         {
+          &val1 = sp_x(&arg4, -1);
+         }
+         else
+         {
+          &val1 = sp_y(&arg4, -1); 
+         }
+         
+         //PPhupdiff and PPpupdiff are the same, so doesn't matter which one we run.
          &save_x = sp_custom("PPhupdiff", &arg4, -1);
          if (&save_x == -1111)
+         {
           &save_x = -1;
- 
-         &save_y = sp_custom("PPhupseq", &arg4, -1);
-         sp_custom("PPRelockSeq", &arg4, &save_y);
-         &val1 = sp_custom("PPhuplimit", &arg4, -1);
-        }
-        if (sp_custom("last-status", &arg4, -1) == 3)
-        {
-         //pulling - do some juggling in a new custom key so we don't have to declare another variable.
-         &save_x = sp_custom("PPpupdiff", &arg4, -1);
-         if (&save_x == -1111)
-          &save_x = -1;
-          
-         &save_y = sp_custom("PPpupseq", &arg4, -1);
-         sp_custom("PPRelockSeq", &arg4, &save_y);
-         &val1 = sp_custom("PPpuplimit", &arg4, -1);   
-        }
-        if (sp_custom("last-status", &arg4, -1) <= 0)
-        {
-         //Dink was neither pushing or pulling.
-         //just don't let any of the if statements below run.
-         sp_custom("PPRelockSeq", &arg4, 9999);
-        }
-  
-        //set whether to use x or y
-        &save_y = sp_custom("move-axis", &arg4, -1);
-        if (&save_y == 1)
-         &save_y = sp_x(&arg4, -1);
-        else
-         &save_y = sp_y(&arg4, -1); 
-        
-        if (sp_custom("PPRelockSeq", &arg4, -1) == 312)
-        {
-         &save_y += &save_x;
-         
-         //assure we aren't locking dink to a position greater than the detected hard limit
-         &val1 += &save_x;
-         if (&save_y > &val1)
-          &save_y = &val1;
-          
-         sp_y(1, &save_y);
-        }
-        if (sp_custom("PPRelockSeq", &arg4, -1) == 314)
-        {
-         &save_y += &save_x;
-         
-         &val1 += &save_x;
-         if (&save_y < &val1)
-          &save_y = &val1;
-          
-         sp_x(1, &save_y);
-        }
-        if (sp_custom("PPRelockSeq", &arg4, -1) == 316)
-        {
-         &save_y += &save_x;
-         
-         &val1 += &save_x;
-         if (&save_y > &val1)
-          &save_y = &val1;
+         }
 
-         sp_x(1, &save_y);
-        } 
-        if (sp_custom("PPRelockSeq", &arg4, -1) == 318)
-        {
-         &save_y += &save_x;
-         
-         &val1 += &save_x;
-         if (&save_y < &val1)
-          &save_y = &val1;
+         &val2 = sp_custom("base_push", &arg4, -1);
+         &val2 += 2;
+         if (&save_y == &val2)
+         {
+          &val1 += &save_x;
           
-         sp_y(1, &save_y);
-        }   
-       }
+          //assure we aren't locking dink to a position greater than the detected hard limit
+          &mco += &save_x;
+          if (&val1 > &mco)
+          {
+           &val1 = &mco;
+          } 
+          
+          sp_y(1, &val1);
+         }
+         &val2 += 2;
+         if (&save_y == &val2)
+         {
+          &val1 += &save_x;
+          &mco += &save_x;
+          if (&val1 < &mco)
+          {
+           &val1 = &mco;
+          }
+          sp_x(1, &val1);
+         }
+         &val2 += 2;
+         if (&save_y == &val2)
+         {
+          &val1 += &save_x;
+          &mco += &save_x;
+          if (&val1 > &mco)
+          {
+           &val1 = &mco;
+          } 
+          sp_x(1, &val1);
+         }
+         &val2 += 2;
+         if (&save_y == &val2)
+         {
+          &val1 += &save_x;
+          &mco += &save_x;
+          if (&val1 < &mco)
+          {
+           &val1 = &mco;
+          }
+          sp_y(1, &val1);
+         }
+        }
+       }        
+      }
       ///////////////////
       //RELOCK COMPLETE//
       ///////////////////
@@ -370,7 +449,8 @@ void end(void)
   &save_x = sp_hard(&arg4, -1);
  
   //update dink's base walk
-  sp_base_walk(1, 70);
+  &val2 = sp_custom("base_walk", &arg4, -1);
+  sp_base_walk(1, &val2);
 
   //kill the fakedink and deactivate nodraw on dink
   &save_x = sp_custom("PPfdink", &arg4, -1);
