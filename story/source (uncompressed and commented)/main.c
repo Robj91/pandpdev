@@ -36,7 +36,6 @@ void main()
 // total, so be sure you don't go overboard.
   
   make_global_int("&story", 0);
-  make_global_int("&spush", 1);
   make_global_int("&vcheck", 0);
 
 //Now we're done... Dink knows to run START.C automatically next....

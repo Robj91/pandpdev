@@ -15,17 +15,8 @@ void talk(void)
  wait(250);
  say_stop("Ok.. is that it? Just walk into things like normal?", 1);
  wait(250);
- if (&spush == 1)
- {
-  say_stop("`3Yes, when you walk into a pushable object, you will grab hold of it.", &current_sprite); 
-  say_stop("`3And then you can push AND pull it!", &current_sprite); 
- }
- else
- {
-  say_stop("`3Yes, but also, try pulling things.", 1); 
-  say_stop("`3just walk up to an object that's pullable and hold the 'Z' Button.", &current_sprite);
-  say_stop("`3Then move backwards to pull it. It's as simple as that.", &current_sprite);
- }
+ say_stop("`3Yes, when you walk into a pushable object, you will grab hold of it.", &current_sprite); 
+ say_stop("`3And then you can push AND pull it!", &current_sprite); 
  wait(250);
  say_stop("Cool thanks, also your name is stupid.. Phisbo.. sounds like some sort of toy brand.", 1);
  wait(250);
@@ -38,8 +29,5 @@ void talk(void)
 
  wait(1200);
 
- if (&spush == 1) 
-  say("So I walk into an object to grab hold of it.. ok.", 1);
- else
-  say("So I Push like normal and I HOLD 'Z' to Pull.", 1);
+ say("So I walk into an object to grab hold of it.. ok.", 1);
 }

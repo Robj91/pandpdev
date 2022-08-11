@@ -13,7 +13,6 @@ help:
         "Help"
         "Continue"
         "View/change gamepad buttons"
-        "Settings"
         choice_end();
 
  if (&result == 1)
@@ -163,29 +162,16 @@ help:
      
      if (&result == 3)
      {
-       if (&spush == 1)
-       {
         choice_start();
         set_y 240
         title_start();
 	Walk into an object. If the object can move, Dink will grab it.
-	You can then move forward or backward to push and pull it.
+	You can then move towards it or away from it to push or pull it.
 	To release the object, move in any other direction.
         title_end();
         "Ok"
         choice_end();
-       }
-       if (&spush == 0)
-       {
-        choice_start();
-        set_y 240
-        title_start();
-	Walk into an object to push it.
-	Walk into an object while holding "z" to pull it. 
-        title_end();
-        "Ok"
-        choice_end();
-       }
+        
       goto helpstart;
      }
 
@@ -239,119 +225,6 @@ help:
   goto help;
  }
 
- if (&result == 7)
- {
-  settings:
-        choice_start();
-        "Push and Pull Mode"
-        "Nevermind"
-        choice_end(); 
-  
-        if (&result == 1)
-        {
-         Pullmode:
-               if (&spush == 0)
-               {
-                choice_start();
-                set_y 250 
-                set_title_color 3
-                title_start();
-      	        Mode is currently set to - Hold 'Z' to Pull Mode.
-      	        Walk into an object to push it.
-		Walk into an object while holding "z" to pull it. 
-      	        
-      	        Would you like to change modes?
-                title_end();   
-                "Change to Sticky Push Mode"
-                "Nevermind"
-                choice_end();  
-                
-                if (&result == 1)
-                {
-                 &spush = 1;
-                 goto pullmode;
-                }
-                
-                goto settings;
-               } 
-               
-               if (&spush == 1)
-               {
-                choice_start();
-                set_y 275
-                set_title_color 3
-                title_start();
-      	        Mode is currently set to - Sticky Push Mode.
-      	        Walk into an object to grab it, and then Push or Pull it.
-      	        Walk in any other direction to let go of the object.
-
-      	        Would you like to change modes?
-                title_end();   
-                "Change to Hold 'Z' to Pull mode"
-                "Nevermind"
-                choice_end();  
-                
-                if (&result == 1)
-                {
-                 if (&vcheck != 1084)
-                 {
-                  if (&vcheck != 1096)
-                  {
-                   if (&vcheck != 108)
-                   {
-                    choice_start();
-                    set_y 275
-                    set_title_color 4
-                    title_start();
-         	    **WARNING**
-         	    Your current version of Dink Smallwood does not support this push and pull mode
-         	    It will either be unrepsonsive, buggy, or not work at all.
-         	    Are you sure you want to change to Hold 'Z' to pull mode?
-                    title_end();   
-                    "Change it anyway, I like my game unplayable"
-                    "Don't change it"
-                    choice_end(); 
-
-                    if (&result == 2)
-                    {
-                     goto pullmode; 
-                    }
-                   }
-                  }
-                 }
-                 
-                 &spush = 0;
-                 goto pullmode;
-                }          
-               }  
-                
-         goto settings;     
-        }
-        
-  goto help;
- }
-
- //unused save game from menu option
- if (&result == 8)
- {
-        choice_start();
-        "&savegameinfo"
-        "&savegameinfo"
-        "&savegameinfo"
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "&savegameinfo" 
-        "Nevermind"
-        choice_end();
-
-   save_game(&result);
-
- }
-
-  unfreeze(1);
-  kill_this_task();
+ unfreeze(1);
+ kill_this_task();
 }

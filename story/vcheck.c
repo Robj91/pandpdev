@@ -4,6 +4,7 @@ void main(void)
 {
  int &crap;
  int &junk;
+ int &val1;
 
  if (&player_map <= 0)
  {
@@ -13,18 +14,6 @@ void main(void)
 //INITIAL VERSION CHECK
  &crap = get_version();
  
-  if (&crap > 108)
-  {
-    &crap = get_client_version();
-    if (&crap < 197)
-    {
-      &crap = 109;
-    }
-    else
-    {
-      &crap = 110;
-    }
-  }
  if (&crap == 108)
  { 
   //check if this is FreeDink version 108.4 or lower
@@ -37,58 +26,50 @@ void main(void)
    &crap = 1084;
   }
   else
-  {
-   //Dink 1.08 or FreeDink 109.6(or higher) in use. Let's differentiate
-   //Using the sound bug in the latest FreeDink to check version. :-)
-   //we should make sure we at least have a few of soundbank numbers free
-   sound_set_kill(18);
-   sound_set_kill(19);
-   sound_set_kill(20);
-   &crap = playsound(23, 22050, 0, 0, 0);
-   sound_set_kill(&crap);
-   &junk = playsound(23, 22050, 0, 0, 0);
-   sound_set_kill(&junk);
-   
-   if (&junk == 0)
+  { 
+   //check if vanilla 1.08 or FreeDink 109.6, with a  keystroke
+   //adjust position of version checker text below
+   &junk = say_xy("`%Please press F2, so  this dmod can determine your Dink version", 20, 200);
+   sp_kill(&junk, 0);
+   sp_brain(1, 1);
+   set_dink_speed(1, -1);
+   sp_nodraw(1, 1);
+   &crap = create_sprite(1, 1, 0, 1, 1);
+   sp_nodraw(&crap, 1);
+   sp_gold(&crap, 999);
+  detect-key:
+   wait(50);
+   &val1 = sp_gold(&crap, -1);
+   if (&val1 != 999)
    {
-    //sound is disabled, which means the soundbank differentiation won't work.
-    //ask the player to select their version
-    
-    wait(1);
-    stop_entire_game(1);
-    choice_start();
-    set_y 280
-    set_title_color 15
-    title_start();
-    Version can not be determined between 1.08 and FreeDink 109.6 while sound is disabled!
-    Please select the Dink version you are currently using.
-    title_end();
-    "Dink Smallwood 1.08"
-    "FreeDink 109.6"
-    choice_end();    
-    
-    if (&result == 1)
-    {
-     &crap = 108;
-     goto proc_cont;
-    }
-    if (&result == 2)
-    {
-     &crap = 1096;
-     goto proc_cont;
-    }
-   }
-   if (&crap != &junk)
-   {
-    &crap -= 1;
-    &junk -= 1;
-    sound_set_kill(&crap);
-    sound_set_kill(&junk);
-    &crap = 1096;
+    &crap = &val1;
    }
    else
    {
-    &crap = 108;
+    goto detect-key;
+   }
+    
+   //change dink back to mouse
+   sp_active(&junk, 0);
+   set_dink_speed(1, 3);
+   sp_nodraw(1, 0);   
+   sp_seq(1, 0);
+   sp_brain(1, 13);
+   sp_pseq(1,10);
+   sp_pframe(1,8);
+   sp_que(1,20000);
+   sp_noclip(1, 1);
+   sp_base_idle(1, -1);
+   sp_base_walk(1, -1);
+
+
+   if (&crap == 1096)
+   {
+    //Freedink 109.6 - check for linux version (broken &arg4 - &arg8)
+    //this will store 1096 for windows and -1096 for linux
+    external("vcheck", "l-w", 1, 0, 0, 99);
+    external("vcheck", "l-w");
+    &crap = &return;
    }
   }
  }
@@ -105,17 +86,20 @@ proc_cont:
   }
   
   //now run the appropriate procedure (after splash or after load)
-  if (&crap < 108)
+  if (&crap > 0)
   {
-   if (&junk <= 0)
+   if (&crap < 108)
    {
-    olddink();
-   }
-   else
-   {
-    olddinkl();
-   }
-  }   
+    if (&junk <= 0)
+    {
+     olddink();
+    }
+    else
+    {
+     olddinkl();
+    }
+   }   
+  }
   if (&crap == 108)
   {
    if (&junk <= 0)
@@ -127,26 +111,32 @@ proc_cont:
     dink108l();
    }
   }  
-  if (&crap == 109)
+  if (&crap >= 109)
   {
-   if (&junk <= 0)
+   if (&crap <= 110)
    {
-    olddinkhd();
-   }
-   else
-   {
-    olddinkhdl();
+    if (&junk <= 0)
+    {
+      olddinkhd();
+    }
+    else
+    {
+      olddinkhdl();
+    }
    }
   }
-  if (&crap == 110) 
+  if (&crap >= 111)
   {
-   if (&junk <= 0)
+   if (&crap < 1000)
    {
-    dinkhd();
-   }
-   else
-   {
-    dinkhdl();
+    if (&junk <= 0)
+    {
+      dinkhd();
+    }
+    else
+    {
+      dinkhdl();
+    }
    }
   }
   if (&crap == 1084)
@@ -169,6 +159,17 @@ proc_cont:
    else
    {
     freedink1096l();
+   }
+  }
+  if (&crap == -1096)
+  {
+   if (&junk <= 0)
+   {
+    freedink-1096();
+   }
+   else
+   {
+    freedink-1096l();
    }
   }
  
@@ -307,7 +308,20 @@ void freedink1084(void)
 void freedink1096(void)
 {
  //Free Dink version 109.6 or later is in use
- int &crap = say_xy("Free Dink 109.6", 0, 450); 
+ int &crap = say_xy("Free Dink 109.6 (Windows)", 0, 450); 
+ sp_kill(&crap, 0); 
+ 
+ //put stuff here
+ 
+ 
+ //bugfix
+ goto stopex;
+}
+
+void freedink-1096(void)
+{
+ //Free Dink version 109.6 or later is in use
+ int &crap = say_xy("Free Dink 109.6 (Linux)", 0, 450); 
  sp_kill(&crap, 0); 
  
  //put stuff here
@@ -382,7 +396,7 @@ void freedink1084l(void)
 void freedink1096l(void)
 {
  //Free Dink version 109.6 or later is in use
- int &crap = say_xy("`%Free Dink 109.6 - Save File Loaded", 10, 380); 
+ int &crap = say_xy("`%Free Dink 109.6 (Windows) - Save File Loaded", 10, 380); 
  sp_kill(&crap, 3000); 
  
  //put stuff here
@@ -392,9 +406,39 @@ void freedink1096l(void)
  goto stopex;
 }
 
-void flawtest(void)
+void freedink-1096l(void)
 {
- return;
+ //Free Dink version 109.6 or later is in use on Linux
+ int &crap = say_xy("`%Free Dink 109.6 (Linux) - Save File Loaded", 10, 380); 
+ sp_kill(&crap, 3000); 
+ 
+ //put stuff here
+
+
+ //bugfix
+ goto stopex;
+}
+
+void l-w(void)
+{
+ //used to differentiate between windows and linux version of FreeDink 109.6
+ if (&arg1 > 0)
+ {
+  //this is the first external call
+  goto stopex;
+ }
+ else
+ {
+  //this is the secon external call
+  if (&arg4 > 0)
+  {
+   return(-1096);
+  }
+  else
+  {
+   return(1096);
+  }
+ }
 }
 
 ///////////////////////////////////////

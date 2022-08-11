@@ -13,18 +13,18 @@ void main(void)
 //INITIAL VERSION CHECK
  &crap = get_version();
  
- if (&crap > 108)
- {
-  &crap = get_client_version();
-  if (&crap < 191)
+  if (&crap > 108)
   {
-   &crap = 109;
+    &crap = get_client_version();
+    if (&crap < 197)
+    {
+      &crap = 109;
+    }
+    else
+    {
+      &crap = 110;
+    }
   }
-  else
-  {
-   &crap = 110;
-  }
- } 
  if (&crap == 108)
  { 
   //check if this is FreeDink version 108.4 or lower
@@ -49,6 +49,35 @@ void main(void)
    &junk = playsound(23, 22050, 0, 0, 0);
    sound_set_kill(&junk);
    
+   if (&junk == 0)
+   {
+    //sound is disabled, which means the soundbank differentiation won't work.
+    //ask the player to select their version
+    
+    wait(1);
+    stop_entire_game(1);
+    choice_start();
+    set_y 280
+    set_title_color 15
+    title_start();
+    Version can not be determined between 1.08 and FreeDink 109.6 while sound is disabled!
+    Please select the Dink version you are currently using.
+    title_end();
+    "Dink Smallwood 1.08"
+    "FreeDink 109.6"
+    choice_end();    
+    
+    if (&result == 1)
+    {
+     &crap = 108;
+     goto proc_cont;
+    }
+    if (&result == 2)
+    {
+     &crap = 1096;
+     goto proc_cont;
+    }
+   }
    if (&crap != &junk)
    {
     &crap -= 1;
@@ -63,9 +92,9 @@ void main(void)
    }
   }
  }
- 
+
+proc_cont: 
   //check if new game, if so we don't want to run the "save file loaded" text
- 
   if (&vcheck == 0)
   {
    &junk = 0;
@@ -255,7 +284,7 @@ void olddinkhd(void)
 void dinkhd(void)
 {
  //Dink Smallwood HD current version in use
- int &crap = say_xy("Dink Smallwood HD 1.91", 0, 450); 
+ int &crap = say_xy("Dink Smallwood HD", 0, 450); 
  sp_kill(&crap, 0); 
  
  //put stuff here
@@ -330,7 +359,7 @@ void olddinkhdl(void)
 void dinkhdl(void)
 {
  //Dink Smallwood HD current version in use
- int &crap = say_xy("`%Dink Smallwood HD 1.91 - Save File Loaded", 10, 380); 
+ int &crap = say_xy("`%Dink Smallwood HD - Save File Loaded", 10, 380); 
  sp_kill(&crap, 3000); 
  
  //put stuff here
@@ -361,6 +390,11 @@ void freedink1096l(void)
 
  //bugfix
  goto stopex;
+}
+
+void flawtest(void)
+{
+ return;
 }
 
 ///////////////////////////////////////

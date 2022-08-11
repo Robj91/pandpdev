@@ -18,7 +18,7 @@ void main(void)
  
  //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
  //also does other important checks to set the push/pull system up properly.
- external("phisbo", "main", -21, -35, 23, 9); 
+ external("phisbo", "main", -21, -35, 23, 9);
  
  goto stopex;
 }
@@ -28,39 +28,17 @@ void touch(void)
 {
  //ADD ANY TOUCH PROCEDURE STUFF HERE.
 
-//required lines to make push/pull work - do not alter or remove.
- &save_x = sp_custom("initiated", &current_sprite, -1);
- if (&save_x > 0)
- {
-  sp_touch_damage(&current_sprite, 0);
-  wait(&save_x);
-  sp_custom("initiated", &current_sprite, 0);
- }
- 
  external("phisbo", "touch"); 
- wait(200);
- external("phisbo", "touchreset");
- 
  goto stopex;
 }
 
 void MoveDetectDuring(void)
 {
-
  goto stopex;
 }
 
 void MoveDetectAfter(void)
 {
-
-
- goto stopex;
-}
-
-void pull(void)
-{
- external("phisbo", "pkey");
-
  goto stopex;
 }
 
@@ -70,6 +48,8 @@ void talk(void)
  if (&return <= 0)
  {
   //ADD ANY TALK STUFF HERE.
+  external("phisbo", "terminate", &current_sprite);
+  external("phisbo", "initiate", &current_sprite);
  }
  else
  {

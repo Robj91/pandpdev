@@ -48,7 +48,7 @@ void main(void)
  //needed for talk procedure. Can't use global juggle var, causes a bug. If no talk procedure, can delete.
  int &val1; 
 
- sp_custom("setcollision", &current_sprite, 0);
+ sp_custom("setcollision", &current_sprite, 3);
 
  sp_custom("trimleft", &current_sprite, 0);
  sp_custom("trimtop", &current_sprite, 10);
