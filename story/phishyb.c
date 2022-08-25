@@ -250,9 +250,7 @@ void hybrid(void)
         if (&val2 == 0)
         {
          &val2 = -20;
-        }
-        
-        sp_custom("PPdotchange", &current_sprite, &val2);         
+        }       
        }
 
        if (&save_x == 4)
@@ -289,9 +287,7 @@ void hybrid(void)
         if (&val2 == 0)
         {
          &val2 = 30;
-        }
-        
-        sp_custom("PPdotchange", &current_sprite, &val2);         
+        }       
        }
 
        if (&save_x == 6)
@@ -333,9 +329,7 @@ void hybrid(void)
         if (&val2 == 0)
         {
          &val2 = -30;
-        }
-
-        sp_custom("PPdotchange", &current_sprite, &val2);         
+        }      
        }
 
        if (&save_x == 8)
@@ -372,17 +366,35 @@ void hybrid(void)
         if (&val2 == 0)
         {
          &val2 = 20;
-        }
-
-        sp_custom("PPdotchange", &current_sprite, &val2);        
+        }     
        }
+
+       if (&val2 == 9999)
+       {
+        &val2 *= -1;
+       }
+       if (&val2 == -9999)
+       {
+        sp_custom("PPdotchange", &current_sprite, 0);
+       }
+       else
+       {
+        sp_custom("PPdotchange", &current_sprite, &val2);
+       }  
 
        if (&val2 != 0)
        {
         if (&val2 < 0)
         {
-         &val2 *= -1;
-         sp_custom("PPpullspace_required", &current_sprite, &val2);
+         if (&val2 == -9999)
+         {
+          sp_custom("PPpullspace_required", &current_sprite, 0);
+         }
+         else
+         {
+          &val2 *= -1;
+          sp_custom("PPpullspace_required", &current_sprite, &val2);
+         }
         }
        }
      /////////////////////
@@ -483,6 +495,69 @@ void hybrid(void)
      external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
      kill_this_task();
     }
+
+    //check if pullspace should be enforced when grabbing a sprite
+    &save_x = sp_custom("enforce_pullspace", &current_sprite, -1);
+    if (&save_x == 1)
+    {
+     //Retrieve the FIRST known hardness in DINK'S pull path
+     &save_x = sp_custom("PPplimittrack1", &current_sprite, -1); 
+     
+     //if it's less than 0, hardness tracker sprite exited screen bound and no hardness was found
+     //In this case, skip it.
+     if (&save_x <= 0)
+     {
+      sp_custom("PPNoRoomStart", &current_sprite, 0);        
+     }        
+     else
+     {
+      //set whether to use x or y
+      &val1 = sp_custom("move-axis", &current_sprite, -1);
+      if (&val1 == 1)
+      {
+       &save_y = sp_x(1, -1);
+      }
+      else
+      {
+       &save_y = sp_y(1, -1); 
+      }
+      
+      &val1 = sp_custom("pulldir", &current_sprite, -1); 
+      &val2 = sp_custom("PPpullspace_required", &current_sprite, -1); 
+      
+      //subtract 1 here.. so Dink can grab it with exactly enough room as well.
+      &val2 -= 1;
+      if (&val1 == 2)
+      { 
+       &save_x -= &save_y;
+      }
+      if (&val1 == 4)
+      {
+       &save_y -= &save_x
+       &save_x = &save_y;
+      }
+      if (&val1 == 6) 
+      {
+       &save_x -= &save_y;
+      } 
+      if (&val1 == 8) 
+      {
+       &save_y -= &save_x;
+       &save_x = &save_y;
+      }
+      
+      if (&save_x <= &val2) 
+      {
+       //trigger the end, and pass dink's original speed and frame_delay to the procedure
+       &val1 = sp_custom("PPd-speed", &current_sprite, -1);
+       &val2 = sp_custom("PPdink-fd", &current_sprite, -1);
+       external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
+       external("dsmove", "space");
+       kill_this_task();
+      }
+     } 
+    }   
+    
 
    ////////////////////
    //FAIL SAFE CHECKS//

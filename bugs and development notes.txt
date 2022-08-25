@@ -1,6 +1,3 @@
-TODO:
-- Fix pull limit, when starting with not enough room.. after clearing the room, it let's you pull back to where you started from.
-
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
 - Escape.c - help section and settings.
@@ -112,18 +109,25 @@ Alternatively, set the above "base" custom keys on Dink, rather than every sprit
 
 -------------------------------------------
 
-"pull_dd_adjust": Used to adjust the point at which Dink will collide with hardness when pulling. By default, it is set to 20/-20 for west/east and 30/-30 for south/north, if no value is set, which places it at the back of Dinks feet.
-                  If you change Dinks base push using the "base_push" custom key, and the default values don't work, and it seems off when you pull things, you have this as an option to fine tune it.
-                  If this is set, it will affect all directions, and the value will be added to all positive directions(east and south), and subtracted for negative directions(west and north).
+"pull_dd_adjust": Used to adjust the point at which Dink will collide with hardness when pulling. 
+                  By default, if no value is set, the push/pull system will use 20/-20 for west/east directions, and 30/-30 for south/north directions, which makes Dink stop when the back of his feet touch hardness, when pulling
+                  If you change Dinks base push using the "base_push" custom key, and the default values don't work with the new sequence, you have this as an option to fine tune it.
+                  If this is set, it will affect all directions, and the value will be added to Dink position for all positive directions(east and south), and subtracted for all negative directions(west and north).
                   
-Setting "pull_dd_adjust", will adjust for all directions. If you want to make any adjustments for specific directions, you can also set any of the below, and they will take priority over the main "pull_dd_adjust" setting.
+If you want to make any adjustments for specific directions, you can also set any of the below, and they will take priority over the main "pull_dd_adjust" setting.
 "pull_dd_adjust_2": Adjustement when pulling in the south direction
 "pull_dd_adjust_4": Adjustement when pulling in the west direction
 "pull_dd_adjust_6": Adjustement when pulling in the east direction
 "pull_dd_adjust_8": Adjustement when pulling in the north direction
 
 When using the specific direction adjustments, it will ADD the value to the depth dot location. Use negative values to subtract instead.
-The "pull_dd_adjust", and also the speicif direction adjustment custom keys can be set on a sprite OR on Dink(all sprites will use if set on Dink). If set on a sprite, the sprite setting will take priority.
+
+Set any of the above to '9999' or '-9999' to DISABLE adjustment of the depth dot (doing this will use the value '0' in all claculations, resulting in NO adjustement. This means even the default adjustement will not be applied).
+
+
+"enforce_pullspace": If this is set to 1, Dink will not be able to move a sprite, if he is in too tight of a space(between the sprite and other hardness behind), the space required will be the same as the current depth dot adjustment as set above.
+
+NOTE: All of the above custom keys can be set on the sprite OR on Dink(all sprites will use it if set on Dink). The sprite setting will always take priority.
 
 -------------------------------------------
 
