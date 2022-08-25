@@ -56,20 +56,10 @@ https://www.youtube.com/playlist?list=PL23KcNyjVv-CkWS2A32cXEXleuHUby04b
 
 Implement this system - 4 simple steps.
 
-If you have the older (2.01) version of Push and Pull installed and would just like to update to this current version, please skip to "Section 4: Updating Push and Pull", further down in this readme file.
-
---------------------------
---STEP 1: DINK.INI LINES--
---------------------------
-There are no new graphics but we need to do the following to prevent graphic glitches in dink version 1.08. (don't worry, no original sequences will be changed,  nothing added, and this is not using any sequence slots either)
-COPY these lines and PASTE them at the very top of your dink.ini before anything else:
-load_sequence_now graphics\dink\push\ds-p2- 522 75 45 79 -7 -21 13 -7
-load_sequence_now graphics\dink\push\ds-p4- 524 75 36 69 3 -9 45 9
-load_sequence_now graphics\dink\push\ds-p6- 526 75 67 71 -21 -12 21
-load_sequence_now graphics\dink\push\ds-p8- 528 75 46 59 -9 5 12 24
+If are using any older version of push and pull and simply wish top update to the latest version, please scroll down to SECTION 4, for a simple step-by-step guide on how to do this.
 
 ------------------------------------------------
---STEP 2: Edit Main.c--
+--STEP 1: Edit Main.c--
 ------------------------------------------------
 There are two Global Variables you need to declare. One is for Push and Pull, and one is for Version Checker, which is required for Push and Pull to function correctly. 
 Please add the following lines in main.c, below the other "make_global_int" lines:

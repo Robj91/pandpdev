@@ -1,7 +1,5 @@
-//REMINDER OF WHAT’S DONE:
-
-bugs and ideas:
-- remove redundant procedures from all scripts
+TODO:
+- Fix pull limit, when starting with not enough room.. after clearing the room, it let's you pull back to where you started from.
 
 TUTNOTES:
 - Mention somewhere that if depth dot is outside hardbox, Hardbox values MUST be passed.
@@ -9,31 +7,31 @@ TUTNOTES:
 
 - "push_active(0);" option in "onload.c"
 
-- “pushdelay” is now true to wait time. If hybrid system is active anything above 450 has possibility of causing issues.
+- "pushdelay" is now true to wait time. If hybrid system is active anything above 450 has possibility of causing issues.
 
 - moveactive now returns sprite number of sprite being moved.
 
 - move_after_idle custom key, ignores movedetectafter procedure if sprite didn’t move, and enables the additional IdleDetectAfter procedure
 - move_during_idle custom key, ignores movedetectduring procedure if sprite didn’t move, and enables the additional IdleDetectDuring procedure
-- move_idle custom key, is the equivelant to setting “move_after_idle” and “move_during_idle” to 1
+- move_idle custom key, is the equivelant to setting "move_after_idle" and "move_during_idle" to 1
 
 //////////////////////
 //Config custom keys//
 //////////////////////
 The below sp_custom() keys are used to configure/customise push and pull on a sprite, setting these to certain values, as described below will change the way push and pull will work with them.
-Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sprite ignore hardness when being moved.
+Example use: sp_custom("move_nohard", &current_sprite, 1); will make &current_sprite ignore hardness when being moved.
 
  "push": Used to make push and pull run the normal push() prcedure. Basically, this mimicks vanilla push system when enabled on a sprite, except with no delay before push activates, by default.
          0 = push() procedure will not be enabled
          1 = push() procedure will be enabled - the push/pull system will look into the sprite script and run push(), rather than using the push/pull system
-         Higher than 1: Will use the value as a delay before push() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate “pushdelay” custom key.
+         Higher than 1: Will use the value as a delay before push() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate "pushdelay" custom key.
 
 ------------------------------------------
 
-“push_custom”: Used to enable the “push_custom” procedure, instead of using the push/pull system. When enabled, it will even skip playing the push sequence.
+"push_custom": Used to enable the "push_custom" procedure, instead of using the push/pull system. When enabled, it will even skip playing the push sequence.
                0 = push_custom() procedure will not be enabled
 	       1 = push_custom() procedure will be enabled - the push/pull system will look into the sprite script and run push_custom(), rather than using the push/pull system (won’t even play a push sequence)
-               Higher than 1: Will use the value as a delay before push_custom() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate “pushdelay” custom key.
+               Higher than 1: Will use the value as a delay before push_custom() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate "pushdelay" custom key.
 
 ------------------------------------------
 
@@ -43,7 +41,7 @@ Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sp
 
 ------------------------------------------
 
-"pushdelay": Used to set a “wait()” delay before push activates, when walking into a sprite. Set the value to the desired delay (in millseconds)
+"pushdelay": Used to set a "wait()" delay before push activates, when walking into a sprite. Set the value to the desired delay (in millseconds)
 
 ------------------------------------------
 
@@ -56,16 +54,20 @@ Example use: sp_custom(“move_nohard”, &current_sprite, 1); will make &current_sp
 
 "base_walk": Used to tell the push/pull system Dink is currently using a different base_walk sequence than his default. This needs to be set if Dinks base walk is different.
 
-“base_push”: Used to tell the push/pull system Dink is currently using a different base_push sequence than his default. This needs to be set if Dinks base push is different.
+"base_push": Used to tell the push/pull system Dink is currently using a different base_push sequence than his default. This needs to be set if Dinks base push is different.
 
-“base_idle”: Used to tell the push/pull system Dink is currently using a different base_idle sequence than his default. This needs to be set if Dinks base idle is different.
+"base_idle": Used to tell the push/pull system Dink is currently using a different base_idle sequence than his default. This needs to be set if Dinks base idle is different.
 
-Alternatively, set the above “base” custom keys on Dink, rather than every sprite. If set on a sprite though, they will take priority over Dinks custom key setting.
+Alternatively, set the above "base" custom keys on Dink, rather than every sprite. If set on a sprite though, they will take priority over Dinks custom key setting.
 
 ------------------------------------------
 
-“pull_depthdot_adjust”: Used to adjust the point at which Dink will collide with hardness when pulling. By default, it is set to the back of Dinks feet.
-                        If you change Dinks base push using the “base_push” custom key, you have this as an option to fine tune it.
+"update_que": If set to 1, checks the current depth que of the sprite, and keeps it updated relative to the sprites Y co-ordinate while it’s being moved.
+
+------------------------------------------
+
+"que_fix": If the depth do of a sprite is +/- 1 from the top or bottom hardbox edge, and you experience depth que bugs while moving (the sprite and dink rapidly changing que draw order and appearing over one another, set this to 1 to fix it.
+           You will probably never need to use this, but it's here just in case.
 
 ------------------------------------------
 
@@ -85,7 +87,7 @@ Alternatively, set the above “base” custom keys on Dink, rather than every sprit
 ------------------------------------------
 
 "Enable-Limit": Used to enable the X/Y, Min/Max override custom keys. This will make it so the sprite cannot exceed these set X/Y limit values.
-		You cannot use this to override detected hard limits - use the custom key “move_nohard” to make a sprite ignore hardness when being moved.
+		You cannot use this to override detected hard limits - use the custom key "move_nohard" to make a sprite ignore hardness when being moved.
 		0 = Disabled
 		1 = Enabled
  		2 = Enabled, and IGNORE values of 0 or -1 in Push and Pull Calculations.
@@ -105,15 +107,30 @@ Alternatively, set the above “base” custom keys on Dink, rather than every sprit
 
 - If you need to set a value to "-1" (which can't be done in a custom key, because "-1" retrieves the custom keys value), set it to "-1111" and push and pull will interpret it as "-1" instead.
 
-- A value of "9999" will cause an individual key to be ignored when “Enable-Limit” is higher than 0. (e.g, you might want to set the "setXmax" value only. You would then set all the others to "9999" so they are ignored).
-  OR ALTERNATIVELY - when “Enable-Limit” is ‘2’ any custom key value of ’0’ or ‘-1’ will be ignored. So you can use this setting, set the keys you want, leave the others untouched.
+- A value of "9999" will cause an individual key to be ignored when "Enable-Limit" is higher than 0. (e.g, you might want to set the "setXmax" value only. You would then set all the others to "9999" so they are ignored).
+  OR ALTERNATIVELY - when "Enable-Limit" is ‘2’ any custom key value of ’0’ or ‘-1’ will be ignored. So you can use this setting, set the keys you want, leave the others untouched.
+
+-------------------------------------------
+
+"pull_dd_adjust": Used to adjust the point at which Dink will collide with hardness when pulling. By default, it is set to 20/-20 for west/east and 30/-30 for south/north, if no value is set, which places it at the back of Dinks feet.
+                  If you change Dinks base push using the "base_push" custom key, and the default values don't work, and it seems off when you pull things, you have this as an option to fine tune it.
+                  If this is set, it will affect all directions, and the value will be added to all positive directions(east and south), and subtracted for negative directions(west and north).
+                  
+Setting "pull_dd_adjust", will adjust for all directions. If you want to make any adjustments for specific directions, you can also set any of the below, and they will take priority over the main "pull_dd_adjust" setting.
+"pull_dd_adjust_2": Adjustement when pulling in the south direction
+"pull_dd_adjust_4": Adjustement when pulling in the west direction
+"pull_dd_adjust_6": Adjustement when pulling in the east direction
+"pull_dd_adjust_8": Adjustement when pulling in the north direction
+
+When using the specific direction adjustments, it will ADD the value to the depth dot location. Use negative values to subtract instead.
+The "pull_dd_adjust", and also the speicif direction adjustment custom keys can be set on a sprite OR on Dink(all sprites will use if set on Dink). If set on a sprite, the sprite setting will take priority.
 
 -------------------------------------------
 
 ////////////////////////////////
 //Custom Keys to retrieve info//
 ////////////////////////////////
-
+The below sp_custom() keys are used to retrieve info. Don’t change the value of these, you might mess up the push/pull system. Only retrieve the value[-1].
 Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X position at the time he grabbed the sprite (but before he moved it).
 
 ------------------------------------------
@@ -145,15 +162,15 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 
 ------------------------------------------
 
-"move_after_idle": Used to make the “MoveDetectAfter” procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
+"move_after_idle": Used to make the "MoveDetectAfter" procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
                    0 = Run MoveDetectAfter always (even if sprite never moved)
                    1 = Only run MoveDetectAfter if sprite moved positions
 
-"move_during_idle": Used to make the “MoveDetectDuring” procedure only run if the sprite is currently moving.
+"move_during_idle": Used to make the "MoveDetectDuring" procedure only run if the sprite is currently moving.
                     0 = Run MoveDetectDuring always (even if sprite isn’t moving)
                     1 = Only run MoveDetectDuring if sprite is currently moving
 
-"move_idle": A combination of the above. Setting this to 1, is the same as setting both “move_after_idle” and “move_during_idle” to 1.
+"move_idle": A combination of the above. Setting this to 1, is the same as setting both "move_after_idle" and "move_during_idle" to 1.
 
 ------------------------------------------
 
@@ -201,8 +218,19 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 ////////////////////
 //CORE custom keys//
 ////////////////////
+The below sp_custom() keys are used by the push/pull system, outside of that they are not very useful for retrieving information.
+They are listed here anyway, just in case someone does indeed need to retrieve any further info from the push/pull system.
+DO NOT change the value of any of these on a sprite. Push and Pull will bug out otherwise.
 
-“PPbw_bp_diff”: Used to store the difference between base_walk and base_push.
+"PPpullspace_required": Used to store the pullspace required behind dink to pull a sprite
+
+"PPsprite_oque": Stores the sprite’s original depth que before it was moved.
+
+"PPqfix_apply": Used to determine if que fix should be applied or not.
+
+"PPsprite_relque": Used to store the difference between the y position and sp_que of the sprite.
+
+"PPbw_bp_diff": Used to store the difference between base_walk and base_push.
 
 "PPtimerscript": Used to store the spawned pushdelay timer script number.
 
@@ -213,14 +241,14 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 "PPAllowCollision": Used to set whether collision can be allowed to run based on the "setcollision" custom key and the Dink Engine in use.
 		  1 = Collision allowed
 
-“PPSLR-limit”: Used in hybup.c to temporarily store the move limit value when calculating custom override of move limits.
+"PPSLR-limit": Used in hybup.c to temporarily store the move limit value when calculating custom override of move limits.
 
-“PPterminated”: Used to set and determine when a sprite is being manually terminated out of course.
+"PPterminated": Used to set and determine when a sprite is being manually terminated out of course.
 
-“PPd-speed”: Used to store dink’s s "set_dink_speed” equivelant before push and pull system locks it to -1.
-“PPd-sp_speed”: Used to store dink’s sp_speed equivelant before push and pull system locks it to -1.
+"PPd-speed": Used to store dink’s s "set_dink_speed" equivelant before push and pull system locks it to -1.
+"PPd-sp_speed": Used to store dink’s sp_speed equivelant before push and pull system locks it to -1.
 
-“PPdink-fd”: Used to store dink’s frame delay before it is changed to match the speed of the sprite being moved.
+"PPdink-fd": Used to store dink’s frame delay before it is changed to match the speed of the sprite being moved.
 
 "PPPosAltered": Used to determine whether the sprite's position changed after a push or pull was initiated.
 	      0 = No change
@@ -330,13 +358,13 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 -------------------------
 
 "PPDinkPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in Dink's path along the intended move axis.
-“PPDinkPhisTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkPhisTracker". Used to cross-reference for a bugfix.
+"PPDinkPhisTrackerfix": Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkPhisTracker". Used to cross-reference for a bugfix.
 
 "PPObjectPhisTracker": Used to store the active sprite number of Dink's tracker sprite when PUSHING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
-“PPObjectPhisTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPObjectPhisTracker". Used to cross-reference for a bugfix
+"PPObjectPhisTrackerfix": Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPObjectPhisTracker". Used to cross-reference for a bugfix
 
 "PPDinkTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in Dink's path along the intended move axis.
-“PPDinkTrackerfix”: Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkTracker". Used to cross-reference for a bugfix
+"PPDinkTrackerfix": Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPDinkTracker". Used to cross-reference for a bugfix
 
 "PPObjectTracker": Used to store the active sprite number of Dink's tracker sprite when PULLING, spawned to detect hardness in the moveable sprite's path along the intended move axis.
 "PPObjectTrackerfix": Used to store the sprite being moved. This custom key is attached to the sprite stored in "PPObjectTracker". Used to cross-reference for a bugfix
@@ -484,4 +512,4 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 
 "PPTrackermax": Used to set a limit on the maximum allowed number of tracker sprites to be created along a sprite's hardbox edge during collision calculation, when PULLING.
 
-“PPdone”: Used to determine when tracker sprites have done their job.
+"PPdone": Used to determine when tracker sprites have done their job.

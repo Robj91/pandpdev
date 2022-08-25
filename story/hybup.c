@@ -66,31 +66,28 @@ void main(void)
           &save_y = sp_y(1, -1); 
          }
          
-         &val1 = sp_custom("pulldir", &hybsprite, -1);    
+         &val1 = sp_custom("pulldir", &hybsprite, -1); 
+         &val2 = sp_custom("PPpullspace_required", &hybsprite, -1);  
          if (&val1 == 2)
          { 
           &save_x -= &save_y;
-          &save_y = 20;
          }
          if (&val1 == 4)
          {
           &save_y -= &save_x
           &save_x = &save_y;
-          &save_y = 30;
          }
          if (&val1 == 6) 
          {
           &save_x -= &save_y;
-          &save_y = 30;
          } 
          if (&val1 == 8) 
          {
           &save_y -= &save_x;
           &save_x = &save_y;
-          &save_y = 20;
          }
          
-         if (&save_x <= &save_y) 
+         if (&save_x <= &val2) 
          {
            //**MARKER (in case of error) - Removed redundant if statement**//
   	   sp_custom("PPNoRoomStart", &hybsprite, 1);
@@ -129,7 +126,7 @@ void main(void)
 
   //get the difference between the que and the y value of the sprite
   &save_x = sp_que(&hybsprite, -1);
-  &save_y = sp_y(&hypsprite, -1);
+  &save_y = sp_y(&hybsprite, -1);
   &save_y -= &save_x;
   sp_custom("PPsprite_relque", &hybsprite, &save_y);
   sp_custom("PPsprite_oque", &hybsprite, &save_x);
@@ -139,7 +136,7 @@ void main(void)
   if (&save_x == 2)
   {
    &save_y = sp_y(1, -1);
-   &save_x = sp_y(&current_sprite, -1); 
+   &save_x = sp_y(&hybsprite, -1); 
    &save_x -= &save_y;
    if (&save_x < 0)
    {
@@ -195,14 +192,6 @@ loop:
      &save_x = sp_y(&hybsprite, -1);
      &save_x -= &val1;
      sp_que(&hybsprite, &save_x);
-
-     //if player isn't moving the sprite (either holding it, or hasn't moved yet), then reset que to normal.
-     &save_x = sp_custom("move-status", &hybsprite, -1);
-     if (&save_x < 2)
-     {
-      &save_x = sp_custom("PPsprite_oque", &hybsprite, -1);
-      sp_que(&hybsprite, &save_x);
-     }
     } 
    }
   }
@@ -1095,34 +1084,31 @@ loop:
           &save_y = sp_x(1, -1);
          else
           &save_y = sp_y(1, -1); 
-                  
+  
+         &val2 = sp_custom("PPpullspace_required", &hybsprite, -1);                  
          if (sp_custom("pulldir", &hybsprite, -1) == 2)
          { 
           &save_x -= &save_y;
-          &save_y = 20;
          }
          
          if (sp_custom("pulldir", &hybsprite, -1) == 4)
          {
           &save_y -= &save_x
           &save_x = &save_y;
-          &save_y = 30;
          }
          
          if (sp_custom("pulldir", &hybsprite, -1) == 6) 
          {
           &save_x -= &save_y;
-          &save_y = 30;
          } 
          
          if (sp_custom("pulldir", &hybsprite, -1) == 8) 
          {
           &save_y -= &save_x;
           &save_x = &save_y;
-          &save_y = 20;
          }
          
-         if (&save_x <= &save_y) 
+         if (&save_x <= &val2) 
          {
           if (&save_x <= 0)
   	   sp_custom("PPNoRoomStart", &hybsprite, 0);

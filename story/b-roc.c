@@ -48,16 +48,12 @@ void talk(void)
  if (&return <= 0)
  {
   //ADD ANY TALK STUFF HERE.
-  external("phisbo", "terminate", &current_sprite);
-  external("phisbo", "initiate", &current_sprite);
  }
  else
  {
   external("dsmove", "main");
  }
 
- //required external line, to prevent bugs.
- external("phisbo", "touchreset");
  goto stopex;
 }
 
@@ -66,8 +62,6 @@ void hit(void)
  //This external line is necessary to prevent bugs.
  external("phisbo", "hit");
 
- //required external line to prevent bugs
- external("phisbo", "touchreset");
  goto stopex;
 }
 

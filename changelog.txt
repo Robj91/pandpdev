@@ -47,6 +47,8 @@ Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushand
 - Added diagonal direction check to phisbo.c to remove lag by preventing load of phishyb.c into memory in situations where push/pull isn’t possible.
 - Added “push_custom” procedure as an option to run instead of push and pull system. It runs after it has detected that Dink is trying to push a sprite, but won’t process push/pull system or change Dink’s anim, so you can customise your own push procedure entirely.
 - Fixed a bug where disengaging a currently held object would allow you to phase through adjacent hardness
+- Removed requirement of version checker - push and pull no longer depends on that
+- Sprite can now be configured to maintain it’s depth que value relative to it’s y value while it’s being moves by setting custom key “update_que” to 1
 
 ---------
 --v2.04--
