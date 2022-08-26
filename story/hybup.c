@@ -159,9 +159,13 @@ loop:
 
   //que fixes, check for update_que custom key first.
   &save_x = sp_custom("update_que", &hybsprite, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("update_que", 1, -1);
+  }
   if (&save_x == 1)
   {
-   //get the current y position of the sprite update the que relative to it based on original values before the sprite was moved
+   //get the current y position of the sprite and update the que relative to it, based on original values before the sprite was moved
    &save_x = sp_custom("PPsprite_relque", &hybsprite, -1);
    &save_y = sp_y(&hybsprite, -1);
    &save_y -= &save_x;
@@ -674,11 +678,19 @@ loop:
   &save_y = 0;
   &val1 = 0;
   &save_x = sp_custom("move_during_idle", &hybsprite, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("move_during_idle", 1, -1);
+  }
   if (&save_x > 0)
   {
    &val1 = 1;
   }
   &save_x = sp_custom("move_idle", &hybsprite, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("move_idle", 1, -1);
+  }
   if (&save_x > 0)
   {
    &val1 = 1;

@@ -504,11 +504,19 @@ void end(void)
   &save_y = 0;
   &val1 = 0;
   &save_x = sp_custom("move_after_idle", &arg4, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("move_after_idle", 1, -1);   
+  }
   if (&save_x > 0)
   {
    &val1 = 1;
   }
   &save_x = sp_custom("move_idle", &arg4, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("move_idle", 1, -1);   
+  }
   if (&save_x > 0)
   {
    &val1 = 1;
@@ -546,6 +554,10 @@ void end(void)
   {
    //revert depth que back to what it was before the sprite moved if "update_que" is not set
    &save_x = sp_custom("update_que", &arg4, -1);
+   if (&save_x == 0)
+   {
+    &save_x = sp_custom("update_que", 1, -1);
+   }
    if (&save_x == 0)
    {
     &save_x = sp_custom("PPsprite_oque", &arg4, -1);

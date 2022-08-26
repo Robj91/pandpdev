@@ -102,6 +102,10 @@ void main(void)
 
   //Check whether to allow collision system or not
   &save_x = sp_custom("setcollision", &current_sprite, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("setcollision", 1, -1);
+  }
   if (&save_x > 0)
   {
    //allow collision

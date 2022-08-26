@@ -9,19 +9,25 @@ TUTNOTES:
 - moveactive now returns sprite number of sprite being moved.
 
 - move_after_idle custom key, ignores movedetectafter procedure if sprite didn’t move, and enables the additional IdleDetectAfter procedure
-- move_during_idle custom key, ignores movedetectduring procedure if sprite didn’t move, and enables the additional IdleDetectDuring procedure
+- move_during_idle custom key, ignores movedetectduring procedure if sprite is not moving, and enables the additional IdleDetectDuring procedure
 - move_idle custom key, is the equivelant to setting "move_after_idle" and "move_during_idle" to 1
 
 //////////////////////
 //Config custom keys//
 //////////////////////
 The below sp_custom() keys are used to configure/customise push and pull on a sprite, setting these to certain values, as described below will change the way push and pull will work with them.
-Example use: sp_custom("move_nohard", &current_sprite, 1); will make &current_sprite ignore hardness when being moved.
+Example use of a custom key: "sp_custom("move_nohard", &current_sprite, 1)" will make &current_sprite ignore hardness when being moved.
 
- "push": Used to make push and pull run the normal push() prcedure. Basically, this mimicks vanilla push system when enabled on a sprite, except with no delay before push activates, by default.
+Any Custom key marked with "[DINK or SPRITE]", means you can attach the custom key to Dink instead. Any compatible push/pull custom key set on Dink will be used across all sprites, rather than having to paste that line in every script. Note that you can have a value attached to Dink, and then still customise certain sprites if you want them to be different - the custom key attached to Dink will only be used if a move-able sprite does not contain it's own value for that key. If a key is attached to Dink, a setting of '0' on a sprite's custom key will be ignored, and will not override Dinks key, since 0 is the default for a custom key that has not been given a value. You can override a custom key on a sprite with an actual value of '0' by setting the value to '-9999' - push/pull will treat these values as '0'.
+
+-----------------------------------------
+
+"push": Used to make push and pull run the normal push() procedure. Basically, this mimicks vanilla push system when enabled on a sprite, except with no delay before push activates, by default.
          0 = push() procedure will not be enabled
          1 = push() procedure will be enabled - the push/pull system will look into the sprite script and run push(), rather than using the push/pull system
          Higher than 1: Will use the value as a delay before push() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate "pushdelay" custom key.
+
+[DINK or SPRITE]
 
 ------------------------------------------
 
@@ -29,6 +35,10 @@ Example use: sp_custom("move_nohard", &current_sprite, 1); will make &current_sp
                0 = push_custom() procedure will not be enabled
 	       1 = push_custom() procedure will be enabled - the push/pull system will look into the sprite script and run push_custom(), rather than using the push/pull system (won’t even play a push sequence)
                Higher than 1: Will use the value as a delay before push_custom() activates (so it’s not instant when Dink touches the sprite). Alternatively, you can set a separate "pushdelay" custom key.
+
+NOTE: If custom key "push" is also set, that will take priority, and "push_custom" will be ignored.
+
+[DINK or SPRITE]
 
 ------------------------------------------
 
@@ -39,6 +49,10 @@ Example use: sp_custom("move_nohard", &current_sprite, 1); will make &current_sp
 ------------------------------------------
 
 "pushdelay": Used to set a "wait()" delay before push activates, when walking into a sprite. Set the value to the desired delay (in millseconds)
+
+NOTE: If this is set, this will take priority over any pushtimer set in custom keys "push" and "push_custom"
+
+[DINK or SPRITE]
 
 ------------------------------------------
 
@@ -55,20 +69,23 @@ Example use: sp_custom("move_nohard", &current_sprite, 1); will make &current_sp
 
 "base_idle": Used to tell the push/pull system Dink is currently using a different base_idle sequence than his default. This needs to be set if Dinks base idle is different.
 
-Alternatively, set the above "base" custom keys on Dink, rather than every sprite. If set on a sprite though, they will take priority over Dinks custom key setting.
+[DINK or SPRITE]
 
 ------------------------------------------
 
 "update_que": If set to 1, checks the current depth que of the sprite, and keeps it updated relative to the sprites Y co-ordinate while it’s being moved.
 
-------------------------------------------
-
-"que_fix": If the depth do of a sprite is +/- 1 from the top or bottom hardbox edge, and you experience depth que bugs while moving (the sprite and dink rapidly changing que draw order and appearing over one another, set this to 1 to fix it.
-           You will probably never need to use this, but it's here just in case.
+[DINK or SPRITE]
 
 ------------------------------------------
 
-"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits a sprite, rather than it's depth dot.
+"que_fix": If the depth dot of a sprite is +/- 1 from the top or bottom hardbox edge, and you experience depth que bugs while moving (the sprite and dink rapidly changing que draw order), set this to 1 to fix it. Setting this on Dink
+           
+You will probably never need to use this, but it's here just in case.
+
+------------------------------------------
+
+"setcollision":  Used to set whether hardbox collision should be enabled for a sprite when moving it. If enabled, the sprite will stop when it's hardbox hits other hardness, rather than when it's depth dot hits other hardness.
 	          1(or higher) = Collision enabled.
 
  			"trimleft": see below
@@ -79,7 +96,10 @@ Alternatively, set the above "base" custom keys on Dink, rather than every sprit
      			The above trim custom keys are used to trim a certain amount of pixels from the designated hardbox side when calculating collision only.
      			This is useful to allow the sprites to move a bit closer to other sprites, rather than stopping precisely when the hardbox edge meets hardness.
      			e.g, if you set "trimleft" to 10,  it'll act as if 10 pixels are trimmed off the left harbox edge when calculating collision with other hardness, in all directions.
-          	     	    i.e, the sprite will literally behave as if the hardbox is 10 pixels shorter on the left side, while the sprite is being moved.
+          	     	    i.e, the sprite will behave as if the hardbox is 10 pixels shorter on the left side, while the sprite is being moved.
+
+[DINK or SPRITE] - ("setcollision")
+[SPRITE] - ("trim<side>")
 
 ------------------------------------------
 
@@ -122,7 +142,7 @@ If you want to make any adjustments for specific directions, you can also set an
 
 When using the specific direction adjustments, it will ADD the value to the depth dot location. Use negative values to subtract instead.
 
-Set any of the above to '9999' or '-9999' to DISABLE adjustment of the depth dot (doing this will use the value '0' in all claculations, resulting in NO adjustement. This means even the default adjustement will not be applied).
+Set any of the above to '-9999' to DISABLE adjustment of the depth dot (doing this will use the value '0' in all claculations, resulting in NO adjustement. This means even the default adjustement will not be applied).
 
 
 "enforce_pullspace": If this is set to 1, Dink will not be able to move a sprite, if he is in too tight of a space(between the sprite and other hardness behind), the space required will be the same as the current depth dot adjustment as set above.
@@ -130,6 +150,22 @@ Set any of the above to '9999' or '-9999' to DISABLE adjustment of the depth dot
 NOTE: All of the above custom keys can be set on the sprite OR on Dink(all sprites will use it if set on Dink). The sprite setting will always take priority.
 
 -------------------------------------------
+
+"move_after_idle": Used to make the MoveDetectAfter() procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
+                   When this is set, if the sprite did not move, push/pull will look in the sprite's script for a IdleDetectAfter() procedure, and if it finds one, will run it.
+                   0 = Run MoveDetectAfter() always (even if sprite never moved)
+                   1 = Only run MoveDetectAfter() if sprite moved positions. If sprite didn't move, run IdleDetectAfter() instead.
+
+"move_during_idle": Used to make the "MoveDetectDuring" procedure only run if the sprite is currently moving.
+                    When this is set, when the sprite is not moving, push/pull will look in the sprite's script for a IdleDetectDuring() procedure, and if it finds one, will run it.
+                    0 = Run MoveDetectDuring always (even if sprite isn’t moving)
+                    1 = Only run MoveDetectDuring if sprite is currently moving. If sprite is not currently moving, run IdleDetectDuring() instead.
+
+"move_idle": A combination of the above. Setting this to 1, is the same as setting both "move_after_idle" and "move_during_idle" to 1.
+
+[DINK or SPRITE]
+
+------------------------------------------
 
 ////////////////////////////////
 //Custom Keys to retrieve info//
@@ -163,18 +199,6 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
              Returns 1 or 2.
              1 = x axis   
 	     2 = y axis
-
-------------------------------------------
-
-"move_after_idle": Used to make the "MoveDetectAfter" procedure only run if the sprite moved positions (If Dink grabbed it, and released without moving it, it won’t run)
-                   0 = Run MoveDetectAfter always (even if sprite never moved)
-                   1 = Only run MoveDetectAfter if sprite moved positions
-
-"move_during_idle": Used to make the "MoveDetectDuring" procedure only run if the sprite is currently moving.
-                    0 = Run MoveDetectDuring always (even if sprite isn’t moving)
-                    1 = Only run MoveDetectDuring if sprite is currently moving
-
-"move_idle": A combination of the above. Setting this to 1, is the same as setting both "move_after_idle" and "move_during_idle" to 1.
 
 ------------------------------------------
 
@@ -225,6 +249,8 @@ Example use: sp_custom("dinkox", &current_sprite, -1); will return Dinks X posit
 The below sp_custom() keys are used by the push/pull system, outside of that they are not very useful for retrieving information.
 They are listed here anyway, just in case someone does indeed need to retrieve any further info from the push/pull system.
 DO NOT change the value of any of these on a sprite. Push and Pull will bug out otherwise.
+
+"PPtimer_delay": Used to store the current push timer delay in use
 
 "PPpullspace_required": Used to store the pullspace required behind dink to pull a sprite
 

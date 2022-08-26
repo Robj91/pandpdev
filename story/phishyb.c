@@ -100,12 +100,16 @@ void hybrid(void)
   }  
  }
 
- //If author has chosen to run the push_custom() procedure
+ //If author has chosen to run the push procedure
  &save_x = sp_custom("push", &current_sprite, -1);
+ if (&save_x == 0)
+ {
+  sp_custom("push", 1, -1);
+ }
  if (&save_x > 0)
  {
-   //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
-   //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
+   //The push custom key is set - cancel this and run push procedure on the current sprite
+   //make it reset everything but act as if terminated so player must initiate it again for it to re-activate
    sp_custom("PPreset-required", &current_sprite, 1);
    sp_custom("PPterminated", &current_sprite, 1);
    &save_y = is_script_attached(&current_sprite);
@@ -126,6 +130,10 @@ void hybrid(void)
  
  //If author has chosen to run the push_custom() procedure
  &save_x = sp_custom("push_custom", &current_sprite, -1);
+ if (&save_x == 0)
+ {
+  sp_custom("push_custom", 1, -1);
+ }
  if (&save_x > 0)
  {
    //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
@@ -193,19 +201,14 @@ void hybrid(void)
      //so we just set an amount that can be ADDED onto the detected hardness location
      //to place Dink's actual location/depth dot where we want him to stop
      //so he stops some pixels before the detected hardness instead. 
-       //first check for custom adjustment specified in custom key by the dmod author
        &save_y = sp_custom("pull_dd_adjust", &current_sprite, -1);
-       if (&save_y == -1111)
-       {
-        &save_y = -1;
-       }
        if (&save_y == 0)
        {
         &save_y = sp_custom("pull_dd_adjust", 1, -1);
-        if (&save_y == -1111)
-        {
-         &save_y = -1;
-        }
+       }
+       if (&save_y == -1111)
+       {
+        &save_y = -1;
        }
        
        &val2 = 0;
@@ -214,79 +217,65 @@ void hybrid(void)
        {
         if (&save_y != 0)
         {
-         &save_y *= -1;
+         if (&save_y != -9999)
+         {
+          &save_y *= -1;
+         }
         }
        
-         &val1 = sp_custom("pull_dd_adjust_2", &current_sprite, -1);
-         if (&val1 == -1111)
+        &val1 = sp_custom("pull_dd_adjust_2", &current_sprite, -1);
+        if (&val1 == 0)
+        {
+         &val1 = sp_custom("pull_dd_adjust_2", 1, -1);
+        }
+        if (&val1 == -1111)
+        {
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
          {
-          &val1 = -1;
+          &val1 *= -1;
          }
-         if (&val1 != 0)
-         {
-          &val2 = &val1;
-          &val2 *= -1;
-         }
-         else
-         {
-          &val1 = sp_custom("pull_dd_adjust_2", 1, -1);
-          &val1 = sp_custom("pull_dd_adjust_2", &current_sprite, -1);
-          if (&val1 == -1111)
-          {
-           &val1 = -1;
-          }
-          if (&val1 != 0)
-          {
-           &val2 = &val1;
-           &val2 *= -1;
-          }          
-         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
  
         if (&val1 == 0)
         {
-         &val2 = &save_y;
-        }
- 
-        if (&val2 == 0)
-        {
-         &val2 = -20;
+         &val1 = -20;
         }       
        }
 
        if (&save_x == 4)
        {
-         &val1 = sp_custom("pull_dd_adjust_4", &current_sprite, -1);
-         if (&val1 == -1111)
-         {
-          &val1 = -1;
-         }
-         if (&val1 != 0)
-         {
-          &val2 = &val1;
-          &val2 *= -1;
-         }
-         else
-         {
-          &val1 = sp_custom("pull_dd_adjust_4", 1, -1);
-          if (&val1 == -1111)
-          {
-           &val1 = -1;
-          }
-          if (&val1 != 0)
-          {
-           &val2 = &val1;
-           &val2 *= -1;
-          }          
-         }
-
+        &val1 = sp_custom("pull_dd_adjust_4", &current_sprite, -1);
         if (&val1 == 0)
         {
-         &val2 = &save_y;
+         &val1 = sp_custom("pull_dd_adjust_4", 1, -1);
         }
-        
-        if (&val2 == 0)
+        if (&val1 == -1111)
         {
-         &val2 = 30;
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = 30;
         }       
        }
 
@@ -294,106 +283,89 @@ void hybrid(void)
        {
         if (&save_y != 0)
         {
-         &save_y *= -1;
+         if (&save_y != -9999)
+         {
+          &save_y *= -1;
+         }
         }
         
-         &val1 = sp_custom("pull_dd_adjust_6", &current_sprite, -1);
-         if (&val1 == -1111)
-         {
-          &val1 = -1;
-         }
-         if (&val1 != 0)
-         {
-          &val2 = &val1;
-          &val2 *= -1;
-         }
-         else
-         {
-          &val1 = sp_custom("pull_dd_adjust_6", 1, -1);
-          if (&val1 == -1111)
-          {
-           &val1 = -1;
-          }
-          if (&val1 != 0)
-          {
-           &val2 = &val1;
-           &val2 *= -1;
-          }          
-         }
-
+        &val1 = sp_custom("pull_dd_adjust_6", &current_sprite, -1);
         if (&val1 == 0)
         {
-         &val2 = &save_y;
+         &val1 = sp_custom("pull_dd_adjust_6", 1, -1);
         }
-        
-        if (&val2 == 0)
+        if (&val1 == -1111)
         {
-         &val2 = -30;
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = -30;
         }      
        }
 
        if (&save_x == 8)
        {
-         &val1 = sp_custom("pull_dd_adjust_8", &current_sprite, -1);
-         if (&val1 == -1111)
-         {
-          &val1 = -1;
-         }
-         if (&val1 != 0)
-         {
-          &val2 = &val1;
-          &val2 *= -1;
-         }
-         else
-         {
-          &val1 = sp_custom("pull_dd_adjust_8", 1, -1);
-          if (&val1 == -1111)
-          {
-           &val1 = -1;
-          }
-          if (&val1 != 0)
-          {
-           &val2 = &val1;
-           &val2 *= -1;
-          }          
-         }
-
+        &val1 = sp_custom("pull_dd_adjust_8", &current_sprite, -1);
         if (&val1 == 0)
         {
-         &val2 = &save_y;
+         &val1 = sp_custom("pull_dd_adjust_8", 1, -1);
         }
-        
-        if (&val2 == 0)
+        if (&val1 == -1111)
         {
-         &val2 = 20;
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = 20;
         }     
        }
 
-       if (&val2 == 9999)
-       {
-        &val2 *= -1;
-       }
-       if (&val2 == -9999)
+       if (&val1 == -9999)
        {
         sp_custom("PPdotchange", &current_sprite, 0);
        }
        else
        {
-        sp_custom("PPdotchange", &current_sprite, &val2);
+        sp_custom("PPdotchange", &current_sprite, &val1);
        }  
 
-       if (&val2 != 0)
+       if (&val1 != 0)
        {
-        if (&val2 < 0)
+        if (&val1 < 0)
         {
-         if (&val2 == -9999)
+         if (&val1 == -9999)
          {
           sp_custom("PPpullspace_required", &current_sprite, 0);
          }
          else
          {
-          &val2 *= -1;
-          sp_custom("PPpullspace_required", &current_sprite, &val2);
+          &val1 *= -1;
+          sp_custom("PPpullspace_required", &current_sprite, &val1);
          }
         }
        }
@@ -498,6 +470,10 @@ void hybrid(void)
 
     //check if pullspace should be enforced when grabbing a sprite
     &save_x = sp_custom("enforce_pullspace", &current_sprite, -1);
+    if (&save_x == 0)
+    {
+     &save_x = sp_custom("enforce_pullspace", 1, -1);
+    }
     if (&save_x == 1)
     {
      //Retrieve the FIRST known hardness in DINK'S pull path
