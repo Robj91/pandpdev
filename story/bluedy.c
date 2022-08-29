@@ -1,10 +1,5 @@
 void main(void)
 {
- external("vcheck", "runtime");
- if (&return == 0)
-  kill_this_task();
-
-
  int &bluedyvar = sp_editor_num(&current_sprite);
  editor_type(&bluedyvar, 0);
  int &bluedyseq = editor_seq(&bluedyvar, -1);
@@ -22,7 +17,16 @@ void main(void)
   say_stop("`5Let's get started with the basics..", &current_sprite);
   say_stop("`5Here's some information on what you need to know.", &current_sprite);
 
-  show_bmp("tiles\PullTut.bmp", 0, 0);
+        choice_start();
+        set_y 240
+        title_start();
+	Walk into an object. If the object can move, Dink will grab it.
+	You can then move towards it to push it, or away from it to pull it.
+	To release the object, move in any other direction.
+        title_end();
+        "Ok"
+        choice_end();
+        
   wait(500);
   say_stop("`5Talk to me for more information!", &current_sprite);
   
