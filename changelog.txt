@@ -49,6 +49,7 @@ Just make sure you deleted any old ‘Push and Pull Demeonstration Dmod’ ("pushand
 - Fixed a bug where disengaging a currently held object would allow you to phase through adjacent hardness
 - Removed requirement of version checker - push and pull no longer depends on that
 - Sprite can now be configured to maintain it’s depth que value relative to it’s y value while it’s being moves by setting custom key “update_que” to 1
+- Simplified the sprite.c script, making it a barebones push/pull script with nothing extra - it will be up to dmod authors to read the documentation and implement anything extra.
 
 ---------
 --v2.04--

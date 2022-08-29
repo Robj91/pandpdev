@@ -1,4 +1,0 @@
-TUTNOTES:
-- "push_active(0);" option in "onload.c"
-
-- moveactive procedure call now returns sprite number of sprite being moved.
