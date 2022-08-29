@@ -1904,29 +1904,7 @@ hyblimitloop:
   }
 
   //check if the object is already past it's detected move limit (been moved into another sprite and overlapping hardboxes?)
-  &save_x = sp_custom("PPpupmove", &current_sprite, -1);
-  &val1 = sp_custom("PullPosNeg", &current_sprite, -1);
-  &val2 = sp_custom("move-axis", &current_sprite, -1);
-  if (&val1 == 1)
-  {
-   if (&val2 == 1)
-    &save_y = sp_x(&current_sprite, -1);
-   else
-    &save_y = sp_y(&current_sprite, -1);
-
-   if (&save_y < &save_x)
-    sp_custom("PPpupmove", &current_sprite, &save_y);
-  }
-  if (&val1 == 2)
-  {
-   if (&val2 == 1)
-    &save_y = sp_x(&current_sprite, -1);
-   else
-    &save_y = sp_y(&current_sprite, -1);
-
-   if (&save_y > &save_x)
-    sp_custom("PPpupmove", &current_sprite, &save_y);
-  }
+  //MARKER - DEPRECATED
 
   //MARKER - removed screen bound check - not needed anymore.
 

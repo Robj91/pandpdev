@@ -55,3 +55,10 @@ void limit(void)
  
  say("I can't move it any further in this direction..", 1);
 }
+
+void space(void)
+{
+ //This is what Dink will say if there is not enough room behind if to grab hold of the sprite
+ //Will only take effect if the "enforce_pullspace" custom key is set
+ say("This space is too tight for me to get a decent hold of it!", 1);
+}

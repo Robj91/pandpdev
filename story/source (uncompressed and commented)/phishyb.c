@@ -100,12 +100,16 @@ void hybrid(void)
   }  
  }
 
- //If author has chosen to run the push_custom() procedure
+ //If author has chosen to run the push procedure
  &save_x = sp_custom("push", &current_sprite, -1);
+ if (&save_x == 0)
+ {
+  sp_custom("push", 1, -1);
+ }
  if (&save_x > 0)
  {
-   //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
-   //make it reset everything  but act as if terminated so player must initiate it again for it to re-activate
+   //The push custom key is set - cancel this and run push procedure on the current sprite
+   //make it reset everything but act as if terminated so player must initiate it again for it to re-activate
    sp_custom("PPreset-required", &current_sprite, 1);
    sp_custom("PPterminated", &current_sprite, 1);
    &save_y = is_script_attached(&current_sprite);
@@ -126,6 +130,10 @@ void hybrid(void)
  
  //If author has chosen to run the push_custom() procedure
  &save_x = sp_custom("push_custom", &current_sprite, -1);
+ if (&save_x == 0)
+ {
+  sp_custom("push_custom", 1, -1);
+ }
  if (&save_x > 0)
  {
    //The push_custom custom key is set - cancel this and run push_custom procedure on the current sprite
@@ -183,7 +191,9 @@ void hybrid(void)
    sp_custom("PPhupdiff", &current_sprite, &save_y);
    sp_custom("PPpupdiff", &current_sprite, &save_y);
 
-     //"PPdotchange" custom key - basically wanting to shift where the depth dot would be
+     //////////////////////////////////////////////////////////////////////////////////////
+     //"PPdotchange" custom key - basically wanting to shift where the depth dot would be//
+     //////////////////////////////////////////////////////////////////////////////////////
       	//(without actually doing it)
      //the normal Dink push depth dot is at the FRONT of him.
      //but when pulling, we want him to stop when his back foot hits hardness
@@ -191,18 +201,177 @@ void hybrid(void)
      //so we just set an amount that can be ADDED onto the detected hardness location
      //to place Dink's actual location/depth dot where we want him to stop
      //so he stops some pixels before the detected hardness instead. 
+       &save_y = sp_custom("pull_dd_adjust", &current_sprite, -1);
+       if (&save_y == 0)
+       {
+        &save_y = sp_custom("pull_dd_adjust", 1, -1);
+       }
+       if (&save_y == -1111)
+       {
+        &save_y = -1;
+       }
+       
+       &val2 = 0;
        &save_x = sp_custom("pulldir", &current_sprite, -1);
        if (&save_x == 2)
-        sp_custom("PPdotchange", &current_sprite, -20);
+       {
+        if (&save_y != 0)
+        {
+         if (&save_y != -9999)
+         {
+          &save_y *= -1;
+         }
+        }
+       
+        &val1 = sp_custom("pull_dd_adjust_2", &current_sprite, -1);
+        if (&val1 == 0)
+        {
+         &val1 = sp_custom("pull_dd_adjust_2", 1, -1);
+        }
+        if (&val1 == -1111)
+        {
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = -20;
+        }       
+       }
 
        if (&save_x == 4)
-        sp_custom("PPdotchange", &current_sprite, 30);
+       {
+        &val1 = sp_custom("pull_dd_adjust_4", &current_sprite, -1);
+        if (&val1 == 0)
+        {
+         &val1 = sp_custom("pull_dd_adjust_4", 1, -1);
+        }
+        if (&val1 == -1111)
+        {
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = 30;
+        }       
+       }
 
        if (&save_x == 6)
-        sp_custom("PPdotchange", &current_sprite, -30);
+       {
+        if (&save_y != 0)
+        {
+         if (&save_y != -9999)
+         {
+          &save_y *= -1;
+         }
+        }
+        
+        &val1 = sp_custom("pull_dd_adjust_6", &current_sprite, -1);
+        if (&val1 == 0)
+        {
+         &val1 = sp_custom("pull_dd_adjust_6", 1, -1);
+        }
+        if (&val1 == -1111)
+        {
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = -30;
+        }      
+       }
 
        if (&save_x == 8)
-        sp_custom("PPdotchange", &current_sprite, 20);
+       {
+        &val1 = sp_custom("pull_dd_adjust_8", &current_sprite, -1);
+        if (&val1 == 0)
+        {
+         &val1 = sp_custom("pull_dd_adjust_8", 1, -1);
+        }
+        if (&val1 == -1111)
+        {
+         &val1 = -1;
+        }
+        if (&val1 != 0)
+        {
+         if (&val1 != -9999)
+         {
+          &val1 *= -1;
+         }
+        }
+        else
+        {
+         &val1 = &save_y;
+        }
+ 
+        if (&val1 == 0)
+        {
+         &val1 = 20;
+        }     
+       }
+
+       if (&val1 == -9999)
+       {
+        sp_custom("PPdotchange", &current_sprite, 0);
+       }
+       else
+       {
+        sp_custom("PPdotchange", &current_sprite, &val1);
+       }  
+
+       if (&val1 != 0)
+       {
+        if (&val1 < 0)
+        {
+         if (&val1 == -9999)
+         {
+          sp_custom("PPpullspace_required", &current_sprite, 0);
+         }
+         else
+         {
+          &val1 *= -1;
+          sp_custom("PPpullspace_required", &current_sprite, &val1);
+         }
+        }
+       }
+     /////////////////////
+     //PPdotchange END//  
+     /////////////////////
 
  //Store Dink's speed in a custom key for later retrieval
  //we can retrieve the sp_speed equivelant of Dink and convert it to dink_speed value.
@@ -282,6 +451,72 @@ void hybrid(void)
  if (&save_x <= 2)
   sp_frame_delay(1, 0);
 
+  /////////////
+  //QUE FIXES//
+  /////////////
+  //get the difference between the que and the y value of the sprite
+  &save_x = sp_que(&hybsprite, -1);
+  &save_y = sp_y(&hybsprite, -1);
+  &save_y -= &save_x;
+  sp_custom("PPsprite_relque", &hybsprite, &save_y);
+  sp_custom("PPsprite_oque", &hybsprite, &save_x);
+
+  //check if the depth dot of the sprite is +/- 1 from the hardbox edge - only needs doing if moving a sprite on the y axis
+  &save_x = sp_custom("move-axis", &current_sprite, -1);
+  if (&save_x == 2)
+  {
+   &save_y = sp_y(1, -1);
+   &save_x = sp_y(&current_sprite, -1); 
+   &save_x -= &save_y;
+   if (&save_x < 0)
+   {
+    &save_x *= -1;
+   }
+   if (&save_x <= 1)
+   {
+    sp_custom("PPqfix_apply", &current_sprite, 1);
+   }
+  }
+
+  //que fixes, check for update_que custom key first and don't run que_fix if it's active
+  &save_x = sp_custom("update_que", &current_sprite, -1);
+  if (&save_x == 0)
+  {
+   &save_x = sp_custom("update_que", 1, -1);
+  }
+  if (&save_x <= 0)
+  {
+   //check if this is a situation where que fix needs to be applied
+   &save_x = sp_custom("PPqfix_apply", &current_sprite, -1);
+   if (&save_x == 1)
+   {
+    //it is, now check if the author has enabled the fix
+    &save_x = sp_custom("que_fix", &current_sprite, -1);  
+    if (&save_x == 1)
+    {
+     //check this against the pushdir and alter accordingly
+     //we need a bigger adjustment here to prevent a quick flash of que drawing order bug.. 3 pixels instead of 1 will do it.
+     &save_x = sp_custom("pushdir", &current_sprite, -1);
+     if (&save_x == 8)
+     {
+      &val1 = 3;
+     }
+     if (&save_x == 2)
+     {
+      &val1 = -3;
+     }
+     
+     //apply the depth que fix
+     &save_x = sp_y(&current_sprite, -1);
+     &save_x -= &val1;
+     sp_que(&current_sprite, &save_x);
+    } 
+   }
+  }
+  /////////////////
+  //QUE FIXES END//
+  /////////////////
+  
     //get the limit of how far the object can be pushed and pulled on the screen.
     external("HybLim", "hybridlimit");		
     &save_x = &return;
@@ -298,6 +533,73 @@ void hybrid(void)
      external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
      kill_this_task();
     }
+
+    //check if pullspace should be enforced when grabbing a sprite
+    &save_x = sp_custom("enforce_pullspace", &current_sprite, -1);
+    if (&save_x == 0)
+    {
+     &save_x = sp_custom("enforce_pullspace", 1, -1);
+    }
+    if (&save_x == 1)
+    {
+     //Retrieve the FIRST known hardness in DINK'S pull path
+     &save_x = sp_custom("PPplimittrack1", &current_sprite, -1); 
+     
+     //if it's less than 0, hardness tracker sprite exited screen bound and no hardness was found
+     //In this case, skip it.
+     if (&save_x <= 0)
+     {
+      sp_custom("PPNoRoomStart", &current_sprite, 0);        
+     }        
+     else
+     {
+      //set whether to use x or y
+      &val1 = sp_custom("move-axis", &current_sprite, -1);
+      if (&val1 == 1)
+      {
+       &save_y = sp_x(1, -1);
+      }
+      else
+      {
+       &save_y = sp_y(1, -1); 
+      }
+      
+      &val1 = sp_custom("pulldir", &current_sprite, -1); 
+      &val2 = sp_custom("PPpullspace_required", &current_sprite, -1); 
+      
+      //subtract 1 here.. so Dink can grab it with exactly enough room as well.
+      &val2 -= 1;
+      if (&val1 == 2)
+      { 
+       &save_x -= &save_y;
+      }
+      if (&val1 == 4)
+      {
+       &save_y -= &save_x
+       &save_x = &save_y;
+      }
+      if (&val1 == 6) 
+      {
+       &save_x -= &save_y;
+      } 
+      if (&val1 == 8) 
+      {
+       &save_y -= &save_x;
+       &save_x = &save_y;
+      }
+      
+      if (&save_x <= &val2) 
+      {
+       //trigger the end, and pass dink's original speed and frame_delay to the procedure
+       &val1 = sp_custom("PPd-speed", &current_sprite, -1);
+       &val2 = sp_custom("PPdink-fd", &current_sprite, -1);
+       external("PhisEnd", "end", 7, 2, 0, &current_sprite, &val1, &val2);
+       external("dsmove", "space");
+       kill_this_task();
+      }
+     } 
+    }   
+    
 
    ////////////////////
    //FAIL SAFE CHECKS//

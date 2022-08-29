@@ -58,33 +58,28 @@ Implement this system - 4 simple steps.
 
 If are using any older version of push and pull and simply wish top update to the latest version, please scroll down to SECTION 4, for a simple step-by-step guide on how to do this.
 
-------------------------------------------------
---STEP 1: Edit Main.c--
-------------------------------------------------
-There are two Global Variables you need to declare. One is for Push and Pull, and one is for Version Checker, which is required for Push and Pull to function correctly. 
-Please add the following lines in main.c, below the other "make_global_int" lines:
-make_global_int("&spush", 1);
-make_global_int("&vcheck", 0);
-
-
-Then, scroll down until you find the "kill_this_task();" line, and paste these lines directly on the line ABOVE it:
-    script_attach(1000);
-    spawn("OnLoad");
-
-
-I also juggled variables using &save_x and &save_y, so these are not dedicated and will not affect any other script that uses them. You don't need to do anything in regards to this.
-For any author that usually cleans up main.c and removes these - make sure they are declared (they are by default), or search and replace my scripts with your own juggle globals if you want.
-
-
 ----------------------------
---STEP 3: Copy the scripts--
+--STEP 1: Copy the scripts--
 ----------------------------
 In the story folder of PushandPull you will find a folder named "Push and Pull Scripts".
 Copy all the scripts from this folder into your dmod.
 
 
+------------------------------------------------
+--STEP 2: Edit Main.c--
+------------------------------------------------
+Scroll down until you find the "kill_this_task();" line, and paste these lines directly on the line ABOVE it:
+    script_attach(1000);
+    spawn("OnLoad");
+
+Please also make sure these 2 lines are somewhere in your Main.c. These variables technically aren’t required and some skeletons don’t declare them by default:
+make_global_int(“&save_x”, 0);
+make_global_int(“&save_y”, 0);
+
+If they are not in your main.c, add them, you can add them after all the other “make_global_int” lines.
+
 ----------------------------------
---STEP 4: Make a Sprite Moveable--
+--STEP 3: Make a Sprite Moveable--
 ----------------------------------
 Once all of the above is done, this is simple for most sprites.
 Simply attach Sprite.c to any sprite in game, and it will become moveable. Without any change, it works as is, however, it is recommended to use it as a skeleton script, make copies and rename it for each sprite, and optimise the script specifically for that sprite (see script comments, and watch video tutorial linked earlier in this file). Using this script vanilla won't be as good as optimising it for your sprite, basically.
