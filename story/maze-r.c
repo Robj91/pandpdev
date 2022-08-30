@@ -48,11 +48,17 @@ void main(void)
  //needed for talk procedure. Can't use global juggle var, causes a bug. If no talk procedure, can delete.
  int &val1; 
 
- sp_custom("setcollision", &current_sprite, 3);
+ //disable enforcing pullspace for this sprite - '0' would do nothing, it's the value of an unset key.
+   //push and pull will interpret the value '-9999' as 0 in this case.
+ sp_custom("enforce_pullspace", &current_sprite, -9999);
 
- sp_custom("trimleft", &current_sprite, 0);
- sp_custom("trimtop", &current_sprite, 10);
- sp_custom("trimright", &current_sprite, 0);
+ //set collision on this sprite
+ sp_custom("setcollision", &current_sprite, 1);
+
+ //make trim the hardbox to make our own fake "push/pull" collision box.
+ sp_custom("trimleft", &current_sprite, 10);
+ sp_custom("trimtop", &current_sprite, 20);
+ sp_custom("trimright", &current_sprite, 10);
  sp_custom("trimbottom", &current_sprite, 6);
 
  external("phisbo", "main", -21, -35, 23, 9);
@@ -62,53 +68,25 @@ void main(void)
 
 void touch(void)
 {
- &save_x = sp_custom("initiated", &current_sprite, -1);
- if (&save_x > 0)
- {
-  sp_touch_damage(&current_sprite, 0);
-  wait(&save_x);
-  sp_custom("initiated", &current_sprite, 0);
- }
  external("phisbo", "touch"); 
- wait(200);
- external("phisbo", "touchreset");
  
- goto stopex;
-}
-
-void pull(void)
-{
- external("phisbo", "pkey");
-
  goto stopex;
 }
 
 void talk(void)
 {
- external("phisbo", "talk");
- &val1 = sp_custom("talkreturn", &current_sprite, -1);
-
- if (&val1 == 2)
+ external("phisbo", "moveactive");
+ if (&return > 0)
  {
+  //Dink is currently moving the sprite  - say a random 'moving a sprite' say line.
   external("dsmove", "main");
  }
- if (&val1 == 1)
- {
- }
-
- external("phisbo", "touchreset");
+ 
  goto stopex;
 }
 
 void MoveDetectDuring(void)
 {
- goto stopex;
-}
-
-void MoveDetectAfter(void)
-{
-//Anything here will be run AFTER the object has moved and dink stops pushing/pulling
-
  //an example of detecting if the player has moved the object to a certain spot on the screen.
  &save_x = sp_x(&current_sprite, -1);
  &save_y = sp_y(&current_sprite, -1);
@@ -148,9 +126,13 @@ void MoveDetectAfter(void)
   unfreeze(1);
   kill_this_task();
  }
+
  goto stopex;
 }
 
+
+//STOPEX PROCEDURE - external bugfix. Please make sure this remains the LAST procedure in this script.
+//doesn't even need to be a procedure since it's the script is sent here by goto. but whatever, this looks cleaner.
 void stopex(void)
 {
 stopex:

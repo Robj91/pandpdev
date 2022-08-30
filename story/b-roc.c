@@ -1,25 +1,29 @@
 void main(void)
 {
- //This decides how fast the sprite will move when push/pulled. Dink will match this and keep up with the sprite, but will not exceed his current speed.
- //If this is set higher than Dinks speed, it will automatically be reduced by the push/pull system to match his current speed (handled by "Dinkspeed.c")
+ //The sprite's speed will decied how fast Dink can move it.
+ //If you set this higher than Dinks speed, it will cap it while push/pull is happening so DInk doesn't get an unnatural speed boost for no reason.
  sp_speed(&current_sprite, 1);
  sp_timing(&current_sprite, 0);	
  
- //ADD ANY MAIN PROCEDURE SCRIPTING FOR YOUR SPRITE HERE, Before the wait line.
+ //Add any normal Main procedure stuff you want here.
  
  wait(1);
 
+ //set collision on this sprite
  sp_custom("setcollision", &current_sprite, 1);
 
- sp_custom("trimleft", &current_sprite, 0);
- sp_custom("trimtop", &current_sprite, 10);
- sp_custom("trimright", &current_sprite, 0);
+ //make trim the hardbox to make our own fake "push/pull" collision box.
+ sp_custom("trimleft", &current_sprite, 10);
+ sp_custom("trimtop", &current_sprite, 20);
+ sp_custom("trimright", &current_sprite, 10);
  sp_custom("trimbottom", &current_sprite, 6);
  
- //assures sprite is hard, touch damage -1, and if no speed has been set, defaults it to 1.
- //also does other important checks to set the push/pull system up properly.
+ //external line below to call "main" proc in "phisbo.c", to make this sprite move-able.
+ //Please pass the hardbox values as &arg1-&arg4. 
+ //It expects them in the same order as they are written in dink.ini, so you can just copy & paste the 4 hardbox values for your sprite.
  external("phisbo", "main", -21, -35, 23, 9);
- 
+
+ //do not delete "goto stopex;" line. It is there to prevent bugs. 
  goto stopex;
 }
 
@@ -28,43 +32,27 @@ void touch(void)
 {
  //ADD ANY TOUCH PROCEDURE STUFF HERE.
 
+ //external line to make push/pull detection work
  external("phisbo", "touch"); 
- goto stopex;
-}
-
-void MoveDetectDuring(void)
-{
- goto stopex;
-}
-
-void MoveDetectAfter(void)
-{
+ 
+ //do not delete "goto stopex;" line. It is there to prevent bugs. 
  goto stopex;
 }
 
 void talk(void)
 {
  external("phisbo", "moveactive");
- if (&return <= 0)
+ if (&return > 0)
  {
-  //ADD ANY TALK STUFF HERE.
- }
- else
- {
+  //Dink is currently moving the sprite  - say a random 'moving a sprite' say line.
   external("dsmove", "main");
  }
 
  goto stopex;
 }
 
-void hit(void)
-{
- //This external line is necessary to prevent bugs.
- external("phisbo", "hit");
-
- goto stopex;
-}
-
+//STOPEX PROCEDURE - external bugfix. Please make sure this remains the LAST procedure in this script.
+//doesn't even need to be a procedure since it's the script is sent here by goto. but whatever, this looks cleaner.
 void stopex(void)
 {
 stopex:

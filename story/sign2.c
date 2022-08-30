@@ -23,6 +23,6 @@ void talk(void)
  }
  else
  {
-  say("`%Conragrutations! You're winner! You accomplished nothing.", &current_sprite);
+  say("`%Conragrutations! You did it!", &current_sprite);
  }
 }

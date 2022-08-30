@@ -1,7 +1,7 @@
 void main(void)
 {
  //The sprite's speed will decied how fast Dink can move it.
- //If you set this higher than Dinks speed, it will only move as fast as Dink current speed though.
+ //If you set this higher than Dinks speed, it will cap it while push/pull is happening so DInk doesn't get an unnatural speed boost for no reason.
  sp_speed(&current_sprite, 1);
  sp_timing(&current_sprite, 0);	
  
@@ -18,7 +18,6 @@ void main(void)
  //do not delete "goto stopex;" line. It is there to prevent bugs.
  goto stopex;
 }
-
 
 void touch(void)
 {

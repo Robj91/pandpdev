@@ -9,6 +9,9 @@ void main(void)
  //Only need to do this if you are including a custom pushdelay longer than the normal time it takes to activate vanilla push mechanic
  //Because then they will conflict. Otherwise, it's safe to leave them both active!
  //push_active(0);
+ 
+ //enforce pull space on all sprites, so Dink can't push/pull in too tight of a space
+ sp_custom("enforce_pullspace", 1, 1);
   
  kill_this_task();
 }
