@@ -427,15 +427,17 @@ void terminate(void)
  //Push/Pull is being manually terminated out of course.
  //&arg1 = sprite being terminated (is passed), otherwise, it's &current_sprite.
  sp_custom("PPterminated", &current_sprite, 1);
+ &save_x = sp_custom("PPd-speed", &current_sprite, -1);
+ &save_y = sp_custom("PPdink-fd", &current_sprite, -1);
  if (&arg1 > 0)
  {
   sp_touch_damage(&arg1, 0);
-  external("PhisEnd", "end", 9, 0, 0, &arg1);
+  external("PhisEnd", "end", 9, 0, 0, &arg1, &save_x, &save_y);
  }
  else
  {
   sp_touch_damage(&current_sprite, 0);
-  external("PhisEnd", "end", 9, 0, 0, &current_sprite);
+  external("PhisEnd", "end", 9, 0, 0, &current_sprite, &save_x, &save_y);
  }
 
  kill_this_task();

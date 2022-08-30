@@ -1,0 +1,1 @@
+- setxmax getting skipped sometimes. check idleskipchecks in hybup.c

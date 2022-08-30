@@ -30,7 +30,7 @@ void main(void)
  //the fireball hard box is no good for moveability, it's too far away from the actual sprite
  //I'm not gonna edit it in dink.ini and mess it up, so this is attached to a sprite with a hardbox about the size of the fireball
  //and the fireball is created here and locked to it. Can't use it as a shadow, it won't be in the correct place, 
- //I just relock it as it moves using the MoveDetectDuring Proc below, and also update it's depth que.
+ //I just re position it as it moves using the MoveDetectDuring Proc below, and also update it's depth que.
  &save_x = sp_x(&current_sprite, -1);
  &save_y = sp_y(&current_sprite, -1);
  &save_x -= 7;
@@ -45,15 +45,7 @@ void main(void)
 
  wait(1);
 
- //needed for talk procedure. Can't use global juggle var, causes a bug. If no talk procedure, can delete.
- int &val1; 
-
- sp_custom("setcollision", &current_sprite, 2);
-
- sp_custom("trimleft", &current_sprite, 0);
- sp_custom("trimtop", &current_sprite, 0);
- sp_custom("trimright", &current_sprite, 0);
- sp_custom("trimbottom", &current_sprite, 0);
+ sp_custom("setcollision", &current_sprite, 1);
  
  external("phisbo", "main", -64, -25, 9, 3); 
  
@@ -86,16 +78,7 @@ void touch(void)
    kill_this_task();
  }  
 
- &save_x = sp_custom("initiated", &current_sprite, -1);
- if (&save_x > 0)
- {
-  sp_touch_damage(&current_sprite, 0);
-  wait(&save_x);
-  sp_custom("initiated", &current_sprite, 0);
- }
  external("phisbo", "touch"); 
- wait(200);
- external("phisbo", "touchreset");
  
  goto stopex;
 }
@@ -114,11 +97,6 @@ void MoveDetectDuring(void)
  sp_x(&fbsprite, &save_x);
  sp_y(&fbsprite, &save_y); 
 
- goto stopex;
-}
-
-void MoveDetectAfter(void)
-{
  //now check each sprite against the current sprite - explosion first
  &save_x = get_sprite_with_this_brain(20, 0);
  &save_x = sp_custom("rock", &save_x, -1);
@@ -148,6 +126,19 @@ void MoveDetectAfter(void)
  //if it got to this point, all sprites are in correct order.
  //assure touch damage will not reset to -1 and also the object won't be moveable again unless we do the external initiate proc.
  external("phisbo", "terminate"); 
+ 
+ //terminate push and pull on everything else as well
+ &save_x = get_sprite_with_this_brain(20, 0);
+ &save_x = sp_custom("rock", &save_x, -1); 
+ external("phisbo", "terminate", &save_x); 
+
+ &save_x = get_sprite_with_this_brain(20, 0);
+ &save_x = sp_custom("rubble", &save_x, -1); 
+ external("phisbo", "terminate", &save_x);
+
+ &save_x = get_sprite_with_this_brain(20, 0);
+ &save_x = sp_custom("explosion", &save_x, -1); 
+ external("phisbo", "terminate", &save_x);
  
  //freeze dink and do cutscene thingy.
  freeze(1);
@@ -259,36 +250,15 @@ void MoveDetectAfter(void)
  goto stopex;
 }
 
-void pull(void)
-{
- external("phisbo", "pkey");
-
- goto stopex;
-}
-
 void talk(void)
 {
- external("phisbo", "talk");
- &val1 = sp_custom("talkreturn", &current_sprite, -1);
-
- if (&val1 == 2)
+ external("phisbo", "moveactive");
+ if (&return > 0)
  {
+  //Dink is currently moving the sprite  - say a random 'moving a sprite' say line.
   external("dsmove", "main");
  }
- if (&val1 == 1)
- {
-  say("A moveable fireball... cool.", 1);
- }
 
- external("phisbo", "touchreset");
- goto stopex;
-}
-
-void hit(void)
-{
- external("phisbo", "hit");
-
- external("phisbo", "touchreset");
  goto stopex;
 }
 

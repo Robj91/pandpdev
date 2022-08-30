@@ -484,7 +484,7 @@ void end(void)
    &save_x = sp_custom("PPSkipSpeedReset", &arg4, -1);
    if (&save_x <= 0)
    {   
-    debug("Phisend confirm(3) DINKSPEED IS &val1");
+    &save_x = sp_custom("PPdink-fd", &arg4, -1);
     set_dink_speed(&val1);
     sp_frame_delay(1, &save_x);
    }

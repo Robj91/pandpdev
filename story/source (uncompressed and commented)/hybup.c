@@ -1289,7 +1289,6 @@ limit:
 void hybkill(void)
 {
 hybkill: 
-
  //kill the sprite clone and end this
  &save_x = sp_custom("PPHybSpriteClone", &hybsprite, -1);
  sp_active(&save_x, 0);
@@ -1303,7 +1302,6 @@ hybkill:
   sp_nodraw(1, 0); 
   &save_x = sp_custom("PPd-speed", 1, -1);
   &save_y = sp_custom("PPdink-fd", 1, -1);
-  debug("hybup - hybkill - dink RETRIEVE FREEDINK SPEED is &save_x");
 
   external("PhisEnd", "end", 0, 0, 0, &hybsprite, &save_x, &save_y);
  }
