@@ -5,10 +5,12 @@ void main(void)
 
  &save_x = get_sprite_with_this_brain(20, 0);
  sp_custom("sign", &current_sprite, &save_x);
- sp_custom("rock1", &save_x, &current_sprite);
+ sp_custom("rock3", &save_x, &current_sprite);
 
+ //use 1 local variable.
  int &val1;
  int &val2;
+ int &val3;
 
  //set rock to previous position it was left in
  &save_x = sp_editor_num(&current_sprite);
@@ -38,7 +40,7 @@ void main(void)
  //enable the limit override, so we can set a limitation on where the sprite can move later on
  sp_custom("Enable-Limit", &current_sprite, 1);
 
- //For now, set all limits to ignore - "9999" will be ignored.
+ //For now, set all limits to ignore - "9999" will be ignored by default.
  sp_custom("setXmax", &current_sprite, 9999);
  sp_custom("setXmin", &current_sprite, 9999);
  sp_custom("setYmax", &current_sprite, 9999);
@@ -73,7 +75,10 @@ void MoveDetectDuring(void)
  //check if we need to declare &val1 - if this procedure is being called from the main proc we need to
  //This is because called procedures, even within the same script are treated as a separate script and do not share local variables.
  if (&arg1 == 1)
+ {
   int &val1;
+  int &val2;
+ }
 
  //store the "sign" sprite's active sprite number in &val1
  &val1 = sp_custom("sign", &current_sprite, -1);
@@ -92,14 +97,14 @@ void MoveDetectDuring(void)
 
  //Here we are simply doing checks for each ROW of the grid.
  //Only working with rows, even if a row is just one tile on the grid.
- //So:  Row 1:  xxx
- //     Row 2:   x
- //     Row 3: xxxxxx
- //     Row 4:     x
- //     Row 5:   xxxxx
+ //So:  Row 1:  rcr
+ //     Row 2:   c
+ //     Row 3: rrcrcr
+ //     Row 4:     c
+ //     Row 5:   rrcrr
  
- //Row 1-3 connection is column 1
- //Row 3-5 connection is column 2
+ //Row 1-3 (c's) - column 1
+ //Row 3-5 (c's) - column 2
  
  //Row 1
  &val2 = inside_box(&save_x, &save_y, 170, 50, 320, 100);
@@ -109,26 +114,137 @@ void MoveDetectDuring(void)
   sp_custom("setXmin", &current_sprite, 193);
   sp_custom("setYmax", &current_sprite, 96);
   sp_custom("setYmin", &current_sprite, 78);
+ } 
+
+ //Row 2
+ &val2 = inside_box(&save_x, &save_y, 220, 100, 270, 178);
+ if (&val2 == 1)
+ {
+  sp_custom("setXmax", &current_sprite, 247);
+  sp_custom("setXmin", &current_sprite, 243);
+  sp_custom("setYmax", &current_sprite, 195);
+  sp_custom("setYmin", &current_sprite, 78);
+ }
  
-  //check if rock is in column 1
-  &val2 = inside_box(&save_x, &save_y, 239, 50, 249, 100);
+ //Row 3
+ &val2 = inside_box(&save_x, &save_y, 120, 150, 420, 200);
+ if (&val2 == 1)
+ {
+  &val2 = inside_box(&save_x, &save_y, 220, 100, 270, 177);
   if (&val2 == 1)
   {
-   //sp_custom("setYmax", &current_sprite, 195);
+   sp_custom("setXmax", &current_sprite, 247);
+   sp_custom("setXmin", &current_sprite, 243);
+   sp_custom("setYmax", &current_sprite, 195);
+   sp_custom("setYmin", &current_sprite, 78);
+  }
+  else
+  {
+   sp_custom("setXmax", &current_sprite, 397);
+   sp_custom("setXmin", &current_sprite, 143);
+   sp_custom("setYmax", &current_sprite, 196);
+   sp_custom("setYmin", &current_sprite, 178);
   }
  } 
  
- //Row 5
- &val2 = inside_box(&save_x, &save_y, 220, 250, 469, 300);
+ //Row 4
+ &val2 = inside_box(&save_x, &save_y, 320, 200, 370, 278);
  if (&val2 == 1)
  {
-  //check if rock is in column 2
+  sp_custom("setXmax", &current_sprite, 347);
+  sp_custom("setXmin", &current_sprite, 343);
+  sp_custom("setYmax", &current_sprite, 295);
+  sp_custom("setYmin", &current_sprite, 178);
+ }
+
+ //Row 5
+ &val2 = inside_box(&save_x, &save_y, 220, 250, 470, 300);
+ if (&val2 == 1)
+ {
+  &val2 = inside_box(&save_x, &save_y, 320, 200, 370, 277);
+  if (&val2 == 1)
+  {
+   sp_custom("setXmax", &current_sprite, 347);
+   sp_custom("setXmin", &current_sprite, 343);
+   sp_custom("setYmax", &current_sprite, 295);
+   sp_custom("setYmin", &current_sprite, 178);
+  }
+  else
+  {
+   sp_custom("setXmax", &current_sprite, 447);
+   sp_custom("setXmin", &current_sprite, 243);
+   sp_custom("setYmax", &current_sprite, 296);
+   sp_custom("setYmin", &current_sprite, 278);
+  }
+ } 
+
+ //Column 1
+ &val2 = inside_box(&save_x, &save_y, 239, 50, 249, 200);
+ if (&val2 == 1)
+ {
+  sp_custom("setYmax", &current_sprite, 195);
+  sp_custom("setYmin", &current_sprite, 78);
+ }
+
+ //Column 2
+ &val2 = inside_box(&save_x, &save_y, 339, 150, 349, 300);
+ if (&val2 == 1)
+ {
+  sp_custom("setYmax", &current_sprite, 295);
+  sp_custom("setYmin", &current_sprite, 178);
+ }  
+
+ //check if rock is on a target area
+ &val3 = 0;
+ &val2 = inside_box(&save_x, &save_y, 120, 150, 157, 200);
+ if (&val2 == 1)
+ {
+  &val3 += 1;
+  sp_custom("target1", &val1, 1);
+  sp_custom("target1", &current_sprite, 1);
+ }
+ &val2 = inside_box(&save_x, &save_y, 374, 150, 420, 200);
+ if (&val2 == 1)
+ {
+  &val3 += 1;
+  sp_custom("target2", &val1, 1);
+  sp_custom("target2", &current_sprite, 1);
+ }
+ &val2 = inside_box(&save_x, &save_y, 170, 50, 218, 100);
+ if (&val2 == 1)
+ {
+  &val3 += 1;
+  sp_custom("target3", &val1, 1); 
+  sp_custom("target3", &current_sprite, 1); 
+ }
+
+ if (&val3 == 0)
+ {
+  //this rock isn't in a target area, check if it was just removed from one and if it was, update the custom key to show it's no longer there
+  &val2 = sp_custom("target1", &current_sprite, -1);
+  if (&val2 == 1)
+  {
+   sp_custom("target1", &val1, 0);
+   sp_custom("target1", &current_sprite, 0);   
+  }
+  &val2 = sp_custom("target2", &current_sprite, -1);
+  if (&val2 == 1)
+  {
+   sp_custom("target2", &val1, 0);
+   sp_custom("target2", &current_sprite, 0);   
+  }
+  &val2 = sp_custom("target3", &current_sprite, -1);
+  if (&val2 == 1)
+  {
+   sp_custom("target3", &val1, 0);
+   sp_custom("target3", &current_sprite, 0);   
+  }
  }
 
  //if this is screen entry, no need to proceed to puzzle check.
  //"sign07.c" main procedure will take care of that.
  if (&arg1 == 1)
-  return;
+  goto stopex;
 
  //check if puzzle is solved.
  &save_y = sp_custom("target1", &val1, -1);
@@ -182,7 +298,7 @@ undo:
 
 void MoveDetectAfter(void)
 {
- //let's use editor_seq and editor_frame to save the tiles position on the screen!
+ //let's use editor_seq and editor_frame to save the rocks position on the screen!
  //save the x value in editor_seq and y value in editor_frame of current sprite
  //editor_frame has a max value of 255 though, which is less than the max y value on screen.
  //SO, if y > 200, we will subtract 200 from it, and add 1000 to x as a marker so we know it happened.

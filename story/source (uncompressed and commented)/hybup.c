@@ -277,15 +277,25 @@ loop:
     {
      //Sprite's original speed is higher than Dinks new speed, set it's current speed to match Dink's
        //since sprite speed determines the push/pull speed.
-     sp_speed(&hybsprite, &save_y);
+     sp_speed(&hybsprite, &save_x);
      sp_timing(&hybsprite, 0);
     }
     else
     {
      //Original sprite speed is lower than or equal to Dink's new speed
       //Set the sprite BACK to it's original speed to maintain it's intended move speed.
+     &save_x = &save_y;
      sp_speed(&hybsprite, &save_y);
     }
+
+    //make clone sprite's speed match &hybsprite
+    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
+    sp_speed(&save_y, &save_x);
+
+    //store dinks frame delay
+    &save_x = sp_frame_delay(1, -1);
+    sp_custom("PPdink-fd", &hybsprite, &save_x);
+    sp_custom("PPdink-fd", 1, &save_x);
    
     //update Dink's frame delay to match the sprite  move speed.
     &save_x = sp_speed(&hybsprite, -1);
@@ -306,13 +316,11 @@ loop:
     &save_x = sp_custom("PPfdink", &hybsprite, -1);
     &save_y = sp_frame_delay(1, -1);
     sp_frame_delay(&save_x, &save_y);
-    
-    //make clone sprite's speed match &hybsprite
-    &save_y = sp_custom("PPHybSpriteClone", &hybsprite, -1);
-    sp_speed(&save_y, &save_x);
+ 
+    //get dink speed again now
+    &save_x = sp_speed(1, -1);
     
     //store dink's new speed
-    &save_x = sp_speed(1, -1);
     sp_custom("PPd-sp_speed", &hybsprite, &save_x);
     
     //convert it to "set_dink_speed" equivelant and store that as well
@@ -333,6 +341,7 @@ loop:
      &save_x = -1111;
     }
     sp_custom("PPd-speed", &hybsprite, &save_x);
+    sp_custom("PPd-speed", 1, &save_x);
         
     //set dink's speed back to -1.
     set_dink_speed(-1);
@@ -630,6 +639,13 @@ loop:
           }
           sp_y(1, &val1);
          }
+         
+         //relock fake dink to real dink
+         &save_x = sp_x(1, -1);
+         &save_y = sp_y(1, -1);
+         &val1 = sp_custom("PPfdink", &hybsprite, -1);
+         sp_x(&val1, &save_x);
+         sp_y(&val1, &save_y);
         }
        }        
       }
