@@ -8,6 +8,7 @@ void main(void)
  sp_custom("rock1", &save_x, &current_sprite);
 
  int &val1;
+ int &val2;
 
  //set rock to previous position it was left in
  &save_x = sp_editor_num(&current_sprite);
@@ -97,132 +98,32 @@ void MoveDetectDuring(void)
  //     Row 4:     x
  //     Row 5:   xxxxx
  
+ //Row 1-3 connection is column 1
+ //Row 3-5 connection is column 2
+ 
  //Row 1
- if (&save_y <= 97)
+ &val2 = inside_box(&save_x, &save_y, 170, 50, 320, 100);
+ if (&val2 == 1)
  {
-  sp_custom("setXmax", &current_sprite, 298);
-  sp_custom("setXmin", &current_sprite, 191);
-  sp_custom("setYmin", &current_sprite, 80);
-  
-  if (&save_x >= 248)
-   sp_custom("setYmax", &current_sprite, 97); 
-   
-  if (&save_x <= 240)
-   sp_custom("setYmax", &current_sprite, 97); 
-
-  if (&save_x <= 212)
-  {
-   //Rock is in the target area on the top row
-   //Save &current_sprite (this sprite's active sprite number), in custom key attached to "sign" sprite.
-   sp_custom("target1", &val1, &current_sprite);
-  }
-  else
-  {
-   //Rock is NOT in the target area on the top row
-   &val1 = sp_custom("target1", &val1, -1);
-   
-   //Check if this sprite just left the target area.
-   if (&val1 == &current_sprite)
-   {
-    &val1 = sp_custom("sign", &current_sprite, -1);  
-    sp_custom("target1", &val1, 0); 
-   } 
-   &val1 = sp_custom("sign", &current_sprite, -1);  
-  }     
- }
-
- //Row 2
- if (&save_y >= 98)
- {
-  if (&save_y <= 174)
-  {
-   sp_custom("setXmax", &current_sprite, 248);
-   sp_custom("setXmin", &current_sprite, 241);
-  }
- }
-
- //Row 3
- if (&save_y >= 175)
- {
-  if (&save_y <= 197)
-  {
-   sp_custom("setXmax", &current_sprite, 398);
-   sp_custom("setXmin", &current_sprite, 141);
-
-   if (&save_x >= 248)
-    sp_custom("setYmin", &current_sprite, 175); 
-   
-   if (&save_x <= 240)
-    sp_custom("setYmin", &current_sprite, 175);  
+  sp_custom("setXmax", &current_sprite, 297);
+  sp_custom("setXmin", &current_sprite, 193);
+  sp_custom("setYmax", &current_sprite, 96);
+  sp_custom("setYmin", &current_sprite, 78);
  
-   if (&save_x <= 340)
-     sp_custom("setYmax", &current_sprite, 197);     
-
-   if (&save_x >= 348)
-     sp_custom("setYmax", &current_sprite, 197);  
-
-   if (&save_x <= 172)
-    sp_custom("target2", &val1, &current_sprite);
-   else
-   {
-    //Rock is NOT in the target area on the top row
-    &val1 = sp_custom("target2", &val1, -1);
-    
-    //Check if this sprite just left the target area.
-    if (&val1 == &current_sprite)
-    {
-     &val1 = sp_custom("sign", &current_sprite, -1);  
-     sp_custom("target2", &val1, 0); 
-    } 
-    &val1 = sp_custom("sign", &current_sprite, -1);   
-   }  
-
-   if (&save_x >= 372)
-    sp_custom("target3", &val1, &current_sprite);
-   else
-   {
-    //Rock is NOT in the target area on the top row
-    &val1 = sp_custom("target3", &val1, -1);
-    
-    //Check if this sprite just left the target area.
-    if (&val1 == &current_sprite)
-    {
-     &val1 = sp_custom("sign", &current_sprite, -1);  
-     sp_custom("target3", &val1, 0); 
-    } 
-    &val1 = sp_custom("sign", &current_sprite, -1);  
-   }  
-  } 
- }
- 
- //Row 4
- if (&save_y >= 198)
- {
-  if (&save_y <= 274)
+  //check if rock is in column 1
+  &val2 = inside_box(&save_x, &save_y, 239, 50, 249, 100);
+  if (&val2 == 1)
   {
-   sp_custom("setXmax", &current_sprite, 348);
-   sp_custom("setXmin", &current_sprite, 341);
+   //sp_custom("setYmax", &current_sprite, 195);
   }
  } 
  
  //Row 5
- if (&save_y >= 275)
+ &val2 = inside_box(&save_x, &save_y, 220, 250, 469, 300);
+ if (&val2 == 1)
  {
-  if (&save_y <= 297)
-  {
-   sp_custom("setXmax", &current_sprite, 448);
-   sp_custom("setXmin", &current_sprite, 241);
-   sp_custom("setYmax", &current_sprite, 297);
-
-   if (&save_x <= 340)
-    sp_custom("setYmin", &current_sprite, 275);
-
-   if (&save_x >= 348) 
-   {
-    sp_custom("setYmin", &current_sprite, 275); 
-   } 
-  } 
- } 
+  //check if rock is in column 2
+ }
 
  //if this is screen entry, no need to proceed to puzzle check.
  //"sign07.c" main procedure will take care of that.

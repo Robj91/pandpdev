@@ -9,6 +9,7 @@ void main(void)
 
  //use 1 local variable.
  int &val1;
+ int &val2;
 
  //set rock to previous position it was left in
  &save_x = sp_editor_num(&current_sprite);
@@ -73,13 +74,17 @@ void MoveDetectDuring(void)
  //check if we need to declare &val1 - if this procedure is being called from the main proc we need to
  //This is because called procedures, even within the same script are treated as a separate script and do not share local variables.
  if (&arg1 == 1)
+ {
   int &val1;
+  int &val2;
+ }
 
  //store the "sign" sprite's active sprite number in &val1
  &val1 = sp_custom("sign", &current_sprite, -1);
 
  //This is basically just doing a bunch of x/y bound checks and setting the override move limits
  //So that the sprite cannot be moved outside of the purple/red grid.
+ &val1 = sp_custom("sign", &current_sprite, -1);
  &save_x = sp_x(&current_sprite, -1);
  &save_y = sp_y(&current_sprite, -1);
  
@@ -97,130 +102,43 @@ void MoveDetectDuring(void)
  //     Row 4:     x
  //     Row 5:   xxxxx
  
+ //Row 1-3 connection is column 1
+ //Row 3-5 connection is column 2
+ 
  //Row 1
- if (&save_y <= 97)
+ &val2 = inside_box(&save_x, &save_y, 170, 50, 320, 100);
+ if (&val2 == 1)
  {
-  sp_custom("setXmax", &current_sprite, 298);
-  sp_custom("setXmin", &current_sprite, 191);
-  sp_custom("setYmin", &current_sprite, 80);
+  sp_custom("setXmax", &current_sprite, 297);
+  sp_custom("setXmin", &current_sprite, 193);
+  sp_custom("setYmax", &current_sprite, 96);
+  sp_custom("setYmin", &current_sprite, 78);
+ } 
   
-  if (&save_x >= 248)
-   sp_custom("setYmax", &current_sprite, 97); 
-   
-  if (&save_x <= 240)
-   sp_custom("setYmax", &current_sprite, 97); 
-
-  if (&save_x <= 212)
-  {
-   //Rock is in the target area on the top row
-   //Save &current_sprite (this sprite's active sprite number), in custom key attached to "sign" sprite.
-   sp_custom("target1", &val1, &current_sprite);
-  }
-  else
-  {
-   //Rock is NOT in the target area on the top row
-   &val1 = sp_custom("target1", &val1, -1);
-   
-   //Check if this sprite just left the target area.
-   if (&val1 == &current_sprite)
-   {
-    &val1 = sp_custom("sign", &current_sprite, -1);  
-    sp_custom("target1", &val1, 0); 
-   } 
-   &val1 = sp_custom("sign", &current_sprite, -1);  
-  }     
+ //Column 1
+ &val2 = inside_box(&save_x, &save_y, 239, 50, 249, 200);
+ if (&val2 == 1)
+ {
+  sp_custom("setYmax", &current_sprite, 195);
+  sp_custom("setYmin", &current_sprite, 78);
  }
 
  //Row 2
- if (&save_y >= 98)
+ &val2 = inside_box(&save_x, &save_y, 220, 96, 270, 178);
+ if (&val2 == 1)
  {
-  if (&save_y <= 174)
-  {
-   sp_custom("setXmax", &current_sprite, 248);
-   sp_custom("setXmin", &current_sprite, 241);
-  }
+  sp_custom("setXmax", &current_sprite, 247);
+  sp_custom("setXmin", &current_sprite, 243);
+  sp_custom("setYmax", &current_sprite, 195);
+  sp_custom("setYmin", &current_sprite, 78);
  }
-
- //Row 3
- if (&save_y >= 175)
- {
-  if (&save_y <= 197)
-  {
-   sp_custom("setXmax", &current_sprite, 398);
-   sp_custom("setXmin", &current_sprite, 141);
-
-   if (&save_x >= 248)
-    sp_custom("setYmin", &current_sprite, 175); 
-   
-   if (&save_x <= 240)
-    sp_custom("setYmin", &current_sprite, 175);  
- 
-   if (&save_x <= 340)
-     sp_custom("setYmax", &current_sprite, 197);     
-
-   if (&save_x >= 348)
-     sp_custom("setYmax", &current_sprite, 197);  
-
-   if (&save_x <= 172)
-    sp_custom("target2", &val1, &current_sprite);
-   else
-   {
-    //Rock is NOT in the target area on the top row
-    &val1 = sp_custom("target2", &val1, -1);
-    
-    //Check if this sprite just left the target area.
-    if (&val1 == &current_sprite)
-    {
-     &val1 = sp_custom("sign", &current_sprite, -1);  
-     sp_custom("target2", &val1, 0); 
-    } 
-    &val1 = sp_custom("sign", &current_sprite, -1);   
-   }  
-
-   if (&save_x >= 372)
-    sp_custom("target3", &val1, &current_sprite);
-   else
-   {
-    //Rock is NOT in the target area on the top row
-    &val1 = sp_custom("target3", &val1, -1);
-    
-    //Check if this sprite just left the target area.
-    if (&val1 == &current_sprite)
-    {
-     &val1 = sp_custom("sign", &current_sprite, -1);  
-     sp_custom("target3", &val1, 0); 
-    } 
-    &val1 = sp_custom("sign", &current_sprite, -1);  
-   }  
-  } 
- }
- 
- //Row 4
- if (&save_y >= 198)
- {
-  if (&save_y <= 274)
-  {
-   sp_custom("setXmax", &current_sprite, 348);
-   sp_custom("setXmin", &current_sprite, 341);
-  }
- } 
  
  //Row 5
- if (&save_y >= 275)
+ &val2 = inside_box(&save_x, &save_y, 220, 250, 469, 300);
+ if (&val2 == 1)
  {
-  if (&save_y <= 297)
-  {
-   sp_custom("setXmax", &current_sprite, 448);
-   sp_custom("setXmin", &current_sprite, 241);
-   sp_custom("setYmax", &current_sprite, 297); 
-
-   if (&save_x <= 340)
-    sp_custom("setYmin", &current_sprite, 275);
-
-   if (&save_x >= 348) 
-    sp_custom("setYmin", &current_sprite, 275);  
-  } 
- } 
+  //check if rock is in column 2
+ }
 
  //if this is screen entry, no need to proceed to puzzle check.
  //"sign07.c" main procedure will take care of that.
@@ -244,7 +162,9 @@ void MoveDetectDuring(void)
      //puzzle is solved
      &save_y = is_script_attached(&val1);
      if (&save_y > 0)
+     {
       run_script_by_number(&save_y, "puzzle");
+     }
       
      goto stopex;
     }
@@ -256,7 +176,7 @@ void MoveDetectDuring(void)
    goto undo;
  }  
  else
-  goto undo;   
+  goto undo;
   
  goto stopex;
 }
