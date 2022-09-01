@@ -2,12 +2,12 @@ Dink's Great Adventure in the Grand Trials of Pushing and Pulling
 
 Author: Robj
 Special thanks to : Bluedy for mapping, title screen, and testing.
-FreeDink offers the best performance. 1.08 does not process code with short waits in between as smoothly, still works tho.
+
 Please Read the "README README README" file in the Dmod's directory for everything you need to know.
 
-Robj got sick of the jerky and unsmooth push mechanic in the Dink engine, so he remade it using DinkC
+Robj got sick of the jerky push mechanic in the Dink engine, so he remade it using DinkC
 and also made it so Dink can Pull. 
-Please credit me if used, it took a lot of work, trial and error, and frustration. Near on 2 months worth.
+Please credit if used, it took a lot of work, trial and error, and frustration. Near on 2 months worth.
 
 Credit to Bluedy for: 
 

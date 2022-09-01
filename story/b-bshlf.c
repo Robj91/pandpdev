@@ -5,9 +5,6 @@ void main(void)
 
  wait(1);
 
- //needed for talk procedure. Can't use global juggle var, causes a bug. If no talk procedure, can delete.
- int &val1; 
-
   sp_custom("que_fix", &current_sprite, 1);  
 
  sp_custom("setcollision", &current_sprite, 1);
@@ -32,11 +29,7 @@ void touch(void)
 void talk(void)
 {
  external("phisbo", "moveactive");
- if (&return <= 0)
- {
-  //ADD ANY TALK STUFF HERE.
- }
- else
+ if (&return > 0)
  {
   external("dsmove", "main");
  }

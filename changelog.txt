@@ -1,7 +1,7 @@
 Push and Pull Changelog.
 
 ---------
---v2.05--
+--v3.0--
 ---------
 
 There are many changes in this version but all old moveable sprite scripts will still work without any change, so you can implement this update into your dmod effortlessly.

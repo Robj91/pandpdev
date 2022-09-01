@@ -14,9 +14,6 @@ void main(void)
  
  external("phisbo", "main", -12, -9, 12, 9); 
  
- //needed for talk procedure. Can't use global juggle var, causes a bug. If no talk procedure, can delete.
- int &val1; 
- 
  goto stopex;
 }
 
@@ -28,32 +25,14 @@ void touch(void)
  goto stopex;
 }
 
-void MoveDetectDuring(void)
-{
- goto stopex;
-}
-
-void MoveDetectAfter(void)
-{
- goto stopex;
-}
-
-void pull(void)
-{
- external("phisbo", "pkey");
-
- goto stopex;
-}
-
 void talk(void)
 {
- external("phisbo", "talk");
- 
- if (sp_custom("talkreturn", &current_sprite, -1) == 2)
+ external("phisbo", "moveactive");
+ if (&return > 0)
  {
   external("dsmove", "main");
  }
- if (sp_custom("talkreturn", &current_sprite, -1) == 1)
+ else
  {
   external("phisbo", "terminate");
   freeze(1);
@@ -64,15 +43,6 @@ void talk(void)
   external("phisbo", "initiate");
  }
 
- external("phisbo", "touchreset");
- goto stopex;
-}
-
-void hit(void)
-{
- external("phisbo", "hit");
-
- external("phisbo", "touchreset");
  goto stopex;
 }
 
