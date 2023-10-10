@@ -78,6 +78,7 @@ void MoveDetectDuring(void)
  {
   int &val1;
   int &val2;
+  int &val3;
  }
 
  //store the "sign" sprite's active sprite number in &val1
