@@ -1,7 +1,15 @@
 Push and Pull Changelog.
 
 ---------
---v3.0--
+--v3.01--
+---------
+
+- Fix in the demonstration Dmods rock puzzle where the puzzle could be un-solved when all rocks are in place.
+- Removed redundant extra folders
+- Added Source folder back in with the .d scripts in .c format
+
+---------
+--v3.00--
 ---------
 
 There are many changes in this version but all old moveable sprite scripts will still work without any change, so you can implement this update into your dmod effortlessly.
